@@ -3,8 +3,26 @@ token: ''
 manhole_enable: true
 manhole_bind: 127.0.0.1:7171
 
+DSN: '' # Get this from here (optional) https://docs.sentry.io/quickstart/
+SECRET_KEY: '' # Generate a strong key used for oauth
+
 state:
-  sync_guild_members: false
+  sync_guild_members: true
+
+control_channels:
+  # ID of channels where the control messages should send to
+  PRODUCTION: 318697653984690177
+  DEVELOPMENT: 318697653984690177
+
+web:
+  DOMAIN: 'https://jetski.cf'
+  discord:
+    CLIENT_ID: 317853637374377985 # Your client ID from discordapp.com/developers
+    CLIENT_SECRET: 'wdrCZ4-0seAd2z33qZdET0mEiBBdOoBL' # Your client secret from discordapp.com/developers
+    API_BASE_URL: 'https://canary.discordapp.com/api'
+    TOKEN_URL: 'https://discordapp.com/api/oauth2/token'
+    AUTH_URL: 'https://discordapp.com/oauth2/authorize'
+    REDIRECT_URI: 'https://jetski.cf/auth/discord/callback' # Your apps callback URL for auth. This is yourdomain/auth/discord/callback
 
 bot:
   commands_enabled: false
