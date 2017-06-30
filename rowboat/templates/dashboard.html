@@ -99,14 +99,9 @@
                   <a href="/guilds/{{ guild.guild_id }}/config">
                     <button type="button" class="btn btn-info btn-circle"><i class="fa fa-edit"></i></button>
                   </a>
-        				  <a href="/guilds/{{ guild.guild_id }}/infractions">
-        					   <button type="button" class="btn btn-warning btn-circle"><i class="fa fa-ban"></i></button>
-        				  </a>
-                  {% if g.user.admin %}
-                  <a id="delete-guild" class="btn btn-danger btn-circle" data-guild-id="{{ guild.guild_id }}">
-                    <i class="fa fa-trash"></i>
+                  <a href="/guilds/{{ guild.guild_id }}/infractions">
+                     <button type="button" class="btn btn-warning btn-circle"><i class="fa fa-ban"></i></button>
                   </a>
-                  {% endif %}
                 </td>
               </tr>
               {% endfor %}
@@ -142,17 +137,6 @@
       notify('success', 'Deploy Started');
     }).fail(function (event) {
       notify('danger', 'Deploy Failed: ' + event.responseText);
-    });
-  });
-
-  $("#delete-guild").click(function () {
-    $.ajax({
-      type: "DELETE",
-      url: "/api/guilds/" + $(this).data("guild-id"),
-    }).done(function (event) {
-      notify('success', 'Guild Deactivated');
-    }).fail(function (event) {
-      notify('danger', 'Guild Deactivation Failed: '+ event.responseText);
     });
   });
 </script>

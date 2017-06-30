@@ -22,9 +22,8 @@ def before_first_request():
     with open('config.yaml', 'r') as f:
         data = load(f)
 
-    rowboat.app.token = data.get('token')
+    rowboat.app.secret_key = data.get('SECRET_KEY')
     rowboat.app.config.update(data['web'])
-    rowboat.app.config['token'] = data.get('SECRET_KEY')
 
 
 @rowboat.app.before_request
