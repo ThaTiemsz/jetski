@@ -38,3 +38,4 @@ bot:
     - rowboat.plugins.sql
     - rowboat.plugins.internal
     - rowboat.plugins.stats
+    - rowboat.plugins.tags
