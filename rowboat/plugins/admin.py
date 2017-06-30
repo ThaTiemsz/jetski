@@ -576,47 +576,47 @@ class AdminPlugin(Plugin):
         else:
             raise CommandFail('invalid user')
 
-    @Plugin.command('mkick', parser=True, level=CommandLevels.MOD)
-    @Plugin.parser.add_argument('users', type=long, nargs='+')
-    @Plugin.parser.add_argument('-r', '--reason', default='', help='reason for modlog')
-    def mkick(self, event, args):
-        members = []
-        for user_id in args.users:
-            member = event.guild.get_member(user_id)
-            if not member:
-                # TODO: this sucks, batch these
-                raise CommandFail('failed to kick {}, user not found'.format(user_id))
+    # @Plugin.command('mkick', parser=True, level=CommandLevels.MOD)
+    # @Plugin.parser.add_argument('users', type=long, nargs='+')
+    # @Plugin.parser.add_argument('-r', '--reason', default='', help='reason for modlog')
+    # def mkick(self, event, args):
+    #     members = []
+    #     for user_id in args.users:
+    #         member = event.guild.get_member(user_id)
+    #         if not member:
+    #             # TODO: this sucks, batch these
+    #             raise CommandFail('failed to kick {}, user not found'.format(user_id))
 
-            if not self.can_act_on(event, member.id, throw=False):
-                raise CommandFail('failed to kick {}, invalid permissions'.format(user_id))
+    #         if not self.can_act_on(event, member.id, throw=False):
+    #             raise CommandFail('failed to kick {}, invalid permissions'.format(user_id))
 
-            members.append(member)
+    #         members.append(member)
 
-        msg = event.msg.reply('Ok, kick {} users for `{}`?'.format(len(members), args.reason or 'no reason'))
-        msg.chain(False).\
-            add_reaction(GREEN_TICK_EMOJI).\
-            add_reaction(RED_TICK_EMOJI)
+    #     msg = event.msg.reply('Ok, kick {} users for `{}`?'.format(len(members), args.reason or 'no reason'))
+    #     msg.chain(False).\
+    #         add_reaction(GREEN_TICK_EMOJI).\
+    #         add_reaction(RED_TICK_EMOJI)
 
-        try:
-            mra_event = self.wait_for_event(
-                'MessageReactionAdd',
-                message_id=msg.id,
-                conditional=lambda e: (
-                    e.emoji.id in (GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI_ID) and
-                    e.user_id == event.author.id
-                )).get(timeout=10)
-        except gevent.Timeout:
-            return
-        finally:
-            msg.delete()
+    #     try:
+    #         mra_event = self.wait_for_event(
+    #             'MessageReactionAdd',
+    #             message_id=msg.id,
+    #             conditional=lambda e: (
+    #                 e.emoji.id in (GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI_ID) and
+    #                 e.user_id == event.author.id
+    #             )).get(timeout=10)
+    #     except gevent.Timeout:
+    #         return
+    #     finally:
+    #         msg.delete()
 
-        if mra_event.emoji.id != GREEN_TICK_EMOJI_ID:
-            return
+    #     if mra_event.emoji.id != GREEN_TICK_EMOJI_ID:
+    #         return
 
-        for member in members:
-            Infraction.kick(self, event, member, args.reason)
+    #     for member in members:
+    #         Infraction.kick(self, event, member, args.reason)
 
-        raise CommandSuccess('kicked {} users'.format(len(members)))
+    #     raise CommandSuccess('kicked {} users'.format(len(members)))
 
     @Plugin.command('ban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     @Plugin.command('forceban', '<user:snowflake> [reason:str...]', level=CommandLevels.MOD)
