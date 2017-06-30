@@ -2,7 +2,7 @@ import yaml
 import operator
 import functools
 
-from flask import Blueprint, render_template, request, g, jsonify
+from flask import Blueprint, render_template, request, g, jsonify, current_app
 
 from rowboat.util.decos import authed
 from rowboat.models.guild import Guild, GuildConfigChange
@@ -45,6 +45,22 @@ def with_guild(f):
 @with_guild
 def guild_info(guild):
     return render_template('guild_info.html', guild=guild)
+
+
+@guilds.route('/api/guilds/<gid>', methods=['DELETE'])
+@with_guild
+def guild_delete(guild):
+    if not g.user.admin:
+        return '', 401
+
+    from disco.api.client import APIClient
+    client = APIClient(current_app.config['token'])
+    client.users_me_guilds_delete(guild.guild_id)
+
+    guild.enabled = False
+    guild.save()
+
+    return '', 204
 
 
 @guilds.route('/guilds/<gid>/config')
@@ -193,6 +209,8 @@ def guild_config_update(guild):
         return '', 200
     except Guild.DoesNotExist:
         return 'Invalid Guild', 404
+    except Exception as e:
+        return 'Invalid Data: %s' % e, 400
 
 
 @guilds.route('/api/guilds/<gid>/config/raw')

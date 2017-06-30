@@ -39,8 +39,15 @@ class Guild(BaseModel):
 
     enabled = BooleanField(default=True)
     whitelist = BinaryJSONField(default=[])
-
+    
     added_at = DateTimeField(default=datetime.utcnow)
+
+    # SQL = '''
+    #     CREATE OR REPLACE FUNCTION shard (int, bigint)
+    #     RETURNS bigint AS $$
+    #       SELECT ($2 >> 22) % $1
+    #     $$ LANGUAGE SQL;
+    # '''
 
     class Meta:
         db_table = 'guilds'
@@ -270,7 +277,7 @@ class GuildVoiceSession(BaseModel):
 
         indexes = (
             # Used for conflicts
-            (('session_id', 'user_id', 'guild_id', 'channel_id', 'ended_at', ), True),
+            (('session_id', 'user_id', 'guild_id', 'channel_id', 'started_at', 'ended_at', ), True),
 
             (('started_at', 'ended_at', ), False),
         )

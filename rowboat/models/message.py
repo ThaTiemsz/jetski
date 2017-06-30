@@ -405,7 +405,7 @@ class Command(BaseModel):
     command = TextField()
     version = TextField()
     success = BooleanField()
-    traceback = TextField()
+    traceback = TextField(null=True)
 
     class Meta:
         db_table = 'commands'
@@ -423,5 +423,5 @@ class Command(BaseModel):
             command=command.name,
             version=REV,
             success=not exception,
-            traceback=traceback.format_exc(),
+            traceback=traceback.format_exc() if exception else None,
         )
