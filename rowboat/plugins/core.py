@@ -35,7 +35,7 @@ from yaml import load
 PY_CODE_BLOCK = u'```py\n{}\n```'
 
 BOT_INFO = '''
-Rowboat is a moderation and utilitarian Bot built for large Discord servers.
+Jetski is a moderation and utilitarian bot, which happens to be incredibly similar to b1nzy's Rowboat.
 '''
 
 GREEN_TICK_EMOJI = 'green_tick:305231298799206401'
@@ -211,7 +211,7 @@ class CorePlugin(Plugin):
     @contextlib.contextmanager
     def send_control_message(self):
         embed = MessageEmbed()
-        embed.set_footer(text='Rowboat {}'.format(
+        embed.set_footer(text='Jetski {}'.format(
             'Production' if ENV == 'prod' else 'Testing'
         ))
         embed.timestamp = datetime.utcnow().isoformat()
@@ -434,7 +434,7 @@ class CorePlugin(Plugin):
         # Make sure this is the owner of the server
         if not global_admin:
             if not event.guild.owner_id == event.author.id:
-                return event.msg.reply(':warning: only the server owner can setup rowboat')
+                return event.msg.reply(':warning: only the server owner can setup Jetski')
 
         # Make sure we have admin perms
         m = event.guild.members.select_one(id=self.state.me.id)
@@ -484,7 +484,7 @@ class CorePlugin(Plugin):
     @Plugin.command('about')
     def command_about(self, event):
         embed = MessageEmbed()
-        embed.set_author(name='Rowboat', icon_url=self.client.state.me.avatar_url, url='https://docs.rowboat.party/')
+        embed.set_author(name='Jetski', icon_url=self.client.state.me.avatar_url, url='https://jetski.cf/')
         embed.description = BOT_INFO
         embed.add_field(name='Servers', value=str(Guild.select().count()), inline=True)
         embed.add_field(name='Uptime', value=humanize.naturaltime(datetime.utcnow() - self.startup), inline=True)
@@ -492,7 +492,7 @@ class CorePlugin(Plugin):
 
     @Plugin.command('uptime', level=-1)
     def command_uptime(self, event):
-        event.msg.reply('Rowboat was started {}'.format(
+        event.msg.reply('Jetski was started {}'.format(
             humanize.naturaltime(datetime.utcnow() - self.startup)
         ))
 
