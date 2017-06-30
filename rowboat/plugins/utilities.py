@@ -32,11 +32,11 @@ EMOJI_RE = re.compile(r'<:(.+):([0-9]+)>')
 USER_MENTION_RE = re.compile('<@!?([0-9]+)>')
 
 STATUS_EMOJI = {
-    Status.ONLINE: ':status_online:305889169811439617',
-    Status.IDLE: ':status_away:305889079222992896',
-    Status.DND: ':status_dnd:305889053255925760',
-    Status.OFFLINE: ':status_offline:305889028996071425',
-    GameType.STREAMING: ':status_streaming:305889126463569920',
+    Status.ONLINE: ':status_online:318468935362281472',
+    Status.IDLE: ':status_away:318468935387316234',
+    Status.DND: ':status_dnd:318468935336984576',
+    Status.OFFLINE: ':status_offline:318468935391641600',
+    GameType.STREAMING: ':status_streaming:318468935450099712',
 }
 
 

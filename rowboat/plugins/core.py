@@ -38,8 +38,8 @@ BOT_INFO = '''
 Jetski is a moderation and utilitarian bot, which happens to be incredibly similar to b1nzy's Rowboat.
 '''
 
-GREEN_TICK_EMOJI = 'green_tick:305231298799206401'
-RED_TICK_EMOJI = 'red_tick:305231335512080385'
+GREEN_TICK_EMOJI = 'green_tick:318468935047446529'
+RED_TICK_EMOJI = 'red_tick:318468934938394626'
 
 
 class CorePlugin(Plugin):
