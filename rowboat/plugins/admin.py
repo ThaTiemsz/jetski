@@ -23,7 +23,7 @@ from rowboat.util.timing import Eventual
 from rowboat.util.images import get_dominant_colors_user
 from rowboat.util.input import parse_duration
 from rowboat.redis import rdb
-from rowboat.types import Field, ListField, snowflake, SlottedModel
+from rowboat.types import Field, DictField, ListField, snowflake, SlottedModel
 from rowboat.types.plugin import PluginConfig
 from rowboat.plugins.modlog import Actions
 from rowboat.models.user import User, Infraction
@@ -78,6 +78,8 @@ class AdminConfig(PluginConfig):
     # Role saving information
     persist = Field(PersistConfig, default=None)
 
+    role_aliases = DictField(unicode, snowflake)
+
     # The mute role
     mute_role = Field(snowflake, default=None)
 
@@ -127,7 +129,7 @@ class AdminPlugin(Plugin):
             if type_ == Infraction.Types.TEMPBAN:
                 # TODO: debounce
                 guild.delete_ban(item.user_id)
-            elif type_ == Infraction.Types.TEMPMUTE:
+            elif type_ == Infraction.Types.TEMPMUTE or Infraction.Types.TEMPROLE:
                 member = guild.get_member(item.user_id)
                 if member:
                     if item.metadata['role'] in member.roles:
@@ -145,7 +147,8 @@ class AdminPlugin(Plugin):
             item.active = False
             item.save()
 
-        # Queue the next set of infractions
+        # Wait a few seconds to backoff from a possible bad loop, and requeue new infractions
+        gevent.sleep(5)
         self.queue_infractions()
 
     def restore_user(self, event, member):
@@ -299,7 +302,7 @@ class AdminPlugin(Plugin):
         type_ = {i.index: i for i in Infraction.Types.attrs}[infraction.type_]
         embed = MessageEmbed()
 
-        if type_ in (Infraction.Types.MUTE, Infraction.Types.TEMPMUTE):
+        if type_ in (Infraction.Types.MUTE, Infraction.Types.TEMPMUTE, Infraction.Types.TEMPROLE):
             embed.color = 0xfdfd96
         elif type_ in (Infraction.Types.KICK, Infraction.Types.SOFTBAN):
             embed.color = 0xffb347
@@ -389,10 +392,10 @@ class AdminPlugin(Plugin):
         if inf.type_ in [Infraction.Types.MUTE.index, Infraction.Types.BAN.index]:
             inf.type_ = Infraction.Types.TEMPMUTE if inf.type_ == Infraction.Types.MUTE.index else Infraction.Types.TEMPBAN
             converted = True
-        elif inf.type_ not in [Infraction.Types.TEMPMUTE.index, Infraction.Types.TEMPBAN.index]:
+        elif inf.type_ not in [Infraction.Types.TEMPMUTE.index, Infraction.Types.TEMPBAN.index, Infraction.Types.TEMPROLE.index]:
             raise CommandFail('cannot set the duration for that type of infraction')
 
-        self.inf_task.set_next_schedule(expires_dt)
+        self.queue_infractions()
         inf.expires_at = expires_dt
         inf.save()
 
@@ -517,11 +520,9 @@ class AdminPlugin(Plugin):
 
             expire_dt = parse_duration(duration)
 
-            # Reset the infraction task so we make sure it runs after this new infraction
-            self.inf_task.set_next_schedule(expire_dt)
-
             # Create the infraction
             Infraction.tempmute(self, event, member, reason, expire_dt)
+            self.queue_infractions()
 
             if event.config.confirm_actions:
                 event.msg.reply(maybe_string(
@@ -533,6 +534,34 @@ class AdminPlugin(Plugin):
                 ))
         else:
             raise CommandFail('invalid user')
+
+    @Plugin.command('temprole', '<user:user|snowflake> <role:snowflake|str> <duration:str> [reason:str...]', level=CommandLevels.MOD)
+    def temprole(self, event, user, role, duration, reason=None):
+        member = event.guild.get_member(user)
+        if not member:
+            raise CommandFail('invalid user')
+
+        self.can_act_on(event, member.id)
+        role_id = role if isinstance(role, (int, long)) else event.config.role_aliases.get(role.lower())
+        if not role_id or role_id not in event.guild.roles:
+            raise CommandFail('invalid or unknown role')
+
+        if role_id in member.roles:
+            raise CommandFail(u'{} is already in that role'.format(member.user))
+
+        expire_dt = parse_duration(duration)
+        Infraction.temprole(self, event, member, role_id, reason, expire_dt)
+        self.queue_infractions()
+
+        if event.config.confirm_actions:
+            event.msg.reply(maybe_string(
+                reason,
+                u':ok_hand: {u} is now in the {r} role for {t} (`{o}`)',
+                u':ok_hand: {u} is now in the {r} role for {t}',
+                r=event.guild.roles[role_id].name,
+                u=member.user,
+                t=humanize.naturaldelta(expire_dt - datetime.utcnow()),
+            ))
 
     @Plugin.command('unmute', '<user:user|snowflake>', level=CommandLevels.MOD)
     def unmute(self, event, user, reason=None):
@@ -667,8 +696,8 @@ class AdminPlugin(Plugin):
         if member:
             self.can_act_on(event, member.id)
             expires_dt = parse_duration(duration)
-            self.inf_task.set_next_schedule(expires_dt)
             Infraction.tempban(self, event, member, reason, expires_dt)
+            self.queue_infractions()
             if event.config.confirm_actions:
                 event.msg.reply(maybe_string(
                     reason,
@@ -778,6 +807,8 @@ class AdminPlugin(Plugin):
 
         if role.isdigit() and int(role) in event.guild.roles.keys():
             role_obj = event.guild.roles[int(role)]
+        elif role.lower() in event.config.role_aliases:
+            role_obj = event.guild.roles.get(event.config.role_aliases[role.lower()])
         else:
             # First try exact match
             exact_matches = [i for i in event.guild.roles.values() if i.name.lower().replace(' ', '') == role.lower()]
