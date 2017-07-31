@@ -199,7 +199,7 @@ class AdminPlugin(Plugin):
         if not member or member.roles:
             return
 
-        duration = datetime.utcnow() timedelta(days=7)
+        duration = (datetime.utcnow() - timedelta(days=7))
         Infraction.tempban(self, event, member, 'AUTOBAN - mentioned b1nzy', duration)
         event.message.reply(u'{} pinged b1nzy for some reason, they are rip now...'.format(member))
 
