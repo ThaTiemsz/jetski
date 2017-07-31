@@ -227,8 +227,9 @@ class MessageArchive(BaseModel):
         if fmt == 'txt':
             return u'\n'.join(map(self.encode_message_text, q))
         elif fmt == 'csv':
-            return u'\n'.join(
-                ['id,channel_id,timestamp,author_id,author,content,deleted,attachments'] + map(self.encode_message_csv, q))
+            return u'\n'.join([
+                'id,channel_id,timestamp,author_id,author,content,deleted,attachments'
+            ] + map(self.encode_message_csv, q))
         elif fmt == 'json':
             return json.dumps({
                 'messages': map(self.encode_message_json, q)

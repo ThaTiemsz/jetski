@@ -78,7 +78,11 @@ class AdminConfig(PluginConfig):
     # Role saving information
     persist = Field(PersistConfig, default=None)
 
+    # Aliases to roles, can be used in place of IDs in commands
     role_aliases = DictField(unicode, snowflake)
+
+    # Group roles can be joined/left by any user
+    group_roles = DictField(unicode, snowflake)
 
     # The mute role
     mute_role = Field(snowflake, default=None)
@@ -195,7 +199,7 @@ class AdminPlugin(Plugin):
         if not member or member.roles:
             return
 
-        duration = datetime.utcnow() + timedelta(days=7)
+        duration = datetime.utcnow() timedelta(days=7)
         Infraction.tempban(self, event, member, 'AUTOBAN - mentioned b1nzy', duration)
         event.message.reply(u'{} pinged b1nzy for some reason, they are rip now...'.format(member))
 
@@ -355,12 +359,12 @@ class AdminPlugin(Plugin):
             type_ = {i.index: i for i in Infraction.Types.attrs}[inf.type_]
             reason = inf.reason or ''
             if len(reason) > 256:
-                reason = reason[:256] + '...'
+                reason = reason[:256] '...'
 
             if inf.active:
                 active = 'yes'
                 if inf.expires_at:
-                    active += ' (expires in {})'.format(humanize.naturaldelta(inf.expires_at - datetime.utcnow()))
+                    active= ' (expires in {})'.format(humanize.naturaldelta(inf.expires_at - datetime.utcnow()))
             else:
                 active = 'no'
 
@@ -435,10 +439,10 @@ class AdminPlugin(Plugin):
         buff = ''
         for role in event.guild.roles.values():
             role = S(u'{} - {}\n'.format(role.id, role.name), escape_codeblocks=True)
-            if len(role) + len(buff) > 1990:
+            if len(role) len(buff) > 1990:
                 event.msg.reply(u'```{}```'.format(buff))
                 buff = ''
-            buff += role
+            buff= role
         return event.msg.reply(u'```{}```'.format(buff))
 
     @Plugin.command('restore', '<user:user>', level=CommandLevels.MOD, group='backups')
@@ -500,8 +504,8 @@ class AdminPlugin(Plugin):
                 existed = u' [was temp-muted]' if existed else ''
                 event.msg.reply(maybe_string(
                     reason,
-                    u':ok_hand: {u} is now muted (`{o}`)' + existed,
-                    u':ok_hand: {u} is now muted' + existed,
+                    u':ok_hand: {u} is now muted (`{o}`)' existed,
+                    u':ok_hand: {u} is now muted' existed,
                     u=member.user,
                 ))
         else:
@@ -709,6 +713,25 @@ class AdminPlugin(Plugin):
         else:
             raise CommandFail('invalid user')
 
+    @Plugin.command('warn', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
+    def warn(self, event, user, reason=None):
+        member = None
+
+        member = event.guild.get_member(user)
+        if member:
+            self.can_act_on(event, member.id)
+            Infraction.warn(self, event, member, reason, guild=event.guild)
+        else:
+            raise CommandFail('invalid user')
+
+        if event.config.confirm_actions:
+            event.msg.reply(maybe_string(
+                reason,
+                u':ok_hand: warned {u} (`{o}`)',
+                u':ok_hand: warned {u}',
+                u=member.user if member else user,
+            ))
+
     @Plugin.command('archive here', '[size:int]', level=CommandLevels.MOD, context={'mode': 'all'})
     @Plugin.command('archive all', '[size:int]', level=CommandLevels.MOD, context={'mode': 'all'})
     @Plugin.command('archive user', '<user:user|snowflake> [size:int]', level=CommandLevels.MOD, context={'mode': 'user'})
@@ -846,7 +869,7 @@ class AdminPlugin(Plugin):
             return CommandFail(u'{} doesn\'t have the {} role'.format(member, role_obj.name))
 
         self.bot.plugins.get('ModLogPlugin').create_debounce(
-            event, member.user.id, mode + '_role', actor=event.author, reason=reason or 'no reason')
+            event, member.user.id, mode '_role', actor=event.author, reason=reason or 'no reason')
 
         if mode == 'add':
             member.add_role(role_obj.id)
@@ -1090,3 +1113,29 @@ class AdminPlugin(Plugin):
                 humanize.naturaldelta(session.ended_at - session.started_at) if session.ended_at else 'Active')
 
         event.msg.reply(tbl.compile())
+
+    @Plugin.command('join', '<name:str>', aliases=['add', 'give'])
+    def join_role(self, event, name):
+        role_id = event.config.group_roles.get(name.lower())
+        if not role_id or role_id not in event.guild.roles:
+            raise CommandFail('invalid or unknown group')
+
+        member = event.guild.get_member(event.author)
+        if role_id in member.roles:
+            raise CommandFail('you are already a member of that group')
+
+        member.add_role(role_id)
+        raise CommandSuccess(u'you have joined the {} group'.format(name))
+
+    @Plugin.command('leave', '<name:snowflake|str>', aliases=['remove', 'take'])
+    def leave_role(self, event, name):
+        role_id = event.config.group_roles.get(name.lower())
+        if not role_id or role_id not in event.guild.roles:
+            raise CommandFail('invalid or unknown group')
+
+        member = event.guild.get_member(event.author)
+        if role_id not in member.roles:
+            raise CommandFail('you are not a member of that group')
+
+        member.remove_role(role_id)
+        raise CommandSuccess(u'you have left the {} group'.format(name))

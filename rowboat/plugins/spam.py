@@ -19,6 +19,10 @@ from rowboat.types import SlottedModel, DictField, Field
 from rowboat.models.user import Infraction
 from rowboat.models.message import Message, EMOJI_RE
 
+# TODO: lazy/cached
+with open('data/badwords.txt', 'r') as f:
+    BAD_WORDS = f.readlines()
+
 
 PunishmentType = Enum(
     'NONE',
@@ -273,7 +277,8 @@ class SpamPlugin(Plugin):
             try:
                 member = event.guild.get_member(event.author)
                 if not member:
-                    self.log.warning('Failed to find member for guild id %s and author id %s', (event.guild.id, event.author.id))
+                    self.log.warning(
+                        'Failed to find member for guild id %s and author id %s', event.guild.id, event.author.id)
                     return
                 
                 level = int(self.bot.plugins.get('CorePlugin').get_level(event.guild, event.author))
