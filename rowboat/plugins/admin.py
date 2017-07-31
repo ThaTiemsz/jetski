@@ -364,7 +364,7 @@ class AdminPlugin(Plugin):
             if inf.active:
                 active = 'yes'
                 if inf.expires_at:
-                    active= ' (expires in {})'.format(humanize.naturaldelta(inf.expires_at - datetime.utcnow()))
+                    active += ' (expires in {})'.format(humanize.naturaldelta(inf.expires_at - datetime.utcnow()))
             else:
                 active = 'no'
 
@@ -439,10 +439,10 @@ class AdminPlugin(Plugin):
         buff = ''
         for role in event.guild.roles.values():
             role = S(u'{} - {}\n'.format(role.id, role.name), escape_codeblocks=True)
-            if len(role) len(buff) > 1990:
+            if len(role) + len(buff) > 1990:
                 event.msg.reply(u'```{}```'.format(buff))
                 buff = ''
-            buff= role
+            buff += role
         return event.msg.reply(u'```{}```'.format(buff))
 
     @Plugin.command('restore', '<user:user>', level=CommandLevels.MOD, group='backups')
@@ -504,8 +504,8 @@ class AdminPlugin(Plugin):
                 existed = u' [was temp-muted]' if existed else ''
                 event.msg.reply(maybe_string(
                     reason,
-                    u':ok_hand: {u} is now muted (`{o}`)' existed,
-                    u':ok_hand: {u} is now muted' existed,
+                    u':ok_hand: {u} is now muted (`{o}`)' + existed,
+                    u':ok_hand: {u} is now muted' + existed,
                     u=member.user,
                 ))
         else:
@@ -869,7 +869,7 @@ class AdminPlugin(Plugin):
             return CommandFail(u'{} doesn\'t have the {} role'.format(member, role_obj.name))
 
         self.bot.plugins.get('ModLogPlugin').create_debounce(
-            event, member.user.id, mode '_role', actor=event.author, reason=reason or 'no reason')
+            event, member.user.id, mode + '_role', actor=event.author, reason=reason or 'no reason')
 
         if mode == 'add':
             member.add_role(role_obj.id)
