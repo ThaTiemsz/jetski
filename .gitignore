@@ -4,3 +4,4 @@ config.yaml
 .venv/
 rowboat.log
 .data
+src/
