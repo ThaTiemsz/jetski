@@ -56,8 +56,9 @@ class TagsPlugin(Plugin):
             (Tag.name == tag.name)
         ).execute()
 
-        event.msg.reply(':information_source: {}'.format(
-            tag.content
+        event.msg.reply(u':{}: {}'.format(
+            'information_source',
+            S(tag.content),
         ))
 
     @Plugin.command('remove', '<name:str>', group='tags', aliases=['del', 'rm'], level=CommandLevels.TRUSTED)
