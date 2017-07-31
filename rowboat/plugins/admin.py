@@ -359,7 +359,7 @@ class AdminPlugin(Plugin):
             type_ = {i.index: i for i in Infraction.Types.attrs}[inf.type_]
             reason = inf.reason or ''
             if len(reason) > 256:
-                reason = reason[:256] '...'
+                reason = reason[:256] + '...'
 
             if inf.active:
                 active = 'yes'
