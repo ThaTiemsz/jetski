@@ -37,7 +37,7 @@ from rowboat.constants import (
 EMOJI_RE = re.compile(r'<:[a-zA-Z0-9_]+:([0-9]+)>')
 
 CUSTOM_EMOJI_STATS_SERVER_SQL = """
-SELECT gm.emoji_id, gm.name, count(*) FROM guildemojis gm
+SELECT gm.emoji_id, gm.name, count(*) FROM guild_emojis gm
 JOIN messages m ON m.emojis @> ARRAY[gm.emoji_id]
 WHERE gm.deleted=false AND gm.guild_id={guild} AND m.guild_id={guild}
 GROUP BY 1, 2
@@ -46,7 +46,7 @@ LIMIT 30
 """
 
 CUSTOM_EMOJI_STATS_GLOBAL_SQL = """
-SELECT gm.emoji_id, gm.name, count(*) FROM guildemojis gm
+SELECT gm.emoji_id, gm.name, count(*) FROM guild_emojis gm
 JOIN messages m ON m.emojis @> ARRAY[gm.emoji_id]
 WHERE gm.deleted=false AND gm.guild_id={guild}
 GROUP BY 1, 2
@@ -1007,7 +1007,7 @@ class AdminPlugin(Plugin):
                 FROM messages
                 WHERE author_id=%s
             ) q
-            JOIN guildemojis gm ON gm.emoji_id=q.id
+            JOIN guild_emojis gm ON gm.emoji_id=q.id
             GROUP BY 1, 2
             ORDER BY 3 DESC
             LIMIT 1

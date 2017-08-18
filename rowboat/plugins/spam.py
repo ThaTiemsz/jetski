@@ -67,7 +67,7 @@ class SubConfig(SlottedModel):
             raise Exception('Invalid value for `clean_duration` must be between 0 and 86400')
 
         if self.clean_count < 0 or self.clean_count > 1000:
-            raise Exception('Invaliud value for `clean_count` must be between 0 and 1000')
+            raise Exception('Invalid value for `clean_count` must be between 0 and 1000')
 
     def get_bucket(self, attr, guild_id):
         obj = getattr(self, attr)

@@ -2,17 +2,17 @@ import re
 from disco.types.user import GameType, Status
 
 # Emojis
-GREEN_TICK_EMOJI_ID = 305231298799206401
-RED_TICK_EMOJI_ID = 305231335512080385
+GREEN_TICK_EMOJI_ID = 318468935047446529
+RED_TICK_EMOJI_ID = 318468934938394626
 GREEN_TICK_EMOJI = 'green_tick:{}'.format(GREEN_TICK_EMOJI_ID)
 RED_TICK_EMOJI = 'red_tick:{}'.format(RED_TICK_EMOJI_ID)
 STAR_EMOJI = u'\U00002B50'
 STATUS_EMOJI = {
-    Status.ONLINE: ':status_online:305889169811439617',
-    Status.IDLE: ':status_away:305889079222992896',
-    Status.DND: ':status_dnd:305889053255925760',
-    Status.OFFLINE: ':status_offline:305889028996071425',
-    GameType.STREAMING: ':status_streaming:305889126463569920',
+    Status.ONLINE: ':status_online:318468935362281472',
+    Status.IDLE: ':status_away:318468935387316234',
+    Status.DND: ':status_dnd:318468935336984576',
+    Status.OFFLINE: ':status_offline:318468935391641600',
+    GameType.STREAMING: ':status_streaming:318468935450099712',
 }
 
 
@@ -23,8 +23,8 @@ EMOJI_RE = re.compile(r'<:(.+):([0-9]+)>')
 USER_MENTION_RE = re.compile('<@!?([0-9]+)>')
 
 # IDs and such
-ROWBOAT_GUILD_ID = 290923757399310337
-ROWBOAT_USER_ROLE_ID = 339256926921555968
+ROWBOAT_GUILD_ID = 318696775173013515
+ROWBOAT_USER_ROLE_ID = 318780548304863238
 
 # Discord Error codes
 ERR_UNKNOWN_MESSAGE = 10008
