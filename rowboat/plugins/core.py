@@ -33,6 +33,8 @@ from rowboat.constants import (
     GREEN_TICK_EMOJI, RED_TICK_EMOJI, ROWBOAT_GUILD_ID, ROWBOAT_USER_ROLE_ID
 )
 
+from yaml import load
+
 PY_CODE_BLOCK = u'```py\n{}\n```'
 
 BOT_INFO = '''
@@ -56,6 +58,11 @@ class CorePlugin(Plugin):
 
         if ENV != 'prod':
             self.spawn(self.wait_for_plugin_changes)
+
+        self.global_config = None
+
+        with open('config.yaml', 'r') as f:
+            self.global_config = load(f)
 
         self._wait_for_actions_greenlet = self.spawn(self.wait_for_actions)
 
@@ -269,7 +276,7 @@ class CorePlugin(Plugin):
         embed.color = 0x779ecb
         yield embed
         self.bot.client.api.channels_messages_create(
-            290924692057882635 if ENV == 'prod' else 301869081714491393,
+            self.global_config['control_channels']['PRODUCTION'] if ENV == 'prod' else self.global_config['control_channels']['DEVELOPMENT'],
             '',
             embed=embed
         )
