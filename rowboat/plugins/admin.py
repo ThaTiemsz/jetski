@@ -23,6 +23,7 @@ from rowboat.plugins import RowboatPlugin as Plugin, CommandFail, CommandSuccess
 from rowboat.util.timing import Eventual
 from rowboat.util.images import get_dominant_colors_user
 from rowboat.util.input import parse_duration
+from rowboat.util.gevent import wait_many
 from rowboat.redis import rdb
 from rowboat.types import Field, DictField, ListField, snowflake, SlottedModel
 from rowboat.types.plugin import PluginConfig
@@ -137,13 +138,45 @@ class AdminPlugin(Plugin):
             # TODO: hacky
             type_ = {i.index: i for i in Infraction.Types.attrs}[item.type_]
             if type_ == Infraction.Types.TEMPBAN:
-                # TODO: debounce
+                self.call(
+                    'ModLogPlugin.create_debounce',
+                    guild.id,
+                    ['GuildBanRemove'],
+                    user_id=item.user_id,
+                )
+
                 guild.delete_ban(item.user_id)
+
+                # TODO: perhaps join on users above and use username from db
+                self.call(
+                    'ModLogPlugin.log_action_ext',
+                    Actions.MEMBER_TEMPBAN_EXPIRE,
+                    guild.id,
+                    user_id=item.user_id,
+                    user=unicode(self.state.users.get(item.user_id) or item.user_id),
+                    inf=item
+                )
             elif type_ == Infraction.Types.TEMPMUTE or Infraction.Types.TEMPROLE:
                 member = guild.get_member(item.user_id)
                 if member:
                     if item.metadata['role'] in member.roles:
+                        self.call(
+                            'ModLogPlugin.create_debounce',
+                            guild.id,
+                            ['GuildMemberUpdate'],
+                            user_id=item.user_id,
+                            role_id=item.metadata['role'],
+                        )
+
                         member.remove_role(item.metadata['role'])
+
+                        self.call(
+                            'ModLogPlugin.log_action_ext',
+                            Actions.MEMBER_TEMPMUTE_EXPIRE,
+                            guild.id,
+                            member=member,
+                            inf=item
+                        )
                 else:
                     GuildMemberBackup.remove_role(
                         item.guild_id,
@@ -200,7 +233,7 @@ class AdminPlugin(Plugin):
         self.call(
             'ModLogPlugin.log_action_ext',
             Actions.MEMBER_RESTORE,
-            event,
+            event.guild.id,
             member=member,
         )
 
@@ -639,7 +672,7 @@ class AdminPlugin(Plugin):
             self.call(
                 'ModLogPlugin.log_action_ext',
                 Actions.MEMBER_UNMUTED,
-                event,
+                event.guild.id,
                 member=member,
                 actor=unicode(event.author) if event.author.id != member.id else 'Automatic',
             )
@@ -964,7 +997,7 @@ class AdminPlugin(Plugin):
         self.call(
             'ModLogPlugin.log_action_ext',
             (Actions.MEMBER_ROLE_ADD if mode == 'add' else Actions.MEMBER_ROLE_REMOVE),
-            event,
+            event.guild.id,
             member=member,
             role=role_obj,
             actor=unicode(event.author),
@@ -978,7 +1011,7 @@ class AdminPlugin(Plugin):
     @Plugin.command('stats', '<user:user>', level=CommandLevels.MOD)
     def msgstats(self, event, user):
         # Query for the basic aggregate message statistics
-        q = list(Message.select(
+        message_stats = Message.select(
             fn.Count('*'),
             fn.Sum(fn.char_length(Message.content)),
             fn.Sum(fn.array_length(Message.emojis, 1)),
@@ -986,9 +1019,9 @@ class AdminPlugin(Plugin):
             fn.Sum(fn.array_length(Message.attachments, 1)),
         ).where(
             (Message.author_id == user.id)
-        ).tuples())[0]
+        ).tuples().async()
 
-        reactions_given = list(Reaction.select(
+        reactions_given = Reaction.select(
             fn.Count('*'),
             Reaction.emoji_id,
             Reaction.emoji_name,
@@ -997,10 +1030,12 @@ class AdminPlugin(Plugin):
             on=(Message.id == Reaction.message_id)
         ).where(
             (Reaction.user_id == user.id)
-        ).group_by(Reaction.emoji_id, Reaction.emoji_name).order_by(fn.Count('*').desc()).tuples())
+        ).group_by(
+            Reaction.emoji_id, Reaction.emoji_name
+        ).order_by(fn.Count('*').desc()).tuples().async()
 
         # Query for most used emoji
-        emojis = list(Message.raw('''
+        emojis = Message.raw('''
             SELECT gm.emoji_id, gm.name, count(*)
             FROM (
                 SELECT unnest(emojis) as id
@@ -1011,30 +1046,44 @@ class AdminPlugin(Plugin):
             GROUP BY 1, 2
             ORDER BY 3 DESC
             LIMIT 1
-        ''', (user.id, )).tuples())
+        ''', (user.id, )).tuples().async()
 
-        deleted = Message.select().where(
+        deleted = Message.select(
+            fn.Count('*')
+        ).where(
             (Message.author_id == user.id) &
             (Message.deleted == 1)
-        ).count()
+        ).tuples().async()
 
+        wait_many(message_stats, reactions_given, emojis, deleted, timeout=10)
+
+        # If we hit an exception executing the core query, throw an exception
+        if message_stats.exception:
+            message_stats.get()
+
+        q = message_stats.value[0]
         embed = MessageEmbed()
         embed.fields.append(
             MessageEmbedField(name='Total Messages Sent', value=q[0] or '0', inline=True))
         embed.fields.append(
             MessageEmbedField(name='Total Characters Sent', value=q[1] or '0', inline=True))
-        embed.fields.append(
-            MessageEmbedField(name='Total Deleted Messages', value=deleted or '0', inline=True))
+
+        if deleted.value:
+            embed.fields.append(
+                MessageEmbedField(name='Total Deleted Messages', value=deleted.value[0][0], inline=True))
         embed.fields.append(
             MessageEmbedField(name='Total Custom Emojis', value=q[2] or '0', inline=True))
         embed.fields.append(
             MessageEmbedField(name='Total Mentions', value=q[3] or '0', inline=True))
         embed.fields.append(
             MessageEmbedField(name='Total Attachments', value=q[4] or '0', inline=True))
-        embed.fields.append(
-            MessageEmbedField(name='Total Reactions', value=sum(i[0] for i in reactions_given), inline=True))
 
-        if reactions_given:
+        if reactions_given.value:
+            reactions_given = reactions_given.value
+
+            embed.fields.append(
+                MessageEmbedField(name='Total Reactions', value=sum(i[0] for i in reactions_given), inline=True))
+
             emoji = (
                 reactions_given[0][2]
                 if not reactions_given[0][1] else
@@ -1046,7 +1095,9 @@ class AdminPlugin(Plugin):
                     reactions_given[0][0],
                 ), inline=True))
 
-        if emojis:
+        if emojis.value:
+            emojis = list(emojis.value)
+
             embed.add_field(
                 name='Most Used Emoji',
                 value=u'<:{1}:{0}> (`{1}`, used {2} times)'.format(*emojis[0]))
