@@ -391,7 +391,7 @@ class CorePlugin(Plugin):
         if event.message.author.bot:
             return
 
-        if rdb.sismember('ignored_channels', event.message.channel_id)
+        if rdb.sismember('ignored_channels', event.message.channel_id):
             return
 
         # If this is message for a guild, grab the guild object
