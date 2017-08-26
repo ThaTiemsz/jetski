@@ -741,44 +741,6 @@ class AdminPlugin(Plugin):
 
         raise CommandSuccess('kicked {} users'.format(len(members)))
 
-        guild = Guild.setup(event.guild)
-        rdb.srem(GUILDS_WAITING_SETUP_KEY, str(event.guild.id))
-        self.guilds[event.guild.id] = guild
-        event.msg.reply(':ok_hand: successfully loaded configuration')
-
-    @Plugin.command('nuke', '<user:snowflake> <reason:str...>', level=-1)
-    def nuke(self, event, user, reason):
-        contents = []
-
-        for gid, guild in self.guilds.items():
-            guild = self.state.guilds[gid]
-            perms = guild.get_permissions(self.state.me)
-
-            if not perms.ban_members and not perms.administrator:
-                contents.append(u':x: {} - No Permissions'.format(
-                    guild.name
-                ))
-                continue
-
-            try:
-                Infraction.ban(
-                    self,
-                    event,
-                    user,
-                    reason,
-                    guild=guild)
-            except:
-                contents.append(u':x: {} - Unknown Error'.format(
-                    guild.name
-                ))
-                self.log.exception('Failed to force ban %s in %s', user, gid)
-
-            contents.append(u':white_check_mark: {} - :regional_indicator_f:'.format(
-                guild.name
-            ))
-
-        event.msg.reply('Results:\n' + '\n'.join(contents))
-
     @Plugin.command('ban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     @Plugin.command('forceban', '<user:snowflake> [reason:str...]', level=CommandLevels.MOD)
     def ban(self, event, user, reason=None):
