@@ -124,8 +124,8 @@ class UtilitiesPlugin(Plugin):
             return event.msg.reply(':warning: no matches')
 
         event.msg.reply(u'{} - {}'.format(
-            data['list'][0]['word'],
-            data['list'][0]['definition'],
+            S(data['list'][0]['word']),
+            S(data['list'][0]['definition']),
         ))
 
     @Plugin.command('pwnd', '<email:str>', global_=True)
