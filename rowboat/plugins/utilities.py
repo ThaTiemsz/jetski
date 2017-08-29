@@ -178,11 +178,11 @@ class UtilitiesPlugin(Plugin):
 
         name, eid = EMOJI_RE.findall(emoji)[0]
         fields.append('**ID:** {}'.format(eid))
-        fields.append('**Name:** {}'.format(name))
+        fields.append('**Name:** {}'.format(S(name)))
 
         guild = self.state.guilds.find_one(lambda v: eid in v.emojis)
         if guild:
-            fields.append('**Guild:** {} ({})'.format(guild.name, guild.id))
+            fields.append('**Guild:** {} ({})'.format(S(guild.name), guild.id))
 
         url = 'https://discordapp.com/api/emojis/{}.png'.format(eid)
         r = requests.get(url)
