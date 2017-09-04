@@ -260,7 +260,7 @@ class Infraction(BaseModel):
         plugin.call(
             'ModLogPlugin.log_action_ext',
             Actions.MEMBER_BAN,
-            event.guild.id,
+            guild.id,
             user=unicode(member),
             user_id=user_id,
             actor=unicode(event.author) if event.author.id != user_id else 'Automatic',
