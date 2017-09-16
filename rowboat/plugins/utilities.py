@@ -446,7 +446,7 @@ class UtilitiesPlugin(Plugin):
         )
 
         for reminder in reminders:
-            self.spawn(self.trigger_reminder(self, reminder))
+            self.spawn(self.trigger_reminder(reminder))
 
         self.queue_reminders()
 
