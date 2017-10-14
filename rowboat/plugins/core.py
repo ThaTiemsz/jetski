@@ -597,7 +597,7 @@ class CorePlugin(Plugin):
         code = cmd.func.__code__
         lines, firstlineno = inspect.getsourcelines(code)
 
-        event.msg.reply('<https://github.com/b1naryth1ef/rowboat/blob/master/{}#L{}-{}>'.format(
+        event.msg.reply('<https://github.com/ThaTiemsz/jetski/blob/master/{}#L{}-{}>'.format(
             code.co_filename,
             firstlineno,
             firstlineno + len(lines)
