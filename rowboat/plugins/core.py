@@ -31,7 +31,8 @@ from rowboat.models.message import Command
 from rowboat.models.notification import Notification
 from rowboat.plugins.modlog import Actions
 from rowboat.constants import (
-    GREEN_TICK_EMOJI, RED_TICK_EMOJI, ROWBOAT_GUILD_ID, ROWBOAT_USER_ROLE_ID
+    GREEN_TICK_EMOJI, RED_TICK_EMOJI, ROWBOAT_GUILD_ID, ROWBOAT_USER_ROLE_ID,
+    ROWBOAT_CONTROL_CHANNEL
 )
 
 from yaml import load
@@ -296,8 +297,7 @@ class CorePlugin(Plugin):
         try:
             yield embed
             self.bot.client.api.channels_messages_create(
-                self.global_config['control_channels']['PRODUCTION'] if ENV == 'prod' else self.global_config['control_channels']['DEVELOPMENT'],
-                '',
+                ROWBOAT_CONTROL_CHANNEL,
                 embed=embed
             )
         except:
@@ -479,8 +479,20 @@ class CorePlugin(Plugin):
                 except CommandResponse as e:
                     event.reply(e.response)
                 except:
-                    Command.track(event, command, exception=True)
+                    tracked = Command.track(event, command, exception=True)
                     self.log.exception('Command error:')
+
+                    with self.send_control_message() as embed:
+                        embed.title = u'Command Error: {}'.format(command.name)
+                        embed.color = 0xff6961
+                        embed.add_field(
+                            name='Author', value='({}) `{}`'.format(event.author, event.author.id), inline=True)
+                        embed.add_field(name='Channel', value='({}) `{}`'.format(
+                            event.channel.name,
+                            event.channel.id
+                        ), inline=True)
+                        embed.description = '```{}```'.format(u'\n'.join(tracked.traceback.split('\n')[-8:]))
+
                     return event.reply('<:{}> something went wrong, perhaps try again later'.format(RED_TICK_EMOJI))
 
             Command.track(event, command)
@@ -565,7 +577,7 @@ class CorePlugin(Plugin):
         embed.description = BOT_INFO
         embed.add_field(name='Servers', value=str(Guild.select().count()), inline=True)
         embed.add_field(name='Uptime', value=humanize.naturaldelta(datetime.utcnow() - self.startup), inline=True)
-        event.msg.reply('', embed=embed)
+        event.msg.reply(embed=embed)
 
     @Plugin.command('uptime', level=-1)
     def command_uptime(self, event):
@@ -687,3 +699,11 @@ class CorePlugin(Plugin):
     def guild_unwhitelist(self, event, guild):
         rdb.srem(GUILDS_WAITING_SETUP_KEY, str(guild))
         event.msg.reply('Ok, I\'ve made sure guild %s is no longer in the whitelist' % guild)
+
+    @Plugin.command('disable', '<plugin:str>', group='plugins', level=-1)
+    def plugin_disable(self, event, plugin):
+        plugin = self.bot.plugins.get(plugin)
+        if not plugin:
+            return event.msg.reply('Hmmm, it appears that plugin doesn\'t exist!?')
+        self.bot.rmv_plugin(plugin.__class__)
+        event.msg.reply('Ok, that plugin has been disabled and unloaded')

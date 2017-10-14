@@ -1,4 +1,5 @@
 import re
+import yaml
 from disco.types.user import GameType, Status
 
 # Emojis
@@ -26,6 +27,7 @@ USER_MENTION_RE = re.compile('<@!?([0-9]+)>')
 # IDs and such
 ROWBOAT_GUILD_ID = 318696775173013515
 ROWBOAT_USER_ROLE_ID = 318780548304863238
+ROWBOAT_CONTROL_CHANNEL = 318697653984690177
 
 # Discord Error codes
 ERR_UNKNOWN_MESSAGE = 10008
@@ -37,3 +39,8 @@ CDN_URL = 'https://twemoji.maxcdn.com/2/72x72/{}.png'
 # Loaded from files
 with open('data/badwords.txt', 'r') as f:
     BAD_WORDS = f.readlines()
+
+# Merge in any overrides in the config
+with open('config.yaml', 'r') as f:
+    loaded = yaml.load(f.read())
+    locals().update(loaded.get('constants', {}))

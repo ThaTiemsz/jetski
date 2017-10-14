@@ -109,7 +109,7 @@ class Message(BaseModel):
 
     @classmethod
     def from_disco_message_many(cls, messages, safe=False):
-        q = cls.insert_many(map(cls.convert_message, messages))
+        q = cls.insert_many(map(cls.convert_message, messages)).returning(cls.id)
 
         if safe:
             q = q.on_conflict('DO NOTHING')
@@ -202,7 +202,7 @@ class MessageArchive(BaseModel):
         with open('config.yaml', 'r') as f:
             config = load(f)
 
-        return '{}/archive/{}.txt'.format(config['web']['DOMAIN'], self.archive_id)
+        return '{}/api/archive/{}.txt'.format(config['web']['DOMAIN'], self.archive_id)
 
     def encode(self, fmt='txt'):
         from rowboat.models.user import User
@@ -418,7 +418,7 @@ class Command(BaseModel):
 
     @classmethod
     def track(cls, event, command, exception=False):
-        cls.create(
+        return cls.create(
             message_id=event.message.id,
             plugin=command.plugin.name,
             command=command.name,
