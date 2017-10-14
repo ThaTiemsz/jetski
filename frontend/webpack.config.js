@@ -8,7 +8,7 @@ if (process.env.NODE_ENV == 'docker') {
 
 module.exports = {
 	// entry file - starting point for the app
-	entry: './src?http://0.0.0.0:80',
+	entry: './src',
 
 	// where to dump the output of a production build
 	output: {
