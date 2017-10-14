@@ -3,7 +3,7 @@ services:
   db:
     build: ./docker/database/
     volumes:
-      - ./.data:/var/lib/postgresql/
+      - ./.data:/var/lib/postgresql/data
   redis:
     image: redis:3.2
     command: redis-server --appendonly yes
@@ -57,5 +57,3 @@ services:
       - .:/opt/rowboat
     depends_on:
       - web
-volumes:
-  postgres: {}
