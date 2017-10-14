@@ -13,7 +13,8 @@ module.exports = {
 	// where to dump the output of a production build
 	output: {
 		path: path.join(__dirname, 'build'),
-		filename: 'bundle.js'
+		filename: 'bundle.js',
+		publicPath: 'https://jetski.cf/'
 	},
 
 	module: {
@@ -50,7 +51,6 @@ module.exports = {
 
 	devServer: {
 		host: '0.0.0.0',
-		port: '80',
     disableHostCheck: true,
 		// serve up any static files from src/
 		contentBase: path.join(__dirname, 'src'),
