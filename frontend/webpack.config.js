@@ -8,7 +8,7 @@ if (process.env.NODE_ENV == 'docker') {
 
 module.exports = {
 	// entry file - starting point for the app
-	entry: './src',
+	entry: './src?http://0.0.0.0:80',
 
 	// where to dump the output of a production build
 	output: {
@@ -50,7 +50,6 @@ module.exports = {
 
 	devServer: {
 		host: '0.0.0.0',
-		port: 8080,
     disableHostCheck: true,
 		// serve up any static files from src/
 		contentBase: path.join(__dirname, 'src'),
