@@ -1,7 +1,7 @@
 import json
 import subprocess
 
-from flask import Blueprint, render_template, request, g, make_response
+from flask import Blueprint, request, g, make_response, jsonify
 from datetime import datetime
 
 from rowboat.redis import rdb
@@ -40,39 +40,22 @@ class ServerSentEvent(object):
         return "%s\n\n" % "\n".join(lines)
 
 
-@dashboard.route('/')
-def dash_index():
-    if g.user:
-        if g.user.admin:
-            stats = json.loads(rdb.get('web:dashboard:stats') or '{}')
+@dashboard.route('/api/stats')
+def stats():
+    stats = json.loads(rdb.get('web:dashboard:stats') or '{}')
 
-            if not stats or 'refresh' in request.args:
-                stats['messages'] = pretty_number(Message.select().count())
-                stats['guilds'] = pretty_number(Guild.select().count())
-                stats['users'] = pretty_number(User.select().count())
-                stats['channels'] = pretty_number(Channel.select().count())
+    if not stats or 'refresh' in request.args:
+        stats['messages'] = pretty_number(Message.select().count())
+        stats['guilds'] = pretty_number(Guild.select().count())
+        stats['users'] = pretty_number(User.select().count())
+        stats['channels'] = pretty_number(Channel.select().count())
 
-                rdb.setex('web:dashboard:stats', json.dumps(stats), 300)
-
-            guilds = Guild.select().order_by(Guild.guild_id)
-        else:
-            stats = {}
-            guilds = Guild.select(
-                Guild, Guild.config['web'][str(g.user.user_id)].alias('role')
-            ).where(
-                (Guild.enabled == 1) &
-                (~(Guild.config['web'][str(g.user.user_id)] >> None))
-            )
-
-        return render_template(
-            'dashboard.html',
-            stats=stats,
-            guilds=guilds,
-        )
-    return render_template('login.html')
+        rdb.setex('web:dashboard:stats', json.dumps(stats), 300)
+    
+    return jsonify(stats)
 
 
-@dashboard.route('/archive/<aid>.<fmt>')
+@dashboard.route('/api/archive/<aid>.<fmt>')
 def archive(aid, fmt):
     try:
         archive = MessageArchive.select().where(
