@@ -57,3 +57,5 @@ services:
       - .:/opt/rowboat
     depends_on:
       - web
+volumes:
+  postgres: {}
