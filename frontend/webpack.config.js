@@ -49,7 +49,8 @@ module.exports = {
 	devtool: 'source-map',
 
 	devServer: {
-    host: '0.0.0.0',
+		host: '0.0.0.0',
+		port: 80,
     disableHostCheck: true,
 		// serve up any static files from src/
 		contentBase: path.join(__dirname, 'src'),
