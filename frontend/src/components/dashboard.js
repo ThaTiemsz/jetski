@@ -73,7 +73,7 @@ class Stats extends Component {
           );
         });
       } else {
-        return;
+        return (null);
       }
     });
   }
