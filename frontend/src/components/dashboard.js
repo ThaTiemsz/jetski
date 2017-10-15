@@ -65,24 +65,22 @@ class Stats extends Component {
 
   async render() {
     let statsPanels = [];
-    const user = await globalState.getCurrentUser()
-    const stats = await globalState.getStats()
-    console.log(user, stats);
-    console.log(1337, globalState.stats);
+    const user = await globalState.getCurrentUser();
+    const stats = await globalState.getStats();
 
-    if (user.admin) {
-      if (stats) {
+    if (globalState.user.admin) {
+      if (globalState.stats) {
         statsPanels.push(
-            <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
+            <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
         );
         statsPanels.push(
-            <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
+            <StatsPanel color='green' icon='server' data={globalState.stats.guilds} text='Guilds' key='guilds' />
         );
         statsPanels.push(
-            <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
+            <StatsPanel color='yellow' icon='user' data={globalState.stats.users} text='Users' key='users' />
         );
         statsPanels.push(
-            <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
+            <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
         );
       }
     }
