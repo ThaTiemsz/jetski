@@ -74,7 +74,7 @@ class Stats extends Component {
   }
 
   getStats() {
-    let statsPanels = null;
+    let statsPanels = [];
     if (globalState.user.admin) {
       globalState.getStats((stats) => {
         // statsPanels.push(
@@ -89,7 +89,7 @@ class Stats extends Component {
         // statsPanels.push(
         //     <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
         // );
-        statsPanels = stats;
+        statsPanels.push(stats);
       });
     }
     return statsPanels;
@@ -99,7 +99,7 @@ class Stats extends Component {
     let panels = this.getStats();
     console.log(panels);
 
-    // let renderPanels = [];
+    let renderPanels = [];
     // for (let panel in panels) {
     //   renderPanels.push(
     //       <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
