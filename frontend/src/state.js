@@ -84,7 +84,7 @@ class State {
         this.stats = res.data;
         resolve(this.stats);
       }).catch((err) => {
-        reject(err);
+        reject();
       })
     })
   }

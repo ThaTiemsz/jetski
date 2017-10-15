@@ -65,15 +65,13 @@ class Stats extends Component {
       stats: null
     };
 
-    globalState.getStats().then((stats) => {
-      this.setState({stats});
-    });
-  //   this.getStuff();
-  // }
+    this.getStuff();
+  }
 
-  // async getStuff() {
-  //   await globalState.getCurrentUser();
-  //   await globalState.getStats();
+  async getStuff() {
+    await globalState.getCurrentUser();
+    const stats = await globalState.getStats();
+    this.setState({stats})
   }
 
   render() {
