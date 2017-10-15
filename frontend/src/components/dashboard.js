@@ -71,27 +71,26 @@ class Stats extends Component {
 
   render() {
     let statsPanels = [];
-    const push = () => {
-      statsPanels.push(
-          <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
-      );
-      statsPanels.push(
-          <StatsPanel color='green' icon='server' data={globalState.stats.guilds} text='Guilds' key='guilds' />
-      );
-      statsPanels.push(
-          <StatsPanel color='yellow' icon='user' data={globalState.stats.users} text='Users' key='users' />
-      );
-      statsPanels.push(
-          <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
-      );
-    }
 
     if (globalState.user.admin) {
-      globalState.getStats((stats) => push());
+      globalState.getStats((stats) => {
+        statsPanels.push(
+            <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
+        );
+        statsPanels.push(
+            <StatsPanel color='green' icon='server' data={globalState.stats.guilds} text='Guilds' key='guilds' />
+        );
+        statsPanels.push(
+            <StatsPanel color='yellow' icon='user' data={globalState.stats.users} text='Users' key='users' />
+        );
+        statsPanels.push(
+            <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
+        );
+      });
     }
 
     console.log(statsPanels)
-    
+
     return (
       <div className="row">
         {statsPanels}
