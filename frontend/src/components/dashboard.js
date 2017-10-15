@@ -67,21 +67,20 @@ class Stats extends Component {
     let statsPanels = [];
     const user = await globalState.getCurrentUser();
     const stats = await globalState.getStats();
-    const fuck = "this"
 
-    if (user.admin) {
-      if (stats) {
+    if (globalState.user.admin) {
+      if (globalState.stats) {
         statsPanels.push(
-            <StatsPanel color='primary' icon='comments' data={fuck} text='Messages' key='messages' />
+            <StatsPanel color='primary' icon='comments' data={globalState.messages} text='Messages' key='messages' />
         );
         statsPanels.push(
-            <StatsPanel color='green' icon='server' data={fuck} text='Guilds' key='guilds' />
+            <StatsPanel color='green' icon='server' data={globalState.guilds} text='Guilds' key='guilds' />
         );
         statsPanels.push(
-            <StatsPanel color='yellow' icon='user' data={fuck} text='Users' key='users' />
+            <StatsPanel color='yellow' icon='user' data={globalState.users} text='Users' key='users' />
         );
         statsPanels.push(
-            <StatsPanel color='red' icon='hashtag' data={fuck} text='Channels' key='channels' />
+            <StatsPanel color='red' icon='hashtag' data={globalState.channels} text='Channels' key='channels' />
         );
       }
     }
