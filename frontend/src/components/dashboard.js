@@ -74,47 +74,47 @@ class Stats extends Component {
   }
 
   getStats() {
-    let statsPanels = [];
+    let statsPanels = null;
     if (globalState.user.admin) {
       globalState.getStats((stats) => {
-        statsPanels.push(
-            <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
-        );
-        statsPanels.push(
-            <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
-        );
-        statsPanels.push(
-            <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
-        );
-        statsPanels.push(
-            <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
-        );
+        // statsPanels.push(
+        //     <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
+        // );
+        // statsPanels.push(
+        //     <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
+        // );
+        // statsPanels.push(
+        //     <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
+        // );
+        // statsPanels.push(
+        //     <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
+        // );
+        statsPanels = stats;
       });
-      return true;
-    } else {
-      return false;
     }
+    return statsPanels;
   }
 
   render() {
     let panels = this.getStats();
     console.log(panels);
 
-    let renderPanels = [];
-    if (panels) {
-      renderPanels.push(
-          <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
-      );
-      renderPanels.push(
-          <StatsPanel color='green' icon='server' data={globalState.stats.guilds} text='Guilds' key='guilds' />
-      );
-      renderPanels.push(
-          <StatsPanel color='yellow' icon='user' data={globalState.stats.users} text='Users' key='users' />
-      );
-      renderPanels.push(
-          <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
-      );
-    }
+    // let renderPanels = [];
+    // for (let panel in panels) {
+    //   renderPanels.push(
+    //       <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
+    //   );
+    //   renderPanels.push(
+    //       <StatsPanel color='green' icon='server' data={globalState.stats.guilds} text='Guilds' key='guilds' />
+    //   );
+    //   renderPanels.push(
+    //       <StatsPanel color='yellow' icon='user' data={globalState.stats.users} text='Users' key='users' />
+    //   );
+    //   renderPanels.push(
+    //       <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
+    //   );
+    // }
+
     return (
       <div>
         {renderPanels}
