@@ -91,7 +91,7 @@ class Stats extends Component {
   }
 
   render() {
-    const statsPanel = this.getStats();
+    const statsPanels = this.getStats();
 
     return (
       <div className="row">
