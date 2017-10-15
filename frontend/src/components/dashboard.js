@@ -73,6 +73,7 @@ class Stats extends Component {
 
     globalState.getStats().then((stats) => {
       this.setState({stats});
+      console.log(globalState.stats);
     });
   }
 
