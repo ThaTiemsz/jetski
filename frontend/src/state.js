@@ -87,12 +87,14 @@ class State {
         reject();
       })
     }) */
-    return axios.get('/api/stats').then((res) => {
-      this.stats = res.data;
-      cb(this.stats);
-    }).catch((err) => {
-      cb(err);
-    })
+    return cb(() => {
+      axios.get('/api/stats').then((res) => {
+        this.stats = res.data;
+        return this.stats;
+      }).catch((err) => {
+        return err;
+      });
+    });
   }
 
   logout() {
