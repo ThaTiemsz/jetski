@@ -73,22 +73,24 @@ class Stats extends Component {
     globalState.getStats();
   }
 
-  async getStats() {
+  getStats() {
     let statsPanels = [];
     if (globalState.user.admin) {
-    await globalState.getStats();
-      statsPanels.push(
-          <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
-      );
-      statsPanels.push(
-          <StatsPanel color='green' icon='server' data={globalState.stats.guilds} text='Guilds' key='guilds' />
-      );
-      statsPanels.push(
-          <StatsPanel color='yellow' icon='user' data={globalState.stats.users} text='Users' key='users' />
-      );
-      statsPanels.push(
-          <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
-      );
+      return globalState.getStats((stats) => {
+        statsPanels.push(
+            <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
+        );
+        statsPanels.push(
+            <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
+        );
+        statsPanels.push(
+            <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
+        );
+        statsPanels.push(
+            <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
+        );
+        return statsPanels;
+      });
     }
     return statsPanels;
   }
@@ -98,7 +100,11 @@ class Stats extends Component {
     console.log(panels);
 
     // return <div>{panels}</div>;
-    return panels;
+    return (
+      [
+        {panels}
+      ]
+    );
   }
 }
 
