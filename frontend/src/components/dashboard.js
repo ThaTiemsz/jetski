@@ -72,16 +72,16 @@ class Stats extends Component {
     if (user.admin) {
       if (stats) {
         statsPanels.push(
-            <StatsPanel color='primary' icon='comments' data={getStats(messages)} text='Messages' key='messages' />
+            <StatsPanel color='primary' icon='comments' data={getStats('messages')} text='Messages' key='messages' />
         );
         statsPanels.push(
-            <StatsPanel color='green' icon='server' data={getStats(guilds)} text='Guilds' key='guilds' />
+            <StatsPanel color='green' icon='server' data={getStats('guilds')} text='Guilds' key='guilds' />
         );
         statsPanels.push(
-            <StatsPanel color='yellow' icon='user' data={getStats(users)} text='Users' key='users' />
+            <StatsPanel color='yellow' icon='user' data={getStats('users')} text='Users' key='users' />
         );
         statsPanels.push(
-            <StatsPanel color='red' icon='hashtag' data={getStats(channels)} text='Channels' key='channels' />
+            <StatsPanel color='red' icon='hashtag' data={getStats('channels')} text='Channels' key='channels' />
         );
       }
     }
