@@ -69,6 +69,10 @@ class Stats extends Component {
   //   await globalState.getStats();
   }
 
+  componentWillMount() {
+    globalState.getStats();
+  }
+
   getStats() {
     let statsPanels = [];
     if (globalState.user.admin) {
