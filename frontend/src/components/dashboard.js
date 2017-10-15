@@ -33,6 +33,50 @@ class DashboardGuildsList extends Component {
   }
 }
 
+class StatsPanel extends Component {
+  render () {
+    const panelClass = `panel panel-${this.props.color}`;
+    const iconClass = `fa fa-${this.props.icon} fa-5x`;
+
+    return (
+      <div className="col-lg-3 col-md-6">
+        <div className={panelClass}>
+          <div class="panel-heading">
+            <div class="row">
+              <div class="col-xs-3">
+                <i class={iconClass}></i>
+              </div>
+              <div class="col-xs-9 text-right">
+                <div class="huge">{this.props.data || 'N/A'}</div>
+                <div>{this.props.text}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+class Stats extends Component {
+  render() {
+    globalState.getCurrentUser().then((user) => {
+      if (user.admin) {
+        globalState.getStats().then((stats) => {
+          return (
+            <div className="row">
+              <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
+              <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
+              <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
+              <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
+            </div>
+          );
+        });
+      }
+    });
+  }
+}
+
 class Dashboard extends Component {
   render() {
 		return (
@@ -43,6 +87,7 @@ class Dashboard extends Component {
             <DashboardGuildsList />
           </div>
         </div>
+        <Stats />
       </div>
     );
   }

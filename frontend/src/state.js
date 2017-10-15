@@ -8,6 +8,7 @@ class State {
     this.events = new EventEmitter();
     this.user = null;
     this.ready = false;
+    this.stats = null;
 
     this._currentGuild = null;
   }
@@ -74,6 +75,17 @@ class State {
         reject();
       });
     });
+  }
+
+  getStats() {
+    return new Promise((resolve, reject) => {
+      axios.get('/api/stats').then((res) => {
+        this.stats = JSON.parse(res)
+        resolve(this.stats)
+      }).catch((err) => {
+        reject();
+      })
+    })
   }
 
   logout() {
