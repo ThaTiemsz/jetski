@@ -60,6 +60,7 @@ class StatsPanel extends Component {
 
 class Stats extends Component {
   constructor() {
+    super();
   }
 
   render() {
