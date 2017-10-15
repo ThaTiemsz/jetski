@@ -95,20 +95,10 @@ class Stats extends Component {
   }
 
   render() {
-    const notworking = this.getStats();
-    const oof = <StatsPanel color='primary' icon='comments' data='69' text='Messages' key='messages' />;
+    let panels = this.getStats();
 
     // return <div>{panels}</div>;
-    return (
-      <div>
-        {oof}
-        {notworking}
-        <StatsPanel color='primary' icon='comments' data='N/A' text='Messages' key='messages' />
-        <StatsPanel color='green' icon='server' data='N/A' text='Guilds' key='guilds' />
-        <StatsPanel color='yellow' icon='user' data='N/A' text='Users' key='users' />
-        <StatsPanel color='red' icon='hashtag' data='N/A' text='Channels' key='channels' />
-      </div>
-    )
+    return panels;
   }
 }
 
