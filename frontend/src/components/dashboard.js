@@ -74,7 +74,7 @@ class Stats extends Component {
     console.log(globalState.user.admin)
 
     if (globalState.user.admin) {
-      globalState.getStats(() => {
+      globalState.getStats((stats) => {
         console.log(globalState.stats)
         console.log(globalState.stats.messages)
         statsPanels.push(
