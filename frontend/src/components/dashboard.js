@@ -61,7 +61,7 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
-    getStuff();
+    this.getStuff();
   }
 
   async getStuff() {
