@@ -91,7 +91,7 @@ class State {
       this.stats = res.data;
       return cb(this.stats);
     }).catch((err) => {
-      return cb(err);
+      throw err;
     })
   }
 
