@@ -98,11 +98,7 @@ class Stats extends Component {
     const panels = this.getStats();
     console.log(panels)
 
-    return (
-      <div>
-        <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
-      </div>
-    );
+    return <div>{panels}</div>;
   }
 }
 
