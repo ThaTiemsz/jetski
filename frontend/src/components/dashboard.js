@@ -69,10 +69,6 @@ class Stats extends Component {
   //   await globalState.getStats();
   }
 
-  componentWillMount() {
-    globalState.getStats();
-  }
-
   getStats() {
     let statsPanels = [];
     if (globalState.user.admin) {
@@ -103,7 +99,7 @@ class Stats extends Component {
     if (panels.length > 0) {
       for (let panel in panels[0]) {
         renderPanels.push(
-            <StatsPanel color='primary' icon='comments' data={panels[panel]} text='Messages' key='messages' />
+            <StatsPanel color='primary' icon='comments' data='{panels[panel]}' text='Messages' key='messages' />
         );
       }
     }
