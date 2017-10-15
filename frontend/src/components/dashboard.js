@@ -89,10 +89,11 @@ class Stats extends Component {
         statsPanels.push(
             <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
         );
-        return statsPanels;
       });
+      return true;
+    } else {
+      return false;
     }
-    return statsPanels;
   }
 
   render() {
@@ -100,8 +101,19 @@ class Stats extends Component {
     console.log(panels);
 
     let renderPanels = [];
-    for (let panel in panels) {
-      renderPanels.push(panel);
+    if (panels) {
+      renderPanels.push(
+          <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
+      );
+      renderPanels.push(
+          <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
+      );
+      renderPanels.push(
+          <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
+      );
+      renderPanels.push(
+          <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
+      );
     }
     return (
       <div>
