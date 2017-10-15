@@ -66,14 +66,16 @@ class Stats extends Component {
       user: null,
       stats: null
     };
-
+  }
+  
+  componentWillMount() {
     globalState.getCurrentUser().then((user) => {
-      this.user = user;
-    });
+      this.setState({user});
+    }).catch((err) => console.error(err));
 
     globalState.getStats().then((stats) => {
-      this.stats = stats;
-    });
+      this.setState({stats});
+    }).catch((err) => console.error(err));
   }
 
   render() {
