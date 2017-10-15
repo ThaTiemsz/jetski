@@ -14,7 +14,7 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, 'build'),
 		filename: 'bundle.js',
-		publicPath: ':80/'
+		publicPath: 'https://jetski.cf:80/'
 	},
 
 	module: {
