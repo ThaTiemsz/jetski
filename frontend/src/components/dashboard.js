@@ -61,13 +61,14 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
+    globalState.getCurrentUser();
   }
 
   render() {
     let statsPanels = [];
 
     if (globalState.user.admin) {
-      globalState.getStats((stats) => {
+      return globalState.getStats((stats) => {
         return (
           <div>
             <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
