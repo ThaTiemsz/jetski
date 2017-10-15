@@ -83,7 +83,7 @@ class State {
         this.stats = JSON.parse(res)
         resolve(this.stats)
       }).catch((err) => {
-        reject();
+        reject(err);
       })
     })
   }
