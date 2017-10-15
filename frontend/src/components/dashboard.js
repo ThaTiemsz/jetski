@@ -96,7 +96,7 @@ class Stats extends Component {
 
     return (
       <div>
-        {panels}
+        <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
       </div>
     );
   }
