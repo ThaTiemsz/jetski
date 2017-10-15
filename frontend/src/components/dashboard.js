@@ -66,12 +66,12 @@ class Stats extends Component {
   async render() {
     let statsPanels = [];
     const user = await globalState.getCurrentUser();
-    const admin = user.admin;
     let stats = await globalState.getStats();
 
-    if (admin) {
+    if (user.admin) {
       if (stats) {
         const statsArray = Object.values(stats);
+        console.log(statsArray)
         statsPanels.push(
             <StatsPanel color='primary' icon='comments' data={statsArray[2]} text='Messages' key='messages' />
         );
