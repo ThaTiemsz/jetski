@@ -61,29 +61,17 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
-
-    this.state = {
-      user: null,
-      stats: null
-    };
-
-    globalState.getCurrentUser().then((user) => {
-      this.setState({user});
-    });
-
-    globalState.getStats().then((stats) => {
-      this.setState({stats});
-      console.log(globalState.stats);
-    });
   }
 
-  render() {
+  async render() {
     let statsPanels = [];
-    console.log(this.state);
-    console.log(globalState.stats);
+    const user = await globalState.getCurrentUser()
+    const stats = await globalState.getStats()
+    console.log(user, stats);
+    console.log(1337, globalState.stats);
 
-    if (this.state.user.admin) {
-      if (this.state.stats) {
+    if (user.admin) {
+      if (stats) {
         statsPanels.push(
             <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
         );
