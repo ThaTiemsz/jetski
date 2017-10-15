@@ -87,15 +87,14 @@ class Stats extends Component {
             <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
         );
       });
+      
+      return (
+        <div className="row">
+          {statsPanels}
+        </div>
+      );
     }
 
-    console.log(statsPanels)
-
-    return (
-      <div className="row">
-        {statsPanels}
-      </div>
-    );
   }
 }
 
