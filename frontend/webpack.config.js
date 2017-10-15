@@ -9,7 +9,7 @@ if (process.env.NODE_ENV == 'docker') {
 module.exports = {
 	// entry file - starting point for the app
 	entry: [
-		'webpack-dev-server/client?https://jetski.cf:80/',
+		'webpack-dev-server/client?https://jetski.cf/',
 		'./src'
 	],
 
@@ -17,7 +17,7 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, 'build'),
 		filename: 'bundle.js',
-		publicPath: 'https://jetski.cf:80/'
+		publicPath: 'https://jetski.cf/'
 	},
 
 	module: {
