@@ -80,8 +80,8 @@ class State {
   getStats() {
     return new Promise((resolve, reject) => {
       axios.get('/api/stats').then((res) => {
-        this.stats = JSON.parse(res)
-        resolve(this.stats)
+        this.stats = res.data;
+        resolve(this.stats);
       }).catch((err) => {
         reject(err);
       })
