@@ -61,10 +61,10 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
-    fetch();
+    getStuff();
   }
 
-  async fetch() {
+  async getStuff() {
     await globalState.getCurrentUser();
     await globalState.getStats();
   }
