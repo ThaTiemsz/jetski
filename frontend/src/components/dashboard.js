@@ -97,7 +97,6 @@ class Stats extends Component {
   render() {
     const Panels = this.getStats();
     const oof = <StatsPanel color='primary' icon='comments' data='69' text='Messages' key='messages' />;
-    console.log(panels)
 
     // return <div>{panels}</div>;
     return (
