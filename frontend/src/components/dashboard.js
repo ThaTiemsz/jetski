@@ -100,20 +100,13 @@ class Stats extends Component {
     console.log(panels);
 
     let renderPanels = [];
-    // for (let panel in panels) {
-    //   renderPanels.push(
-    //       <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
-    //   );
-    //   renderPanels.push(
-    //       <StatsPanel color='green' icon='server' data={globalState.stats.guilds} text='Guilds' key='guilds' />
-    //   );
-    //   renderPanels.push(
-    //       <StatsPanel color='yellow' icon='user' data={globalState.stats.users} text='Users' key='users' />
-    //   );
-    //   renderPanels.push(
-    //       <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
-    //   );
-    // }
+    if (panels.length > 0) {
+      for (let panel in panels[0]) {
+        renderPanels.push(
+            <StatsPanel color='primary' icon='comments' data={panels[panel]} text='Messages' key='messages' />
+        );
+      }
+    }
 
     return (
       <div>
