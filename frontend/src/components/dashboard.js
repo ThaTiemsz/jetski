@@ -64,7 +64,7 @@ class Stats extends Component {
 
     this.state = {
       user: null,
-      stats: null,
+      stats: null
     };
 
     console.log(globalState.stats);
