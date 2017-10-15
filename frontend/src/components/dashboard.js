@@ -78,7 +78,7 @@ class Stats extends Component {
 
   render() {
     let statsPanels = [];
-    consoel.log(this.state)
+    console.log(this.state)
 
     if (globalState.user.admin) {
       statsPanels.push(
