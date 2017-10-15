@@ -68,10 +68,12 @@ class Stats extends Component {
     };
 
     globalState.getCurrentUser().then((user) => {
+      console.log(user);
       this.setState({user});
     });
 
     globalState.getStats().then((stats) => {
+      console.log(stats);
       this.setState({stats});
     });
   }
@@ -79,7 +81,7 @@ class Stats extends Component {
   render() {
     let statsPanels = [];
     console.log(this.state);
-    
+
     if (this.state.user.admin) {
       if (this.state.stats) {
         statsPanels.push(
