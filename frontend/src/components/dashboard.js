@@ -91,14 +91,12 @@ class Stats extends Component {
   }
 
   render() {
-    const statsPanels = this.getStats();
-    console.log(statsPanels)
+    const panels = this.getStats();
+    console.log(panels)
 
     return (
-      <div className="row">
-        <div>
-          {statsPanels}
-        </div>
+      <div>
+        {panels}
       </div>
     );
   }
