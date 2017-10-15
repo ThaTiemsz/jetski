@@ -72,10 +72,10 @@ class Stats extends Component {
   render() {
     let statsPanels = [];
     console.log(globalState.user.admin)
-    console.log(this.state)
 
     if (globalState.user.admin) {
       globalState.getStats((stats) => {
+        console.log(stats);
         statsPanels.push(
             <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
         );
