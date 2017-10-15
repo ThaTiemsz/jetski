@@ -78,6 +78,7 @@ class Stats extends Component {
           </div>
         );
       });
+      return (null);
     } else {
       return (null);
     }
