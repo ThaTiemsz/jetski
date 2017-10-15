@@ -70,7 +70,7 @@ class Stats extends Component {
   }
 
   render() {
-    let statsPanels = [];
+    // let statsPanels = [];
 
     if (globalState.user.admin) {
       globalState.getStats((stats) => {
@@ -86,15 +86,20 @@ class Stats extends Component {
         statsPanels.push(
             <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
         );
+
+        return (
+          <div className="row">
+            {statsPanels}
+          </div>
+        );
       });
-      
-      return (
-        <div className="row">
-          {statsPanels}
-        </div>
-      );
     }
 
+    return (
+      <div className="row">
+        {statsPanels}
+      </div>
+    );
   }
 }
 
@@ -103,7 +108,9 @@ class Dashboard extends Component {
 		return (
       <div>
         <PageHeader name="Dashboard" />
-        <Stats />
+        <div className="row">
+          <Stats />
+        </div>
         <div className="row">
           <div className="col-lg-12">
             <DashboardGuildsList />
