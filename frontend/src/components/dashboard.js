@@ -67,17 +67,13 @@ class Stats extends Component {
       stats: null
     };
 
-    globalState.getCurrentUser().then((res) => {
-      console.log(res);
-      this.setState({user: res});
+    globalState.getCurrentUser().then((user) => {
+      this.user = user;
     });
 
-    globalState.getStats().then((res) => {
-      console.log(res);
-      this.setState({res});
+    globalState.getStats().then((stats) => {
+      this.stats = stats;
     });
-
-    console.log(this.state)
   }
 
   render() {
