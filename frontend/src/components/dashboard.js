@@ -61,19 +61,19 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
-    this.getStuff();
+  //   this.getStuff();
+  // }
+
+  // async getStuff() {
+  //   await globalState.getCurrentUser();
+  //   await globalState.getStats();
   }
 
-  async getStuff() {
-    await globalState.getCurrentUser();
-    await globalState.getStats();
-  }
-
-  render() {
+  async render() {
     let statsPanels = [];
 
     if (globalState.user.admin) {
-      if (globalState.stats) {
+      if (await globalState.getStats()) {
         statsPanels.push(
             <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
         );
@@ -102,12 +102,12 @@ class Dashboard extends Component {
 		return (
       <div>
         <PageHeader name="Dashboard" />
+        <Stats />
         <div className="row">
           <div className="col-lg-12">
             <DashboardGuildsList />
           </div>
         </div>
-        <Stats />
       </div>
     );
   }
