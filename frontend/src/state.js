@@ -89,9 +89,9 @@ class State {
     }) */
     return axios.get('/api/stats').then((res) => {
       this.stats = res.data;
-      cb(this.stats);
+      return cb(this.stats);
     }).catch((err) => {
-      cb(err);
+      return cb(err);
     })
   }
 
