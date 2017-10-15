@@ -61,6 +61,13 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
+    this.state = {
+      stats: null
+    };
+
+    globalState.getStats().then((stats) => {
+      this.setState({stats});
+    });
   //   this.getStuff();
   // }
 
@@ -69,26 +76,22 @@ class Stats extends Component {
   //   await globalState.getStats();
   }
 
-  async stats(type) {
-    await globalState.getStats();
-    return globalState.stats[type];
-  }
-
   render() {
     let statsPanels = [];
+    consoel.log(this.state)
 
     if (globalState.user.admin) {
       statsPanels.push(
-          <StatsPanel color='primary' icon='comments' data={this.stats('messages')} text='Messages' key='messages' />
+          <StatsPanel color='primary' icon='comments' data={this.state.stats.messages} text='Messages' key='messages' />
       );
       statsPanels.push(
-          <StatsPanel color='green' icon='server' data={this.stats('guilds')} text='Guilds' key='guilds' />
+          <StatsPanel color='green' icon='server' data={this.state.stats.guilds} text='Guilds' key='guilds' />
       );
       statsPanels.push(
-          <StatsPanel color='yellow' icon='user' data={this.stats('users')} text='Users' key='users' />
+          <StatsPanel color='yellow' icon='user' data={this.state.stats.users} text='Users' key='users' />
       );
       statsPanels.push(
-          <StatsPanel color='red' icon='hashtag' data={this.stats('channels')} text='Channels' key='channels' />
+          <StatsPanel color='red' icon='hashtag' data={this.state.stats.channels} text='Channels' key='channels' />
       );
     }
 
