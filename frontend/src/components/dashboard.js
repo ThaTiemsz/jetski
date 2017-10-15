@@ -68,20 +68,22 @@ class Stats extends Component {
     const user = await globalState.getCurrentUser();
     const stats = await globalState.getStats();
     const getStats = (type) => stats[type];
+    let dumbArray = [];
+    for(let d in stats) dumbArray.push(stats[d]);
 
     if (user.admin) {
       if (stats) {
         statsPanels.push(
-            <StatsPanel color='primary' icon='comments' data={getStats('messages')} text='Messages' key='messages' />
+            <StatsPanel color='primary' icon='comments' data={dumbArray[2]} text='Messages' key='messages' />
         );
         statsPanels.push(
-            <StatsPanel color='green' icon='server' data={getStats('guilds')} text='Guilds' key='guilds' />
+            <StatsPanel color='green' icon='server' data={dumbArray[1]} text='Guilds' key='guilds' />
         );
         statsPanels.push(
-            <StatsPanel color='yellow' icon='user' data={getStats('users')} text='Users' key='users' />
+            <StatsPanel color='yellow' icon='user' data={dumbArray[3]} text='Users' key='users' />
         );
         statsPanels.push(
-            <StatsPanel color='red' icon='hashtag' data={getStats('channels')} text='Channels' key='channels' />
+            <StatsPanel color='red' icon='hashtag' data={dumbArray[1]} text='Channels' key='channels' />
         );
       }
     }
