@@ -9,7 +9,7 @@ if (process.env.NODE_ENV == 'docker') {
 module.exports = {
 	// entry file - starting point for the app
 	entry: [
-		'webpack-dev-server/client?http://localhost:80/'
+		'webpack-dev-server/client?http://localhost:80/',
 		'./src'
 	],
 
