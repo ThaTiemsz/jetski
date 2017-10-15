@@ -61,27 +61,54 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
-    globalState.getCurrentUser();
+  //   this.getStuff();
+  // }
+
+  // async getStuff() {
+  //   await globalState.getCurrentUser();
+  //   await globalState.getStats();
   }
 
   render() {
     let statsPanels = [];
 
+    console.log(1, globalState.user.admin)
     if (globalState.user.admin) {
+      console.log(2, 'is admin');
       globalState.getStats((stats) => {
-        return (
-          <div>
+        console.log(3, stats);
+        statsPanels.push(
             <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
+        );
+        statsPanels.push(
             <StatsPanel color='green' icon='server' data={globalState.stats.guilds} text='Guilds' key='guilds' />
+        );
+        statsPanels.push(
             <StatsPanel color='yellow' icon='user' data={globalState.stats.users} text='Users' key='users' />
+        );
+        statsPanels.push(
             <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
+        );
+        console.log(3, statsPanels);
+        return (
+          <div className="row">
+            {statsPanels}
           </div>
         );
       });
-      return (null);
-    } else {
-      return (null);
+      console.log(statsPanels);
+      return (
+        <div className="row">
+          {statsPanels}
+        </div>
+      );
     }
+
+    return (
+      <div className="row">
+        {statsPanels}
+      </div>
+    );
   }
 }
 
