@@ -90,6 +90,8 @@ class Stats extends Component {
       globalState.getStats((stats) => push());
     }
 
+    console.log(statsPanels)
+    
     return (
       <div className="row">
         {statsPanels}
