@@ -92,10 +92,13 @@ class Stats extends Component {
 
   render() {
     const statsPanels = this.getStats();
+    console.log(statsPanels)
 
     return (
       <div className="row">
-        {statsPanels}
+        <div>
+          {statsPanels}
+        </div>
       </div>
     );
   }
