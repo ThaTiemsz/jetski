@@ -98,11 +98,10 @@ class Stats extends Component {
     let renderPanels = [];
     if (panels.length > 0) {
       for (let panel in panels[0]) {
-        renderPanels.push(
-            <StatsPanel color='primary' icon='comments' data='{panels[panel]}' text='Messages' key='messages' />
-        );
+        renderPanels.push(<StatsPanel color='primary' icon='comments' data={panels[panel]} text='Messages' key='messages' />);
       }
     }
+    console.log(renderPanels)
 
     return (
       <div>
