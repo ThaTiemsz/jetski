@@ -67,8 +67,6 @@ class Stats extends Component {
       stats: null
     };
 
-    console.log(globalState.stats);
-
     globalState.getCurrentUser().then((user) => {
       this.setState({user: user});
     });
