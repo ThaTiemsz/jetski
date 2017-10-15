@@ -61,10 +61,9 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
-    this.getStuff();
   }
 
-  async getStuff() {
+  async componentWillMount() {
     await globalState.getCurrentUser();
     await globalState.getStats();
   }
@@ -73,7 +72,7 @@ class Stats extends Component {
     let statsPanels = [];
     console.log(globalState.user.admin)
     console.log(globalState.stats)
-    
+
     if (globalState.user.admin) {
       if (globalState.stats) {
         statsPanels.push(
