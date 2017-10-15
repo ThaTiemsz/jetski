@@ -54,6 +54,7 @@ module.exports = {
 
 	devServer: {
 		host: '0.0.0.0',
+		port: 8080,
     disableHostCheck: true,
 		// serve up any static files from src/
 		contentBase: path.join(__dirname, 'src'),
