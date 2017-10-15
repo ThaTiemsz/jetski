@@ -61,12 +61,16 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
+    fetch();
+  }
+
+  async fetch() {
+    await globalState.getCurrentUser();
+    await globalState.getStats();
   }
 
   render() {
     let statsPanels = [];
-    globalState.getCurrentUser();
-    globalState.getStats();
 
     if (globalState.user.admin) {
       if (globalState.stats) {
