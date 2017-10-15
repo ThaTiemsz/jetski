@@ -99,10 +99,13 @@ class Stats extends Component {
     let panels = this.getStats();
     console.log(panels);
 
-    // return <div>{panels}</div>;
+    let renderPanels = [];
+    for (let panel in panels) {
+      renderPanels.push(panel);
+    }
     return (
       <div>
-        {panels}
+        {renderPanels}
       </div>
     );
   }
