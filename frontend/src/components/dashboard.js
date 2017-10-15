@@ -75,6 +75,8 @@ class Stats extends Component {
 
     if (globalState.user.admin) {
       globalState.getStats(() => {
+        console.log(globalState.stats)
+        console.log(globalState.stats.messages)
         statsPanels.push(
             <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
         );
