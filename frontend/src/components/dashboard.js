@@ -63,10 +63,10 @@ class Stats extends Component {
     super();
   }
 
-  async render() {
+  render() {
     let statsPanels = [];
-    const user = await globalState.getCurrentUser();
-    const stats = await globalState.getStats();
+    globalState.getCurrentUser();
+    globalState.getStats();
 
     if (globalState.user.admin) {
       if (globalState.stats) {
