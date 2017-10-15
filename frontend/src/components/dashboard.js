@@ -67,7 +67,8 @@ class Stats extends Component {
     let statsPanels = [];
     const user = await globalState.getCurrentUser();
     const admin = user.admin;
-    const stats = await globalState.getStats();
+    let stats = await globalState.getStats();
+    stats = Object.values(stats);
 
     if (admin) {
       if (stats) {
