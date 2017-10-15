@@ -69,14 +69,10 @@ class Stats extends Component {
   //   await globalState.getStats();
   }
 
-  render() {
+  getStats() {
     let statsPanels = [];
-
-    console.log(1, globalState.user.admin)
     if (globalState.user.admin) {
-      console.log(2, 'is admin');
       globalState.getStats((stats) => {
-        console.log(3, stats);
         statsPanels.push(
             <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
         );
@@ -89,20 +85,13 @@ class Stats extends Component {
         statsPanels.push(
             <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
         );
-        console.log(3, statsPanels);
-        return (
-          <div className="row">
-            {statsPanels}
-          </div>
-        );
       });
-      console.log(statsPanels);
-      return (
-        <div className="row">
-          {statsPanels}
-        </div>
-      );
     }
+    return statsPanels;
+  }
+
+  render() {
+    const statsPanel = this.getStats();
 
     return (
       <div className="row">
