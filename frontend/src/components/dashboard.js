@@ -67,12 +67,14 @@ class Stats extends Component {
 
     if (globalState.user.admin) {
       globalState.getStats((stats) => {
-        return ([
+        return (
+          <div>
             <StatsPanel color='primary' icon='comments' data={globalState.stats.messages} text='Messages' key='messages' />
             <StatsPanel color='green' icon='server' data={globalState.stats.guilds} text='Guilds' key='guilds' />
             <StatsPanel color='yellow' icon='user' data={globalState.stats.users} text='Users' key='users' />
             <StatsPanel color='red' icon='hashtag' data={globalState.stats.channels} text='Channels' key='channels' />
-        ]);
+          </div>
+        );
       });
     } else {
       return (null);
