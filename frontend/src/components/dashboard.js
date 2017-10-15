@@ -41,13 +41,13 @@ class StatsPanel extends Component {
     return (
       <div className="col-lg-3 col-md-6">
         <div className={panelClass}>
-          <div class="panel-heading">
-            <div class="row">
-              <div class="col-xs-3">
-                <i class={iconClass}></i>
+          <div className="panel-heading">
+            <div className="row">
+              <div className="col-xs-3">
+                <i className={iconClass}></i>
               </div>
-              <div class="col-xs-9 text-right">
-                <div class="huge">{this.props.data || 'N/A'}</div>
+              <div className="col-xs-9 text-right">
+                <div className="huge">{this.props.data || 'N/A'}</div>
                 <div>{this.props.text}</div>
               </div>
             </div>
@@ -61,17 +61,16 @@ class StatsPanel extends Component {
 class Stats extends Component {
   constructor() {
     super();
+    this.getStuff();
   }
 
-  async componentWillMount() {
+  async getStuff() {
     await globalState.getCurrentUser();
     await globalState.getStats();
   }
 
   render() {
     let statsPanels = [];
-    console.log(globalState.user.admin)
-    console.log(globalState.stats)
 
     if (globalState.user.admin) {
       if (globalState.stats) {

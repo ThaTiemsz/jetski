@@ -38,6 +38,7 @@ class State {
       this.ready = true;
       this.events.emit('ready');
       user.getGuilds();
+      this.getStats();
     }).catch(() => {
       this.ready = true;
       this.events.emit('ready');
