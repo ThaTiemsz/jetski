@@ -101,9 +101,9 @@ class Stats extends Component {
 
     // return <div>{panels}</div>;
     return (
-      [
+      <div>
         {panels}
-      ]
+      </div>
     );
   }
 }
