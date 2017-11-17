@@ -1,6 +1,6 @@
 var path = require('path');
 
-var proxyURL = 'http://localhost:8686';
+let proxyURL = 'http://localhost:8686';
 
 if (process.env.NODE_ENV == 'docker') {
   proxyURL = 'http://web:8686';
@@ -8,12 +8,16 @@ if (process.env.NODE_ENV == 'docker') {
 
 module.exports = {
 	// entry file - starting point for the app
-	entry: './src',
+	entry: [
+		'webpack-dev-server/client?https://jetski.cf/',
+		'./src'
+	],
 
 	// where to dump the output of a production build
 	output: {
 		path: path.join(__dirname, 'build'),
-		filename: 'bundle.js'
+		filename: 'bundle.js',
+		publicPath: 'https://jetski.cf/'
 	},
 
 	module: {
@@ -49,7 +53,10 @@ module.exports = {
 	devtool: 'source-map',
 
 	devServer: {
-    host: '0.0.0.0',
+		host: '0.0.0.0',
+		port: 8080,
+		public: '0.0.0.0',
+
     disableHostCheck: true,
 		// serve up any static files from src/
 		contentBase: path.join(__dirname, 'src'),
