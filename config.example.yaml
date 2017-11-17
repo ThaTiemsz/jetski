@@ -3,6 +3,18 @@ token: ''
 manhole_enable: true
 manhole_bind: 127.0.0.1:7171
 
+DSN: ''
+
+web:
+  SECRET_KEY: ''
+  discord:
+    CLIENT_ID: ''
+    REDIRECT_URI: 'http://WEBSITE.com/api/auth/discord/callback'
+    CLIENT_SECRET: ''
+    API_BASE_URL: 'https://discordapp.com/api'
+    TOKEN_URL: 'https://discordapp.com/api/oauth2/token'
+    AUTH_URL: 'https://discordapp.com/oauth2/authorize'
+
 state:
   sync_guild_members: false
 
@@ -20,3 +32,4 @@ bot:
     - rowboat.plugins.sql
     - rowboat.plugins.internal
     - rowboat.plugins.stats
+    - rowboat.plugins.tags

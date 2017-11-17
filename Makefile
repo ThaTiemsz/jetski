@@ -7,9 +7,6 @@ restart:
 stop:
 	docker-compose stop
 
-build:
-	docker-compose up -d --no-deps --build
-
 down:
 	docker-compose down
 
