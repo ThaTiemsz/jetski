@@ -345,7 +345,7 @@ class CorePlugin(Plugin):
         try:
             guild = Guild.with_id(event.id)
         except Guild.DoesNotExist:
-            If the guild is not awaiting setup, leave it now
+            # If the guild is not awaiting setup, leave it now
             if not rdb.sismember(GUILDS_WAITING_SETUP_KEY, str(event.id)) and event.id != ROWBOAT_GUILD_ID:
                 self.log.warning(
                     'Leaving guild %s (%s), not within setup list',
