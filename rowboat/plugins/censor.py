@@ -40,7 +40,7 @@ class CensorSubConfig(SlottedModel):
     blocked_words = ListField(lower, default=[])
     blocked_tokens = ListField(lower, default=[])
 
-    bypass_level = Field(int, default=None)
+    channel = Field(snowflake, default=None)
 
     @cached_property
     def blocked_re(self):
@@ -153,10 +153,8 @@ class CensorPlugin(Plugin):
             try:
                 # TODO: perhaps imap here? how to raise exception then?
                 for config in configs:
-                    if config.bypass_level:
-                        user_level = int(self.bot.plugins.get('CorePlugin').get_level(event.guild, author))
-
-                        if user_level > config.bypass_level:
+                    if config.channel:
+                        if event.channel_id != config.channel
                             return
 
                     if config.filter_zalgo:
