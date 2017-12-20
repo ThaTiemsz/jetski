@@ -89,13 +89,7 @@ class Censorship(Exception):
 class CensorPlugin(Plugin):
     def compute_relevant_configs(self, event, author):
         if event.channel_id in event.config.channels:
-            if event.config.channels[event.channel.id].bypass_level:
-                user_level = int(self.bot.plugins.get('CorePlugin').get_level(event.guild, author))
-
-                if user_level <= event.config.channels[event.channel.id].bypass_level:
-                    yield event.config.channels[event.channel.id]
-            else:
-                yield event.config.channels[event.channel.id]
+            yield event.config.channels[event.channel.id]
 
         if event.config.levels:
             user_level = int(self.bot.plugins.get('CorePlugin').get_level(event.guild, author))
@@ -157,6 +151,12 @@ class CensorPlugin(Plugin):
             try:
                 # TODO: perhaps imap here? how to raise exception then?
                 for config in configs:
+                    if config.bypass_level:
+                        user_level = int(self.bot.plugins.get('CorePlugin').get_level(event.guild, author))
+
+                        if user_level > config.bypass_level:
+                            return
+
                     if config.filter_zalgo:
                         self.filter_zalgo(event, config)
 
