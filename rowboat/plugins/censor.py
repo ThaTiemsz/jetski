@@ -40,6 +40,8 @@ class CensorSubConfig(SlottedModel):
     blocked_words = ListField(lower, default=[])
     blocked_tokens = ListField(lower, default=[])
 
+    bypass_level = Field(int, default=None)
+
     @cached_property
     def blocked_re(self):
         return re.compile(u'({})'.format(u'|'.join(
