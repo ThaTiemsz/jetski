@@ -154,7 +154,7 @@ class CensorPlugin(Plugin):
                 # TODO: perhaps imap here? how to raise exception then?
                 for config in configs:
                     if config.channel:
-                        if event.channel_id != config.channel
+                        if event.channel_id != config.channel:
                             return
 
                     if config.filter_zalgo:
