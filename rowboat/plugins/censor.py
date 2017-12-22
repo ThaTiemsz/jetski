@@ -155,7 +155,7 @@ class CensorPlugin(Plugin):
                 for config in configs:
                     if config.channel:
                         if event.channel_id != config.channel:
-                            return
+                            continue
 
                     if config.filter_zalgo:
                         self.filter_zalgo(event, config)
