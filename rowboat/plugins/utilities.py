@@ -99,7 +99,7 @@ class UtilitiesPlugin(Plugin):
         # Sometimes random.cat gives us gifs (smh)
         for _ in range(3):
             try:
-                r = requests.get('http://random.cat/meow')
+                r = requests.get('https://aws.random.cat/meow')
                 r.raise_for_status()
             except:
                 continue
