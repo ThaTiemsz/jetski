@@ -352,7 +352,7 @@ class CorePlugin(Plugin):
             #         event.id, event.name
             #     )
             #     event.guild.leave()
-            # return
+            return
 
         if not guild.enabled:
             return
