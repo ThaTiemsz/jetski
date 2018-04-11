@@ -84,10 +84,10 @@ class ControlPanel extends Component {
       <div className="panel panel-default">
         {this.state.message && <div className={"alert alert-" + this.state.message.type}>{this.state.message.contents}</div>}
         <div className="panel-heading">
-          <i class="fa fa-cog fa-fw"></i> Control Panel
+          <i className="fa fa-cog fa-fw"></i> Control Panel
         </div>
         <div className="panel-body">
-        <a href="#" onClick={() => this.onSave()} class="btn btn-success btn-block">Deploy</a>
+        <a href="#" onClick={() => this.onSave()} className="btn btn-success btn-block">Deploy</a>
         </div>
       </div>
     );
