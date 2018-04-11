@@ -189,16 +189,12 @@ class Dashboard extends Component {
         <div className="col-lg-8">
           <DashboardGuildsList />
         </div>
-      </div>
-    );
-
-    if (globalState.user && globalState.user.admin) {
-      parts.push(
-        <div className="row">
+        {
+          globalState.user && globalState.user.admin &&
           <div className="col-lg-4"> 
             <ControlPanel />
           </div>
-        </div>
+        }
       );
     }
 
