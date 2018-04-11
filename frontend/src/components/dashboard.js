@@ -33,6 +33,66 @@ class DashboardGuildsList extends Component {
   }
 }
 
+class ControlPanel extends Component {
+  constructor() {
+    super();
+
+    this.messageTimer = null;
+
+    this.state = {
+      guilds: null,
+      message: null,
+    };
+  }
+
+  componentWillMount() {
+    globalState.getCurrentUser().then((user) => {
+      user.getGuilds().then((guilds) => {
+        this.setState({guilds});
+      });
+    });
+  }
+
+  onDeploy() {
+    globalState.deploy().then(() => {
+      this.renderMessage('success', 'Deploy Started');
+    }).catch((err) => {
+      this.renderMessage('danger', `Deploy Failed: ${err}`);
+    });
+  }
+
+  renderMessage(type, contents) {
+    this.setState({
+      message: {
+        type: type,
+        contents: contents,
+      }
+    })
+
+    if (this.messageTimer) clearTimeout(this.messageTimer);
+
+    this.messageTimer = setTimeout(() => {
+      this.setState({
+        message: null,
+      });
+      this.messageTimer = null;
+    }, 5000);
+  }
+
+  render() {
+    return (
+      <div className="panel panel-default">
+        <div className="panel-heading">
+          <i class="fa fa-cog fa-fw"></i> Control Panel
+        </div>
+        <div className="panel-body">
+        <a href="#" onClick={() => this.onSave()} class="btn btn-success btn-block">Deploy</a>
+        </div>
+      </div>
+    );
+  }
+}
+
 class StatsPanel extends Component {
   render () {
     const panelClass = `panel panel-${this.props.color}`;
@@ -111,17 +171,40 @@ class Stats extends Component {
 
 class Dashboard extends Component {
   render() {
-		return (
-      <div>
-        <PageHeader name="Dashboard" />
-        <div className="row">
-          <Stats />
+    let parts = [];
+
+    parts.push(
+      <PageHeader name="Dashboard" />
+    );
+
+    parts.push(
+      <div className="row">
+        <Stats />
+      </div>
+    );
+
+    parts.push(
+      <div className="row">
+        <div className="col-lg-8">
+          <DashboardGuildsList />
         </div>
+      </div>
+    );
+
+    if (globalState.user && globalState.user.admin) {
+      parts.push(
         <div className="row">
-          <div className="col-lg-12">
-            <DashboardGuildsList />
+          <div class="col-lg-4"> 
+            <ControlPanel />
           </div>
         </div>
+      );
+    }
+
+		return (
+      <div>
+        {this.state.message && <div className={"alert alert-" + this.state.message.type}>{this.state.message.contents}</div>}
+        {parts}
       </div>
     );
   }

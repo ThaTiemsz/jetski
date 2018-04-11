@@ -95,6 +95,16 @@ class State {
     })
   }
 
+  deploy() {
+    return new Promise((resolve) => {
+      axios.post('/api/deploy').then((res) => {
+        resolve();
+      }).catch((err) => {
+        reject();
+      });
+    });
+  }
+
   logout() {
     return new Promise((resolve) => {
       axios.post('/api/auth/logout').then((res) => {
