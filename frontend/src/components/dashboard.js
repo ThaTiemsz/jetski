@@ -82,6 +82,7 @@ class ControlPanel extends Component {
   render() {
     return (
       <div className="panel panel-default">
+        {this.state.message && <div className={"alert alert-" + this.state.message.type}>{this.state.message.contents}</div>}
         <div className="panel-heading">
           <i class="fa fa-cog fa-fw"></i> Control Panel
         </div>
@@ -203,7 +204,6 @@ class Dashboard extends Component {
 
 		return (
       <div>
-        {this.state.message && <div className={"alert alert-" + this.state.message.type}>{this.state.message.contents}</div>}
         {parts}
       </div>
     );
