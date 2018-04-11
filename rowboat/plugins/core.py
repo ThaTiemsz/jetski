@@ -32,7 +32,7 @@ from rowboat.models.notification import Notification
 from rowboat.plugins.modlog import Actions
 from rowboat.constants import (
     GREEN_TICK_EMOJI, RED_TICK_EMOJI, ROWBOAT_GUILD_ID, ROWBOAT_USER_ROLE_ID,
-    ROWBOAT_CONTROL_CHANNEL
+    ROWBOAT_CONTROL_CHANNEL, ROWBOAT_SPAM_CONTROL_CHANNEL
 )
 
 from yaml import load
@@ -302,6 +302,24 @@ class CorePlugin(Plugin):
             )
         except:
             self.log.exception('Failed to send control message:')
+            return
+
+    @contextlib.contextmanager
+    def send_spam_control_message(self):
+        embed = MessageEmbed()
+        embed.set_footer(text='Jetski {}'.format(
+            'Production' if ENV == 'prod' else 'Testing'
+        ))
+        embed.timestamp = datetime.utcnow().isoformat()
+        embed.color = 0x779ecb
+        try:
+            yield embed
+            self.bot.client.api.channels_messages_create(
+                ROWBOAT_SPAM_CONTROL_CHANNEL,
+                embed=embed
+            )
+        except:
+            self.log.exception('Failed to send spam control message:')
             return
 
     @Plugin.listen('Resumed')

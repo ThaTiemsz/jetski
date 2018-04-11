@@ -140,7 +140,7 @@ class SpamPlugin(Plugin):
                 v=violation
             )
 
-            with self.bot.plugins.get('CorePlugin').send_control_message() as embed:
+            with self.bot.plugins.get('CorePlugin').send_spam_control_message() as embed:
                 embed.title = '{} Violated'.format(violation.label)
                 embed.color = 0xfdfd96
                 embed.description = violation.msg
