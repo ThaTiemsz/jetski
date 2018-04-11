@@ -195,7 +195,7 @@ class Dashboard extends Component {
     if (globalState.user && globalState.user.admin) {
       parts.push(
         <div className="row">
-          <div class="col-lg-4"> 
+          <div className="col-lg-4"> 
             <ControlPanel />
           </div>
         </div>
