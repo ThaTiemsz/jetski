@@ -195,8 +195,8 @@ class Dashboard extends Component {
             <ControlPanel />
           </div>
         }
-      );
-    }
+      </div>
+    );
 
 		return (
       <div>
