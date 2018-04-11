@@ -87,7 +87,7 @@ class ControlPanel extends Component {
           <i className="fa fa-cog fa-fw"></i> Control Panel
         </div>
         <div className="panel-body">
-        <a href="#" onClick={() => this.onSave()} className="btn btn-success btn-block">Deploy</a>
+        <a href="#" onClick={() => this.onDeploy()} className="btn btn-success btn-block">Deploy</a>
         </div>
       </div>
     );
