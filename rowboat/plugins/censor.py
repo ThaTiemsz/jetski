@@ -113,8 +113,7 @@ class CensorPlugin(Plugin):
         if obj.channel and obj.channel.type == ChannelType.GROUP_DM:
             obj = {
                 'id': obj.channel.id,
-                'name': obj.channel.name,
-                'icon': obj.channel.icon
+                'name': obj.channel.name
             }
         else:
             obj = {
