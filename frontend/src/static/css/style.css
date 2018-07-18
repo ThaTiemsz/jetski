@@ -3,8 +3,9 @@
  * Copyright 2013-2016 Start Bootstrap
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
-body {
-  background-color: #f8f8f8;
+/* Source: https://dashboard.aperturebot.science/static/style.css */
+ body {
+  background-color: #23272A;
 }
 #wrapper {
   width: 100%;
@@ -12,14 +13,14 @@ body {
 #page-wrapper {
   padding: 0 15px;
   min-height: 568px;
-  background-color: white;
+  background-color: #23272A;
 }
 @media (min-width: 768px) {
   #page-wrapper {
     position: inherit;
     margin: 0 0 0 250px;
     padding: 0 30px;
-    border-left: 1px solid #e7e7e7;
+    border-left: 1px solid #2C2F33;
   }
 }
 .navbar-top-links {
@@ -75,10 +76,10 @@ body {
   padding: 15px;
 }
 .sidebar ul li {
-  border-bottom: 1px solid #e7e7e7;
+  border-bottom: 1px solid #2C2F33;
 }
 .sidebar ul li a.active {
-  background-color: #eeeeee;
+  background-color: #414244;
 }
 .sidebar .arrow {
   float: right;
