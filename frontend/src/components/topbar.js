@@ -33,8 +33,8 @@ class Topbar extends Component {
 				</div>
 
 				<ul className="nav navbar-top-links navbar-right">
-					<li><a onClick={this.onLogoutClicked.bind(this)}><i className="fa fa-sign-out fa-fw"></i></a></li>
-					<li><a onClick={this.onExpandClicked.bind(this)}><i className={expandIcon}></i></a></li>
+					<li><a onClick={this.onLogoutClicked.bind(this)}><i className="fa fa-sign-out fa-fw" title="Log Out"></i></a></li>
+					<li><a onClick={this.onExpandClicked.bind(this)}><i className={expandIcon} title="Toggle All Servers"></i></a></li>
 				</ul>
 
         <Sidebar />
