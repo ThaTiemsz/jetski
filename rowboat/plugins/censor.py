@@ -114,7 +114,7 @@ class CensorPlugin(Plugin):
             obj = {
                 'id': obj.channel.id,
                 'name': obj.channel.name,
-                'icon': obj.guild.icon
+                'icon': obj.channel.icon
             }
         else:
             obj = {
