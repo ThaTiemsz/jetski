@@ -4,6 +4,7 @@ import urlparse
 
 from holster.enum import Enum
 from disco.types.base import cached_property
+from disco.types.channel import ChannelType
 from disco.util.sanitize import S
 from disco.api.http import APIException
 
@@ -109,11 +110,18 @@ class CensorPlugin(Plugin):
         except:
             return
 
-        obj = {
-            'id': obj.guild.id,
-            'name': obj.guild.name,
-            'icon': obj.guild.icon
-        }
+        if obj.channel and obj.channel.type == ChannelType.GROUP_DM:
+            obj = {
+                'id': obj.channel.id,
+                'name': obj.channel.name,
+                'icon': obj.guild.icon
+            }
+        else:
+            obj = {
+                'id': obj.guild.id,
+                'name': obj.guild.name,
+                'icon': obj.guild.icon
+            }
 
         # Cache for 12 hours
         rdb.setex('inv:{}'.format(code), json.dumps(obj), 43200)
@@ -215,7 +223,7 @@ class CensorPlugin(Plugin):
 
             if need_whitelist and not whitelisted:
                 raise Censorship(CensorReason.INVITE, event, ctx={
-                    'hit': 'whietlist',
+                    'hit': 'whitelist',
                     'invite': invite,
                     'guild': invite_info,
                 })
