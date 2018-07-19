@@ -168,6 +168,7 @@ class Stats extends Component {
   render() {
     let panel = this.getStats();
     console.log(panel);
+    if (!anel[0]) return;
 
     // let renderPanels = [];
     // for (let panel in panels[0]) {
