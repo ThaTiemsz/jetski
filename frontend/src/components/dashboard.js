@@ -120,41 +120,54 @@ class StatsPanel extends Component {
 }
 
 class Stats extends Component {
-  constructor() {
-    super();
-  //   this.getStuff();
-  // }
-
-  // async getStuff() {
-  //   await globalState.getCurrentUser();
-  //   await globalState.getStats();
-  }
-
   getStats() {
     let statsPanels = [];
     if (globalState.user.admin) {
       globalState.getStats((stats) => {
-        statsPanels.push(
-            <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
-        );
-        statsPanels.push(
-            <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
-        );
-        statsPanels.push(
-            <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
-        );
-        statsPanels.push(
-            <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
-        );
-        // statsPanels.push(stats);
+        // statsPanels.push(
+        //     <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
+        // );
+        // statsPanels.push(
+        //     <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
+        // );
+        // statsPanels.push(
+        //     <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
+        // );
+        // statsPanels.push(
+        //     <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
+        // );
+        statsPanels.push(stats);
       });
     }
     return statsPanels;
   }
 
+  drawStats({ color, icon, data, text}) {
+    const panelClass = `panel panel-${color}`;
+    const iconClass = `fa fa-${icon} fa-5x`;
+
+    return (
+      <div className="col-lg-3 col-md-6">
+        <div className={panelClass}>
+          <div className="panel-heading">
+            <div className="row">
+              <div className="col-xs-3">
+                <i className={iconClass}></i>
+              </div>
+              <div className="col-xs-9 text-right">
+                <div className="huge">{data || 'N/A'}</div>
+                <div>{text}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   render() {
-    let panels = this.getStats();
-    console.log(panels);
+    let stats = this.getStats();
+    console.log(stats);
 
     // let renderPanels = [];
     // for (let panel in panels[0]) {
@@ -166,7 +179,12 @@ class Stats extends Component {
 
     return (
       <div>
-        {panels}
+        {this.drawStats({
+          color: "primary",
+          icon: "comments",
+          data: stats[0].messages,
+          text: "Messages"
+        })}
       </div>
     );
   }
