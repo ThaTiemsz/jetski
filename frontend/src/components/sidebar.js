@@ -86,6 +86,10 @@ class Sidebar extends Component {
       <SidebarLink icon='dashboard' to='/' text='Dashboard' key='dashboard' />
     );
 
+    sidebarLinks.push(
+      <SidebarLink icon='comments' to='https://discord.gg/CQX3Gju' text='Discord Server' key='discord' />
+    );
+
     if (this.state.guilds) {
       for (let guild of Object.values(this.state.guilds)) {
         // Only show the active guild for users with a lot of them
