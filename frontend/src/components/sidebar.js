@@ -7,13 +7,23 @@ class SidebarLink extends Component {
   render () {
     const iconClass = `fa fa-${this.props.icon} fa-fw`;
 
-    return (
-      <li>
-        <Link to={this.props.to}>
-          <i className={iconClass}></i> {this.props.text}
-        </Link>
-      </li>
-    );
+    if (this.props.external) {
+      return (
+        <li>
+          <a href={this.props.to} target="_blank">
+            <i className={iconClass}></i> {this.props.text}
+          </a>
+        </li>
+      );
+    } else {
+      return (
+        <li>
+          <Link to={this.props.to}>
+            <i className={iconClass}></i> {this.props.text}
+          </Link>
+        </li>
+      );
+    }
   }
 }
 
@@ -87,7 +97,7 @@ class Sidebar extends Component {
     );
 
     sidebarLinks.push(
-      <SidebarLink icon='comments' to='https://discord.gg/CQX3Gju' text='Discord Server' key='discord' />
+      <SidebarLink icon='comments' to='https://discord.gg/CQX3Gju' external='true' text='Discord Server' key='discord' />
     );
 
     if (this.state.guilds) {
