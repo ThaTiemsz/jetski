@@ -161,7 +161,6 @@ class Stats extends Component {
       renderPanels.push(
         <StatsPanel color='primary' icon='comments' data={panels[0][panel]} text='Messages' key={panels} />
       );
-      console.log(renderPanels);
     }
     console.log(renderPanels);
 
