@@ -146,28 +146,28 @@ class Stats extends Component {
     const panelClass = `panel panel-${color}`;
     const iconClass = `fa fa-${icon} fa-5x`;
 
-    return `
+    return (
       <div className="col-lg-3 col-md-6">
-        <div className=${panelClass}>
+        <div className={panelClass}>
           <div className="panel-heading">
             <div className="row">
               <div className="col-xs-3">
-                <i className=${iconClass}></i>
+                <i className={iconClass}></i>
               </div>
               <div className="col-xs-9 text-right">
-                <div className="huge">${data || 'N/A'}</div>
-                <div>${text}</div>
+                <div className="huge">{data || 'N/A'}</div>
+                <div>{text}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    `;
+    );
   }
 
   render() {
-    let stats = this.getStats();
-    console.log(stats);
+    let panel = this.getStats();
+    console.log(panel);
 
     // let renderPanels = [];
     // for (let panel in panels[0]) {
@@ -182,7 +182,7 @@ class Stats extends Component {
         {this.drawStats({
           color: "primary",
           icon: "comments",
-          data: stats[0].messages,
+          data: panel[0].messages,
           text: "Messages"
         })}
       </div>
