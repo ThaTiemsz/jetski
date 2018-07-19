@@ -134,19 +134,19 @@ class Stats extends Component {
     let statsPanels = [];
     if (globalState.user.admin) {
       globalState.getStats((stats) => {
-        // statsPanels.push(
-        //     <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
-        // );
-        // statsPanels.push(
-        //     <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
-        // );
-        // statsPanels.push(
-        //     <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
-        // );
-        // statsPanels.push(
-        //     <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
-        // );
-        statsPanels.push(stats);
+        statsPanels.push(
+            <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
+        );
+        statsPanels.push(
+            <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
+        );
+        statsPanels.push(
+            <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
+        );
+        statsPanels.push(
+            <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
+        );
+        // statsPanels.push(stats);
       });
     }
     return statsPanels;
@@ -156,17 +156,17 @@ class Stats extends Component {
     let panels = this.getStats();
     console.log(panels);
 
-    let renderPanels = [];
-    for (let panel in panels[0]) {
-      renderPanels.push(
-        <StatsPanel color='primary' icon='comments' data={panels[0][panel]} text='Messages' key={panels} />
-      );
-    }
-    console.log(renderPanels);
+    // let renderPanels = [];
+    // for (let panel in panels[0]) {
+    //   renderPanels.push(
+    //     <StatsPanel color='primary' icon='comments' data={panels[0][panel]} text='Messages' key={panels} />
+    //   );
+    // }
+    // console.log(renderPanels);
 
     return (
       <div>
-        {renderPanels}
+        {panels}
       </div>
     );
   }
