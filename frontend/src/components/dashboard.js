@@ -183,7 +183,7 @@ class Stats extends Component {
         {this.drawStats({
           color: "primary",
           icon: "comments",
-          data: panel[0].messages,
+          data: panel[0].messages || 0,
           text: "Messages"
         })}
       </div>
