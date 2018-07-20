@@ -120,7 +120,14 @@ class StatsPanel extends Component {
 }
 
 class Stats extends Component {
-  getStats() {
+  constructor() {
+    super();
+    this.state = {
+      stats: null
+    };
+  }
+
+  componentDidMount() {
     let statsPanels = [];
     if (globalState.user.admin) {
       globalState.getStats((stats) => {
@@ -139,7 +146,9 @@ class Stats extends Component {
         statsPanels.push(stats);
       });
     }
-    return statsPanels;
+    this.setState({
+      stats: statsPanels
+    });
   }
 
   drawStats({ color, icon, data, text}) {
@@ -166,10 +175,8 @@ class Stats extends Component {
   }
 
   render() {
-    let panel = this.getStats();
+    let panel = this.state.stats;
     console.log(panel);
-    console.log(panel[0]);
-    console.log(panel[0].messages);
     // if (!panel[0]) return (<div></div>);
 
     // let renderPanels = [];
