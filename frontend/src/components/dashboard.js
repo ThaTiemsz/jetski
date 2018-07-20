@@ -123,7 +123,7 @@ class Stats extends Component {
   constructor() {
     super();
     this.state = {
-      stats: null
+      panels: null
     };
   }
 
@@ -145,7 +145,7 @@ class Stats extends Component {
         // );
         statsPanels.push(stats);
         this.setState({
-          stats: statsPanels
+          panels: statsPanels
         });
       });
     }
