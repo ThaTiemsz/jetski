@@ -144,11 +144,11 @@ class Stats extends Component {
         //     <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
         // );
         statsPanels.push(stats);
+        this.setState({
+          stats: statsPanels
+        });
       });
     }
-    this.setState({
-      stats: statsPanels
-    });
   }
 
   drawStats({ color, icon, data, text}) {
@@ -173,7 +173,7 @@ class Stats extends Component {
       </div>
     );
   }
-
+  
   render() {
     let panel = this.state.stats;
     console.log(panel);
