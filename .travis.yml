@@ -1,11 +1,18 @@
-language: python
+language: node_js
+node_js:
+  - '5'
 
-cache: pip
+install:
+  - npm install -g gitbook-cli
+  - gitbook install
+  - gitbook -V
 
-services:
-  - redis-server
+script:
+  - gitbook build src/
 
-python:
-  - '2.7'
-
-script: 'py.test tests'
+deploy:
+  skip_cleanup: true
+  provider: surge
+  project: ./src/_book/
+  domain: rowboat.party
+  on: master

@@ -1,0 +1,11 @@
+.gitbook-link {
+  display: none !important;
+}
+
+.markdown-section table tr:nth-child(2n) {
+  background-color:  #f2f2f3;
+}
+
+.page-inner {
+  max-width: 1200px;
+}

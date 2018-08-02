@@ -1,7 +1,1 @@
-rowboat-*.json
-config.yaml
-*.pyc
-.venv/
-*.log
-.data
-src/
+src/_book
