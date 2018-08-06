@@ -97,6 +97,10 @@ class Sidebar extends Component {
     );
 
     sidebarLinks.push(
+      <SidebarLink icon='book' to='https://docs.jetski.ga/' external='true' text='Documentation' key='documentation' />
+    );
+
+    sidebarLinks.push(
       <SidebarLink icon='comments' to='https://discord.gg/CQX3Gju' external='true' text='Discord Server' key='discord' />
     );
 
