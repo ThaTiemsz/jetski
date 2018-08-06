@@ -1,20 +1,20 @@
-# Rowboat
+# Jetski
 
-Rowboat is a utilitarian and administration assistant for Discord. It's a bot that was built to be highly configurable, and allow server admins to modify functionality based on the requirements of individual servers. The freely hosted version of Rowboat is private, and only added on high-traffic servers. Rowboat is [open-source](https://github.com/b1naryth1ef/rowboat).
+Jetski is a fork of b1nzy's [Rowboat](https://github.com/b1naryth1ef/rowboat), which is a utilitarian and administration assistant for Discord. The bot was built to be highly configurable, and allow server admins to modify functionality based on the requirements of individual servers.
 
 ## Use Cases
 
 ### r/Overwatch
 
-With over 50,000 members, r/Overwatch is one of Discord's largest and most complicated servers. Previously the administration team had put together a multitude of custom-written bots with various functionality, but when moving to Rowboat they where able to eliminate these entirely. Rowboat provides r/Overwatch with the level of protection and auditing required to run such a high activity server.
+With over 50,000 members, r/Overwatch is one of Discord's largest and most complicated servers. Previously the administration team had put together a multitude of custom-written bots with various functionality, but when moving to Rowboat they where able to eliminate these entirely. Rowboat provided r/Overwatch with the level of protection and auditing required to run such a high activity server.
 
 #### Multiple Mod Logs
 
-By using Rowboat's support for multiple mod logs, r/Overwatch's admins are able to split and categorize logs into various channels, reducing noise without sacrificing logging.
+By using Rowboat's support for multiple mod logs, r/Overwatch's admins were able to split and categorize logs into various channels, reducing noise without sacrificing logging.
 
 #### Spam Prevention
 
-By turning on Rowboat's spam prevention, r/Overwatch takes a huge burden off moderators and ensures the server is safe even when nobody is watching. With the high level of configurability they were able to ensure a level of security which does not impact normal chat, but catches bad actors quickly and efficiently.
+By turning on Rowboat's spam prevention, r/Overwatch took a huge burden off moderators and ensured the server was safe even when nobody was watching. With the high level of configurability they were able to ensure a level of security which does not impact normal chat, but catches bad actors quickly and efficiently.
 
 ## User Testimonials
 
@@ -84,5 +84,5 @@ By turning on Rowboat's spam prevention, r/Overwatch takes a huge burden off mod
   * User information, including last seen time
   * Server information
   * User search
-  * CAT PHOTOS
+  * WORKING CAT PHOTOS
 

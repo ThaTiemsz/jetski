@@ -2,7 +2,7 @@
 
 [Introduction](./)
 
-* [Setting Up Rowboat](setup.md)
+* [Setting Up Jetski](setup.md)
 * [General Configuration](general.md)
 * [Moderator Command Reference](moderator.md)
 * [Plugins](summary.md)
