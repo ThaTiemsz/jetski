@@ -1,11 +1,11 @@
 # Summary
 
-[Introduction](README.md)
+[Introduction](./)
 
 * [Setting Up Rowboat](setup.md)
 * [General Configuration](general.md)
 * [Moderator Command Reference](moderator.md)
-* [Plugins]()
+* [Plugins](summary.md)
   * [Utility](plugins/utility.md)
   * [Admin](plugins/admin.md)
   * [Infractions](plugins/infractions.md)
@@ -14,3 +14,4 @@
   * [Modlog](plugins/modlog.md)
   * [Starboard](plugins/starboard.md)
   * [Reddit](plugins/reddit.md)
+

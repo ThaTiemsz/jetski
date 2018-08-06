@@ -5,10 +5,10 @@ The utility plugin provides a number of useful and fun commands
 ## Commands
 
 | Name | Description | Default Level | Usage |
-|------|-------------|---------------|-------|
+| :--- | :--- | :--- | :--- |
 | `!cat` | Returns a random image of a cat | Default | `!cat` |
 | `!emoji {emoji}` | Returns information on the given emoji | Default | `!emoji :smiley:` |
-| `!info {user}` | Returns information on the given user | Default | `!info 232921983317180416` OR `!info @rowboat#0001`|
+| `!info {user}` | Returns information on the given user | Default | `!info 232921983317180416` OR `!info @rowboat#0001` |
 | `!jumbo {emojis}` | Returns 128x128px images of the given emoji | Default | `!jumbo :cat: :dog: :rabbit:` |
 | `!random coin` | Flips a coin and returns the result | Default | `!random coin` |
 | `!random number [end number] [start number]` | Returns a random number from 0-10 or in a range if specified | Default | `!random number` OR `!random number 50 20` |
@@ -20,8 +20,9 @@ The utility plugin provides a number of useful and fun commands
 
 ## Configuration Example
 
-```
+```text
 utilities: {}
 ```
 
 There is no further configuration for this plugin.
+

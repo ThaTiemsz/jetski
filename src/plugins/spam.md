@@ -2,24 +2,24 @@
 
 The spam plugin allows administrators and moderators to limit spam and enforce punishments on spammers. The plugin can be used to limit mass sending of:
 
-- General Spam
-- Mentions
-- Links
-- Attachments
-- Emojis
-- Newlines
-- Duplicate Messages
+* General Spam
+* Mentions
+* Links
+* Attachments
+* Emojis
+* Newlines
+* Duplicate Messages
 
 ## Configuration Options
 
 | Option | Description | Type | Default |
-|--------|-------------|------|---------|
+| :--- | :--- | :--- | :--- |
 | levels | A mapping of levels to Spam Configurations. This will match any user with a level that is equal or lower | dict | empty |
 
 ### Spam Configuration
 
 | Option | Description | Type | Default |
-|--------|-------------|------|---------|
+| :--- | :--- | :--- | :--- |
 | punishment | Sets which action is performed when the spam filter is triggered. Options are: NONE, MUTE, TEMPMUTE, BAN, TEMPBAN, KICK | str | none |
 | punishment\_duration | Required for TEMPBAN and TEMPMUTE punishments and determines how many seconds a punishment should last | int | 300 |
 | count | How many times an action should be performed for it to trigger the filter | int | ??? |
@@ -33,11 +33,11 @@ The spam plugin allows administrators and moderators to limit spam and enforce p
 | max\_duplicates | How many duplicate messages can be sent | dict | empty |
 | clean | Whether or not the offending messages which triggered spam detection should be deleted | bool | false |
 | clean\_count | Maximum number of messages to be deleted | int | 100 |
-| clean\_duration | Maximum duration (in seconds) for which to delete messages | int | 900 |
+| clean\_duration | Maximum duration \(in seconds\) for which to delete messages | int | 900 |
 
 ## Configuration Example
 
-```
+```text
   spam:
     levels:
       0:
@@ -68,3 +68,4 @@ The spam plugin allows administrators and moderators to limit spam and enforce p
           count: 5
           interval: 30
 ```
+
