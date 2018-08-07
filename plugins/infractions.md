@@ -1,4 +1,4 @@
-# Infractions Plugin
+# Infractions
 
 The infractions plugin provides a set of useful moderator commands. These commands are intended to be used together and help handle/track misbehaving users over time.
 
@@ -11,8 +11,9 @@ The infractions plugin provides a set of useful moderator commands. These comman
 | `!unmute {user}` | Unmutes a user | Moderator | `!unmute 232921983317180416` |
 | `!tempmute {user} {duration} [reason]` | Temporarily mutes a user. Will only work if `temp_mute_role` or `mute_role` is set in the config | Moderator | `!tempmute 232921983317180416 30m spamming` OR `!tempmute @rowboat#0001 30m spamming` |
 | `!kick {user} [reason]` | Kicks the user from the server | Moderator | `!kick 232921983317180416 spamming` OR `!kick @rowboat#0001 spamming` |
-| `!mkick {users] -r [reason]` | Kicks multiple users from the server | Moderator | `!mkick 232921983317180416 80351110224678912 108598213681922048 -r spamming` |
+| `!mkick {users} -r [reason]` | Kicks multiple users from the server | Moderator | `!mkick 232921983317180416 80351110224678912 108598213681922048 -r spamming` |
 | `!ban {user} [reason]` | Bans a user from the server | Moderator | `!ban 232921983317180416 spamming` OR `!ban @rowboat#0001 spamming` |
+| `!mban {users} -r [reason]` | Ban multiple users from the servers | Moderator | `!mban 232921983317180416 80351110224678912 108598213681922048 -r raid` |
 | `!unban {user} [reason]` | Unbans a user | Moderator | `!unban 232921983317180416` |
 | `!forceban {User ID} [reason]` | Force bans a user who is not currently in the server | Moderator | `!forceban 232921983317180416 spamming` |
 | `!softban {user} [reason]` | Softbans \(bans/unbans\) a user and deletes the user's messages sent within the last 7 days | Moderator | `!softban 232921983317180416 spamming` OR `!softban @rowboat#0001 spamming` |

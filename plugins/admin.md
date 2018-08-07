@@ -1,4 +1,4 @@
-# Admin Plugin
+# Admin
 
 The admin plugin provides a set of administrator commands that help in moderating active servers.
 

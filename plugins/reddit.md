@@ -1,4 +1,4 @@
-# Reddit Plugin
+# Reddit
 
 The Reddit plugin provides a feed of new posts on specified subreddits.
 

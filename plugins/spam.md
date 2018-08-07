@@ -1,4 +1,4 @@
-# Spam Plugin
+# Spam
 
 The spam plugin allows administrators and moderators to limit spam and enforce punishments on spammers. The plugin can be used to limit mass sending of:
 

@@ -1,11 +1,10 @@
-# Summary
+# Table of contents
 
-[Introduction](./)
-
+* [Introduction](README.md)
 * [Setting Up Jetski](setup.md)
 * [General Configuration](general.md)
 * [Moderator Command Reference](moderator.md)
-* [Plugins](summary.md)
+* [Plugins](plugins/README.md)
   * [Utility](plugins/utility.md)
   * [Admin](plugins/admin.md)
   * [Infractions](plugins/infractions.md)

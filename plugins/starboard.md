@@ -1,4 +1,4 @@
-# Starboard Plugin
+# Starboard
 
 The starboard plugin provides an ongoing board of highlighted messages through community voting.
 

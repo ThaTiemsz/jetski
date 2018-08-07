@@ -1,4 +1,4 @@
-# Censor Plugin
+# Censor
 
 The censor plugin provides administrators and moderators a simple way to filter certain types of malicious and offensive content, such as:
 

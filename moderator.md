@@ -1,4 +1,4 @@
-# Moderator Command Quick-Reference
+# Moderator Command Reference
 
 ## Punishments
 

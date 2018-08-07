@@ -1,4 +1,4 @@
-# Utility Plugin
+# Utility
 
 The utility plugin provides a number of useful and fun commands
 
