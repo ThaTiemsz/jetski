@@ -79,20 +79,20 @@ class State {
   }
 
   getStats(cb) {
-    /* return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       axios.get('/api/stats').then((res) => {
         this.stats = res.data;
         resolve(this.stats);
       }).catch((err) => {
         reject();
       })
-    }) */
-    return axios.get('/api/stats').then((res) => {
-      this.stats = res.data;
-      if (typeof cb === 'function') cb(this.stats)
-    }).catch((err) => {
-      throw err;
     })
+    // return axios.get('/api/stats').then((res) => {
+    //   this.stats = res.data;
+    //   if (typeof cb === 'function') cb(this.stats)
+    // }).catch((err) => {
+    //   throw err;
+    // })
   }
 
   deploy() {

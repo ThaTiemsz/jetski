@@ -123,30 +123,35 @@ class Stats extends Component {
   constructor() {
     super();
     this.state = {
-      panels: null
+      stats: null
     };
   }
 
-  componentDidMount() {
-    let statsPanels = [];
+  componentWillMount() {
+    // let statsPanels = [];
+    // if (globalState.user.admin) {
+    //   globalState.getStats((stats) => {
+    //     // statsPanels.push(
+    //     //     <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
+    //     // );
+    //     // statsPanels.push(
+    //     //     <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
+    //     // );
+    //     // statsPanels.push(
+    //     //     <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
+    //     // );
+    //     // statsPanels.push(
+    //     //     <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
+    //     // );
+    //     statsPanels.push(stats);
+    //     this.setState({
+    //       panels: statsPanels
+    //     });
+    //   });
+    // }
     if (globalState.user.admin) {
-      globalState.getStats((stats) => {
-        // statsPanels.push(
-        //     <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
-        // );
-        // statsPanels.push(
-        //     <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
-        // );
-        // statsPanels.push(
-        //     <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
-        // );
-        // statsPanels.push(
-        //     <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
-        // );
-        statsPanels.push(stats);
-        this.setState({
-          panels: statsPanels
-        });
+      globalState.getStats().then((stats) => {
+        this.setState({stats});
       });
     }
   }
@@ -175,8 +180,9 @@ class Stats extends Component {
   }
   
   render() {
-    let panel = this.state.stats;
-    console.log(panel);
+    // let panel = this.state.stats;
+    const data = this.state.stats;
+    console.log(data);
     // if (!panel[0]) return (<div></div>);
 
     // let renderPanels = [];
@@ -192,8 +198,26 @@ class Stats extends Component {
         {this.drawStats({
           color: "primary",
           icon: "comments",
-          data: panel[0].messages || 0,
+          data: data.messages || 0,
           text: "Messages"
+        })}
+        {this.drawStats({
+          color: "primary",
+          icon: "server",
+          data: data.guilds || 0,
+          text: "Guilds"
+        })}
+        {this.drawStats({
+          color: "primary",
+          icon: "user",
+          data: data.users || 0,
+          text: "Users"
+        })}
+        {this.drawStats({
+          color: "primary",
+          icon: "hashtag",
+          data: data.channels || 0,
+          text: "Channels"
         })}
       </div>
     );
