@@ -5,8 +5,8 @@ function notify(level, msg) {
   div.delay(6000).fadeOut();
 }
 
-if ($("div.panel-primary")) {
-  setInterval(async() => {
+if (document.querySelector("div.panel-primary")) {
+  setTimeout(async() => {
     const res = await fetch("/api/stats", { method: "GET" });
     const stats = await res.json();
     const color = {
@@ -18,5 +18,5 @@ if ($("div.panel-primary")) {
     for (const key in stats) {
       $(`div.panel-${color[key]} .huge`).text(stats[key]);
     }
-  }, 5000);
+  }, 1500);
 }
