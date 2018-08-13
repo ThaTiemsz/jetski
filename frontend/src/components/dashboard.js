@@ -232,11 +232,11 @@ class Dashboard extends Component {
       <PageHeader name="Dashboard" />
     );
 
-    // parts.push(
-    //   <div className="row">
-    //     <Stats />
-    //   </div>
-    // );
+    parts.push(
+      <div className="row">
+        <Stats />
+      </div>
+    );
 
     parts.push(
       <div className="row">
