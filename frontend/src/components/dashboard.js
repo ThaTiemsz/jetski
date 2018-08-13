@@ -207,19 +207,19 @@ class Stats extends Component {
           text: "Messages"
         })}
         {this.drawStats({
-          color: "primary",
+          color: "green",
           icon: "server",
           data: data.guilds || 0,
           text: "Guilds"
         })}
         {this.drawStats({
-          color: "primary",
+          color: "yellow",
           icon: "user",
           data: data.users || 0,
           text: "Users"
         })}
         {this.drawStats({
-          color: "primary",
+          color: "red",
           icon: "hashtag",
           data: data.channels || 0,
           text: "Channels"
