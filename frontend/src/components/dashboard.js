@@ -123,7 +123,12 @@ class Stats extends Component {
   constructor() {
     super();
     this.state = {
-      stats: null
+      stats: {
+        messages: "0",
+        guilds: "0",
+        users: "0",
+        channels: "0"
+      }
     };
   }
 
