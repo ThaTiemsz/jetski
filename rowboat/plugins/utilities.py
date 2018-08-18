@@ -332,13 +332,15 @@ class UtilitiesPlugin(Plugin):
                     'avatar',
                     'discriminator',
                     'id',
-                    'username'
+                    'username',
+                    'presence'
                 ])
                 user = User(
                     avatar=data["avatar"],
                     discriminator=data["discriminator"],
                     id=data["id"],
-                    username=data["username"]
+                    username=data["username"],
+                    presence=None
                 )
             except APIException as e:
                 raise CommandFail('invalid user')
