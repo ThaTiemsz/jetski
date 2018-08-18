@@ -18,6 +18,7 @@ from disco.types.message import MessageTable, MessageEmbed, MessageEmbedField, M
 from disco.types.permissions import Permissions
 from disco.util.functional import chunks
 from disco.util.sanitize import S
+from disco.api.http import Routes, APIException
 
 from rowboat.plugins import RowboatPlugin as Plugin, CommandFail, CommandSuccess
 from rowboat.util.timing import Eventual
@@ -749,7 +750,10 @@ class AdminPlugin(Plugin):
 
         if isinstance(user, (int, long)):
             self.can_act_on(event, user)
-            Infraction.ban(self, event, user, reason, guild=event.guild)
+            try:
+                Infraction.ban(self, event, user, reason, guild=event.guild)
+            except APIException:
+                raise CommandFail('invalid user')
         else:
             member = event.guild.get_member(user)
             if member:
@@ -766,7 +770,7 @@ class AdminPlugin(Plugin):
                 u=member.user if member else user,
             ))
 
-    @Plugin.command('mban', parser=True, level=CommandLevels.MOD)
+    @Plugin.command('mban', '<snowflake> <snowflake2> [-r reason]', parser=True, level=CommandLevels.MOD)
     @Plugin.parser.add_argument('users', type=long, nargs='+')
     @Plugin.parser.add_argument('-r', '--reason', default='', help='reason for modlog')
     def mban(self, event, args):

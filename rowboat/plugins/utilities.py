@@ -10,11 +10,13 @@ from peewee import fn
 from gevent.pool import Pool
 from datetime import datetime, timedelta
 from collections import defaultdict
+from json import loads
 
 from disco.types.user import GameType, Status
 from disco.types.message import MessageEmbed
 from disco.util.snowflake import to_datetime
 from disco.util.sanitize import S
+from disco.api.http import Routes, APIException
 
 from rowboat.plugins import RowboatPlugin as Plugin, CommandFail
 from rowboat.util.timing import Eventual
@@ -321,8 +323,15 @@ class UtilitiesPlugin(Plugin):
         embed.description = '\n'.join(content)
         event.msg.reply('', embed=embed)
 
-    @Plugin.command('info', '<user:user>')
+    @Plugin.command('info', '<user:user|snowflake>')
     def info(self, event, user):
+        if not user:
+            try:
+                r = self.bot.client.api.http(Routes.USERS_GET, dict(user=user)) # hacky method cause this old version of Disco doesn't have a method for this and we're too lazy to update
+                user = loads(r.json())
+            except APIException as e:
+                raise CommandFail('invalid user')
+        
         content = []
         content.append(u'**\u276F User Information**')
         content.append(u'ID: {}'.format(user.id))
