@@ -9,8 +9,7 @@ from PIL import Image
 from peewee import fn
 from gevent.pool import Pool
 from datetime import datetime, timedelta
-from collections import defaultdict
-from json import loads
+from collections import defaultdict, namedtuple
 
 from disco.types.user import GameType, Status
 from disco.types.message import MessageEmbed
@@ -328,7 +327,19 @@ class UtilitiesPlugin(Plugin):
         if not user:
             try:
                 r = self.bot.client.api.http(Routes.USERS_GET, dict(user=user)) # hacky method cause this old version of Disco doesn't have a method for this and we're too lazy to update
-                user = loads(r.json())
+                data = r.json()
+                User = namedtuple('User', [
+                    'avatar',
+                    'discriminator',
+                    'id',
+                    'username'
+                ])
+                user = User(
+                    avatar=data["avatar"],
+                    discriminator=data["discriminator"],
+                    id=data["id"],
+                    username=data["username"]
+                )
             except APIException as e:
                 raise CommandFail('invalid user')
         
