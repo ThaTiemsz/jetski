@@ -324,6 +324,7 @@ class UtilitiesPlugin(Plugin):
 
     @Plugin.command('info', '<user:user|snowflake>')
     def info(self, event, user):
+        print user
         if not user:
             try:
                 r = self.bot.client.api.http(Routes.USERS_GET, dict(user=user)) # hacky method cause this old version of Disco doesn't have a method for this and we're too lazy to update
