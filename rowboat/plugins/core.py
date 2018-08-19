@@ -150,9 +150,9 @@ class CorePlugin(Plugin):
                 try:
                     self.log.info(u'Leaving guild %s', self.guilds[data['id']].name)
                     self.bot.client.api.users_me_guilds_delete(guild=data['id'])
-                except APIException:
+                except:
                     self.log.info(u'Cannot leave guild %s, bot not in guild', name)
-                else:
+                finally:
                     self.log.info(u'Disabling guild %s', self.guilds[data['id']].name)
                     Guild.update(enabled=False).where(Guild.guild_id == data['id']).execute()
 
@@ -391,7 +391,11 @@ class CorePlugin(Plugin):
             return
 
         if not guild.enabled:
-            return
+            if rdb.sismember(GUILDS_WAITING_SETUP_KEY, str(event.id)):
+                guild.enabled = True
+                guild.save()
+            else:
+                return
 
         config = guild.get_config()
         if not config:
