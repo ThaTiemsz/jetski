@@ -16,13 +16,16 @@ def users_me():
 @authed
 def users_me_guilds():
     if g.user.admin:
-        guilds = list(Guild.select())
+        guilds = list(Guild.select().where(
+            (Guild.enabled == True)
+        ))
     else:
         guilds = list(Guild.select(
             Guild,
             Guild.config['web'][str(g.user.user_id)].alias('role')
         ).where(
-            (~(Guild.config['web'][str(g.user.user_id)] >> None))
+            (~(Guild.config['web'][str(g.user.user_id)] >> None)) &
+            (Guild.enabled == True))
         ))
 
     return jsonify([

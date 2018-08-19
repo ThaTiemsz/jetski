@@ -150,6 +150,12 @@ class CorePlugin(Plugin):
                 self.log.info(u'Leaving guild %s', self.guilds[data['id']].name)
                 self.guilds[data['id']].leave()
 
+                self.log.info(u'Disabling guild %s', self.guilds[data['id']].name)
+                Guild.update(enabled=False).where(Guild.guild_id == data['id']).execute()
+
+                self.log.info(u'Unwhilelisting guild %s', self.guilds[data['id']].name)
+                rdb.srem(GUILDS_WAITING_SETUP_KEY, str(data['id']))
+
     def unload(self, ctx):
         ctx['guilds'] = self.guilds
         ctx['startup'] = self.startup
