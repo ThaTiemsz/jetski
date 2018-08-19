@@ -1,6 +1,6 @@
-# Infractions
+# Moderator
 
-The infractions plugin provides a set of useful moderator commands. These commands are intended to be used together and help handle/track misbehaving users over time.
+The admin plugin provides a set of useful moderator commands. These commands are intended to be used together and help handle/track misbehaving users over time.
 
 ## Commands
 
