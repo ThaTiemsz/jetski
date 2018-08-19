@@ -141,7 +141,7 @@ class CorePlugin(Plugin):
                 self.log.info('Restart requested, signaling parent')
                 os.kill(os.getppid(), signal.SIGUSR1)
             elif data['type'] == 'GUILD_DELETE' and data['id'] in self.guilds:
-                name = self.guilds[data['id']].name if self.guilds[data['id']].name else data['id']
+                name = self.guilds[data['id']].name if self.guilds[data['id']].id != None else data['id']
 
                 with self.send_control_message() as embed:
                     embed.color = 0xff6961
