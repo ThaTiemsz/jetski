@@ -149,7 +149,7 @@ class CorePlugin(Plugin):
                         name,
                     )
 
-                if self.guilds[data['id']].id:
+                if self.guilds[data['id']].id == None:
                     self.log.info(u'Leaving guild %s', name)
                     self.bot.client.api.users_me_guilds_delete(guild=data['id'])
                 else:
