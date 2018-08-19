@@ -150,7 +150,7 @@ class CorePlugin(Plugin):
                 try:
                     self.log.info(u'Leaving guild %s', self.guilds[data['id']].name)
                     self.bot.client.api.users_me_guilds_delete(guild=data['id'])
-                except APIException:
+                except:
                     self.log.info(u'Cannot leave guild %s, bot not in guild', name)
 
                 self.log.info(u'Disabling guild %s', self.guilds[data['id']].name)
