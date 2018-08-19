@@ -25,7 +25,7 @@ def users_me_guilds():
             Guild.config['web'][str(g.user.user_id)].alias('role')
         ).where(
             (~(Guild.config['web'][str(g.user.user_id)] >> None)) &
-            (Guild.enabled == True))
+            (Guild.enabled == True)
         ))
 
     return jsonify([
