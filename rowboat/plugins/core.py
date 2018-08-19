@@ -141,9 +141,6 @@ class CorePlugin(Plugin):
                 self.log.info('Restart requested, signaling parent')
                 os.kill(os.getppid(), signal.SIGUSR1)
             elif data['type'] == 'GUILD_DELETE':
-                self.log.info(u'GUILD_DELETE debug: %s', data['id'])
-                self.log.info(u'GUILD_DELETE debug: %s', self.guilds[data['id']])
-                self.log.info(u'GUILD_DELETE debug: %s', self.guilds[data['id']].name)
                 with self.send_control_message() as embed:
                     embed.color = 0xff6961
                     embed.title = u'Guild Force Deleted {}'.format(
