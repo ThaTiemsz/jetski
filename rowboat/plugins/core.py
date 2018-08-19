@@ -141,19 +141,24 @@ class CorePlugin(Plugin):
                 self.log.info('Restart requested, signaling parent')
                 os.kill(os.getppid(), signal.SIGUSR1)
             elif data['type'] == 'GUILD_DELETE' and data['id'] in self.guilds:
+                name = self.guilds[data['id']].name if self.guilds[data['id']].name else data['id']
+
                 with self.send_control_message() as embed:
                     embed.color = 0xff6961
                     embed.title = u'Guild Force Deleted {}'.format(
-                        self.guilds[data['id']].name,
+                        name,
                     )
 
-                self.log.info(u'Leaving guild %s', self.guilds[data['id']].name)
-                self.bot.client.api.users_me_guilds_delete(guild=data['id'])
+                if self.guilds[data['id']].name:
+                    self.log.info(u'Leaving guild %s', name)
+                    self.bot.client.api.users_me_guilds_delete(guild=data['id'])
+                else:
+                    self.log.info(u'Cannot leave guild %s, left already possibly?', name)
 
-                self.log.info(u'Disabling guild %s', self.guilds[data['id']].name)
+                self.log.info(u'Disabling guild %s', name)
                 Guild.update(enabled=False).where(Guild.guild_id == data['id']).execute()
 
-                self.log.info(u'Unwhilelisting guild %s', self.guilds[data['id']].name)
+                self.log.info(u'Unwhilelisting guild %s', name)
                 rdb.srem(GUILDS_WAITING_SETUP_KEY, str(data['id']))
 
     def unload(self, ctx):
