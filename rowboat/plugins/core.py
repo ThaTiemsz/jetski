@@ -150,14 +150,14 @@ class CorePlugin(Plugin):
                 try:
                     self.log.info(u'Leaving guild %s', self.guilds[data['id']].name)
                     self.bot.client.api.users_me_guilds_delete(guild=data['id'])
-                except:
+                except APIException:
                     self.log.info(u'Cannot leave guild %s, bot not in guild', name)
+                else:
+                    self.log.info(u'Disabling guild %s', self.guilds[data['id']].name)
+                    Guild.update(enabled=False).where(Guild.guild_id == data['id']).execute()
 
-                self.log.info(u'Disabling guild %s', self.guilds[data['id']].name)
-                Guild.update(enabled=False).where(Guild.guild_id == data['id']).execute()
-
-                self.log.info(u'Unwhilelisting guild %s', self.guilds[data['id']].name)
-                rdb.srem(GUILDS_WAITING_SETUP_KEY, str(data['id']))
+                    self.log.info(u'Unwhilelisting guild %s', self.guilds[data['id']].name)
+                    rdb.srem(GUILDS_WAITING_SETUP_KEY, str(data['id']))
 
     def unload(self, ctx):
         ctx['guilds'] = self.guilds
