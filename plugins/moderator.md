@@ -23,6 +23,8 @@ The admin plugin provides a set of useful moderator commands. These commands are
 | `!infractions info {inf#}` | Presents information on the given infraction | Moderator | `!infractions info 1274` |
 | `!infractions duration {inf#} {duration}` | Updates the duration of the given infraction. Duration starts from time of initial action | Moderator | `!infractions duration 1274 5h` |
 | `!reason {inf#} {reason}` | Updates the reason of a given infraction | Moderator | `!infractions reason 1274 rude behaviour towards staff` |
+| `!backups restore {user}` | Restore a member's roles/nickname etc. | Moderator | `!backups restore 152164749868662784` |
+| `!backups clear {User ID}` | Clear a member's backup | Moderator | `!backups clear 152164749868662784` |
 
 ## Configuration Options
 
