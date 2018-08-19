@@ -148,7 +148,7 @@ class CorePlugin(Plugin):
                     )
 
                 self.log.info(u'Leaving guild %s', self.guilds[data['id']].name)
-                self.guilds[data['id']].leave()
+                self.bot.client.api.users_me_guilds_delete(guild=data['id'])
 
                 self.log.info(u'Disabling guild %s', self.guilds[data['id']].name)
                 Guild.update(enabled=False).where(Guild.guild_id == data['id']).execute()
