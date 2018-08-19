@@ -338,7 +338,7 @@ class UtilitiesPlugin(Plugin):
                 user = User(
                     avatar=data["avatar"],
                     discriminator=data["discriminator"],
-                    id=int(data["id"]),
+                    id=73193882359173120, # int(data["id"])
                     username=data["username"],
                     presence=None
                 )
