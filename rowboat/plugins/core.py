@@ -140,7 +140,7 @@ class CorePlugin(Plugin):
             elif data['type'] == 'RESTART':
                 self.log.info('Restart requested, signaling parent')
                 os.kill(os.getppid(), signal.SIGUSR1)
-            elif data['type'] == 'GUILD_DELETE' and data['id'] in self.guilds:
+            elif data['type'] == 'GUILD_DELETE':
                 self.log.info(u'GUILD_DELETE debug: %s', data['id'])
                 self.log.info(u'GUILD_DELETE debug: %s', self.guilds[data['id']])
                 self.log.info(u'GUILD_DELETE debug: %s', self.guilds[data['id']].name)
