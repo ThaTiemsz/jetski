@@ -4,6 +4,7 @@ import functools
 import operator
 
 from flask import Blueprint, request, g, jsonify
+from time import mktime
 
 from rowboat.util.decos import authed
 from rowboat.models.guild import Guild, GuildConfigChange
@@ -195,6 +196,7 @@ def guild_config_history(guild):
             'before': unicode(gcc.before_raw),
             'after': unicode(gcc.after_raw),
             'created_at': gcc.created_at.isoformat(),
+            'created_timestamp': int(mktime(gcc.created_at.timetuple())),
         }
 
     q = GuildConfigChange.select(GuildConfigChange, User).join(

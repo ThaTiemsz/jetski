@@ -5,6 +5,7 @@ from peewee import (
     BigIntegerField, CharField, TextField, BooleanField, DateTimeField, CompositeKey, BlobField
 )
 from holster.enum import Enum
+from time import time, mktime
 from datetime import datetime
 from playhouse.postgres_ext import BinaryJSONField, ArrayField
 
@@ -214,6 +215,7 @@ class GuildConfigChange(BaseModel):
     after_raw = BlobField()
 
     created_at = DateTimeField(default=datetime.utcnow)
+    created_timestamp = IntegerField(default=int(time()))
 
     class Meta:
         db_table = 'guild_config_changes'
