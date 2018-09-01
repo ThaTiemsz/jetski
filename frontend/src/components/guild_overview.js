@@ -98,13 +98,17 @@ export default class GuildOverview extends Component {
       <div className="row">
         <div className="col-lg-12">
           <div className="panel panel-default">
-            <div className="panel-heading">Guild Banner</div>
+            <div className="panel-heading">
+              <i className="fa fa-flag fa-fw"></i> Guild Banner
+            </div>
             <div className="panel-body">
               <GuildWidget guildID={this.state.guild.id} />
             </div>
           </div>
           <div className="panel panel-default">
-            <div className="panel-heading">Guild Info</div>
+            <div className="panel-heading">
+              <i className="fa fa-info-circle fa-fw"></i> Guild Info
+            </div>
             <div className="panel-body">
               <div className="table-responsive">
                 <OverviewTable guild={this.state.guild} />

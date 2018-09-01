@@ -23,7 +23,7 @@ class DashboardGuildsList extends Component {
     return (
       <div className="panel panel-default">
         <div className="panel-heading">
-          Guilds
+          <i className="fa fa-server fa-fw"></i> Guilds
         </div>
         <div className="panel-body">
           <GuildsTable guilds={this.state.guilds}/>

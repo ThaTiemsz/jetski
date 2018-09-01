@@ -87,7 +87,7 @@ export default class GuildConfigEdit extends Component {
         <div className="col-md-12">
           <div className="panel panel-default">
             <div className="panel-heading">
-              Configuration Editor
+              <i className="fa fa-gear fa-fw"></i> Configuration Editor
             </div>
             <div className="panel-body">
               <AceEditor
@@ -97,6 +97,7 @@ export default class GuildConfigEdit extends Component {
                 height="1000px"
                 value={this.state.contents == null ? '' : this.state.contents}
                 onChange={(newValue) => this.onEditorChange(newValue)}
+                readOnly={this.state.guild && this.state.guild.role != 'viewer' ? false : true}
               />
             </div>
             <div className="panel-footer">

@@ -70,7 +70,7 @@ export default function router() {
         <Route exact path='/login' component={Login} />
         <Route exact path='/guilds/:gid/stats' component={wrapped(GuildStats)} />
         <Route exact path='/guilds/:gid/infractions' component={wrapped(GuildInfractions)} />
-        <Route exact path='/guilds/:gid/config' component={wrapped(GuildConfigEdit)} />
+        <Route exact path='/guilds/:gid/config/:timestamp?' component={wrapped(GuildConfigEdit)} />
         <Route exact path='/guilds/:gid' component={wrapped(GuildOverview)} />
         <Route exact path='/' component={wrapped(Dashboard)} />
       </Switch>

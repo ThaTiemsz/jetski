@@ -54,7 +54,9 @@ class GuildInfractionInfo extends Component {
   render() {
     return (
       <div className="panel panel-default">
-        <div className="panel-heading">Infraction Info</div>
+        <div className="panel-heading">
+          <i className="fa fa-info-circle fa-fw"></i> Infraction Info
+        </div>
         <div className="panel-body">
           <InfractionTable infraction={this.props.infraction} />
         </div>
@@ -170,13 +172,15 @@ export default class GuildInfractions extends Component {
     return (
       <div className="row">
         <div className="col-lg-12">
+          {this.state.infraction && <GuildInfractionInfo infraction={this.state.infraction} />}
           <div className="panel panel-default">
-            <div className="panel-heading">Infractions</div>
+            <div className="panel-heading">
+              <i className="fa fa-ban fa-fw"></i> Infractions
+            </div>
             <div className="panel-body">
               <GuildInfractionsTable guild={this.state.guild} onSelectInfraction={this.onSelectInfraction.bind(this)} />
             </div>
           </div>
-          {this.state.infraction && <GuildInfractionInfo infraction={this.state.infraction} />}
         </div>
       </div>
     );
