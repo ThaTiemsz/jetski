@@ -35,7 +35,7 @@ export default class GuildConfigEdit extends Component {
           contents: config.contents,
         });
       })
-      .then(guild.getConfigHistory())
+      .then(guild.getConfigHistory)
       .then((history) => {
         console.log("getConfigHistory", history);
         this.setState({
