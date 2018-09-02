@@ -2,7 +2,7 @@ import yaml
 import logging
 
 from peewee import (
-    BigIntegerField, CharField, TextField, BooleanField, DateTimeField, CompositeKey, BlobField
+    BigIntegerField, CharField, TextField, BooleanField, DateTimeField, CompositeKey, BlobField, IntegerField
 )
 from holster.enum import Enum
 from time import time, mktime
