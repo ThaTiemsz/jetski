@@ -9,7 +9,7 @@ export default class User extends BaseModel {
 
     this.id = obj.id;
     this.username = obj.username;
-    this.discriminator = obj.discriminator;
+    this.discriminator = obj.discriminator.padStart(0, "4");
     this.avatar = obj.avatar;
     this.bot = obj.bot;
     this.admin = obj.admin;

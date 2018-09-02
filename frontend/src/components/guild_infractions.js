@@ -22,11 +22,11 @@ class InfractionTable extends Component {
           </tr>
           <tr>
             <td>Target User</td>
-            <td>{inf.user.username}#{inf.user.discriminator} ({inf.user.id})</td>
+            <td>{inf.user.username}#{inf.user.discriminator.padStart(0, "4")} ({inf.user.id})</td>
           </tr>
           <tr>
             <td>Actor User</td>
-            <td>{inf.actor.username}#{inf.actor.discriminator} ({inf.actor.id})</td>
+            <td>{inf.actor.username}#{inf.actor.discriminator.padStart(0, "4")} ({inf.actor.id})</td>
           </tr>
           <tr>
             <td>Created At</td>
@@ -86,7 +86,7 @@ class GuildInfractionsTable extends Component {
             {
               Header: "Tag",
               id: "user_tag",
-              accessor: d => d.user.username + '#' + d.user.discriminator,
+              accessor: d => d.user.username + '#' + d.user.discriminator.padStart(0, "4"),
               filterable: false,
               sortable: false,
             }
@@ -96,7 +96,7 @@ class GuildInfractionsTable extends Component {
             {
               Header: "Tag",
               id: "actor_tag",
-              accessor: d => d.actor.username + '#' + d.actor.discriminator,
+              accessor: d => d.actor.username + '#' + d.actor.discriminator.padStart(0, "4"),
               filterable: false,
               sortable: false,
             }
