@@ -444,3 +444,11 @@ table.dataTable thead .sorting:after {
 .row:first-of-type {
   padding-top: 10px;
 }
+
+/* Diff markup */
+.codeMarker:first-child {
+  background: #004d7a;
+  position: absolute;
+  z-index: 20;
+  width: 100% !important;
+}
