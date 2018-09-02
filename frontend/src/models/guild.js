@@ -49,6 +49,32 @@ export default class Guild extends BaseModel {
     });
   }
 
+  getConfig(refresh = false) {
+    if (this.config && !refresh) {
+      return new Promise((resolve) => {
+        resolve(this.config);
+      });
+    }
+
+    return new Promise((resolve, reject) => {
+      axios.get(`/api/guilds/${this.id}/config`).then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject();
+      });
+    });
+  }
+
+  getConfigHistory() {
+    return new Promise((resolve, reject) => {
+      axios.get(`/api/guilds/${this.id}/config/history`).then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject();
+      });
+    });
+  }
+
   putConfig(config) {
     return new Promise((resolve, reject) => {
       axios.post(`/api/guilds/${this.id}/config`, {config: config}).then((res) => {

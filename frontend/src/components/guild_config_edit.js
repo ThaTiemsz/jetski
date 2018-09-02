@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AceEditor from 'react-ace';
+import AceEditor, { diff as DiffEditor } from 'react-ace';
 import {globalState} from '../state';
 
 import 'brace/mode/yaml'
@@ -18,6 +18,7 @@ export default class GuildConfigEdit extends Component {
       guild: null,
       contents: null,
       hasUnsavedChanges: false,
+      history: null,
     }
   }
 
@@ -31,6 +32,12 @@ export default class GuildConfigEdit extends Component {
         this.setState({
           guild: guild,
           contents: config.contents,
+        });
+      });
+
+      guild.getConfigHistory().then((history) => {
+        this.setState({
+          history: history
         });
       });
     }).catch((err) => {
@@ -81,6 +88,11 @@ export default class GuildConfigEdit extends Component {
   }
 
   render() {
+    let history;
+    if (this.props.params.timestamp) {
+      history = this.state.history[0]
+    }
+
     return (<div>
       {this.state.message && <div className={"alert alert-" + this.state.message.type}>{this.state.message.contents}</div>}
       <div className="row">
@@ -90,19 +102,30 @@ export default class GuildConfigEdit extends Component {
               <i className="fa fa-gear fa-fw"></i> Configuration Editor
             </div>
             <div className="panel-body">
-              <AceEditor
-                mode="yaml"
-                theme="monokai"
-                width="100%"
-                height="1000px"
-                value={this.state.contents == null ? '' : this.state.contents}
-                onChange={(newValue) => this.onEditorChange(newValue)}
-                readOnly={this.state.guild && this.state.guild.role != 'viewer' ? false : true}
-              />
+              { this.state.history && this.props.params.timestamp ? (
+                <AceEditor
+                  mode="yaml"
+                  theme="monokai"
+                  width="100%"
+                  height="1000px"
+                  value={this.state.contents == null ? '' : this.state.contents}
+                  onChange={(newValue) => this.onEditorChange(newValue)}
+                  readOnly={this.state.guild && this.state.guild.role != 'viewer' ? false : true}
+                />
+              ) : (
+                <DiffEditor
+                  mode="yaml"
+                  theme="monokai"
+                  width="100%"
+                  height="1000px"
+                  value={[history.before, history.after]}
+                  readOnly={true}
+                />
+              )}
             </div>
             <div className="panel-footer">
-              {
-                this.state.guild && this.state.guild.role != 'viewer' &&
+              { // check if diff
+                this.state.guild && !this.props.params.timestamp && this.state.guild.role != 'viewer' &&
                   <button onClick={() => this.onSave()} type="button" className="btn btn-success btn-circle btn-lg">
                   <i className="fa fa-check"></i>
                 </button>
