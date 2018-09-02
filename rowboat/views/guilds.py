@@ -205,7 +205,7 @@ def guild_config_history(guild):
         GuildConfigChange.created_at.desc()
     ).paginate(int(request.values.get('page', 1)), 25)
 
-    return jsonify(map(serialize, q))
+    return jsonify([serialize(x) for x in q])
 
 
 @guilds.route('/<gid>/stats/messages', methods=['GET'])
