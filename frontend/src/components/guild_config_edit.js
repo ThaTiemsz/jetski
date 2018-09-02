@@ -29,11 +29,11 @@ export default class GuildConfigEdit extends Component {
       guild.getConfig(true)
       .then((config) => {
         this.initialConfig = config.contents;
-
         this.setState({
           guild: guild,
           contents: config.contents,
         });
+        return guild
       })
       .then(guild.getConfigHistory)
       .then((history) => {
