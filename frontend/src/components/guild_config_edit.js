@@ -36,6 +36,7 @@ export default class GuildConfigEdit extends Component {
       });
 
       guild.getConfigHistory().then((history) => {
+        console.log("getConfigHistory", history);
         this.setState({
           history: history
         });
@@ -90,8 +91,8 @@ export default class GuildConfigEdit extends Component {
   render() {
     let history;
     if (this.props.params.timestamp) {
-      console.log(this.props.params.timestamp);
-      console.log(this.state.history);
+      console.log("props.timestamp", this.props.params.timestamp);
+      console.log("state.history", this.state.history);
       history = this.state.history[0]
     }
 
