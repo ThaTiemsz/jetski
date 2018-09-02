@@ -33,7 +33,7 @@ export default class GuildConfigEdit extends Component {
           guild: guild,
           contents: config.contents,
         });
-        return guild
+        return guild.id
       })
       .then(guild.getConfigHistory)
       .then((history) => {
