@@ -4,7 +4,7 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
 /* Source: https://dashboard.aperturebot.science/static/style.css */
- body {
+body {
   background-color: #23272A;
 }
 #wrapper {
@@ -446,9 +446,9 @@ table.dataTable thead .sorting:after {
 }
 
 /* Diff markup */
-.codeMarker:first-child {
+.codeMarker {
   background: #004d7a;
   position: absolute;
   z-index: 20;
-  width: 100% !important;
+  /* width: 100% !important; */
 }
