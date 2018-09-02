@@ -55,6 +55,7 @@ export default class Guild extends BaseModel {
         let data = res.data
         data = data.map(obj => {
           obj.created_timestamp = Math.floor(new Date(obj.created_at).getTime() / 1000);
+          obj.user.discriminator = obj.user.discriminator.padStart(4, "0");
           return obj;
         });
         resolve(data);

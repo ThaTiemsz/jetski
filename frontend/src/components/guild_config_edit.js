@@ -26,16 +26,17 @@ export default class GuildConfigEdit extends Component {
     globalState.getGuild(this.props.params.gid).then((guild) => {
       globalState.currentGuild = guild;
 
-      guild.getConfig(true).then((config) => {
+      guild.getConfig(true)
+      .then((config) => {
         this.initialConfig = config.contents;
 
         this.setState({
           guild: guild,
           contents: config.contents,
         });
-      });
-
-      guild.getConfigHistory().then((history) => {
+      })
+      .then(guild.getConfigHistory())
+      .then((history) => {
         console.log("getConfigHistory", history);
         this.setState({
           history: history
