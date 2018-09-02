@@ -68,7 +68,10 @@ export default class Guild extends BaseModel {
   getConfigHistory() {
     return new Promise((resolve, reject) => {
       axios.get(`/api/guilds/${this.id}/config/history`).then((res) => {
-        resolve(res.data);
+        resolve(res.data.map(obj => {
+          obj.created_timestamp = Math.floor(new Date(obj.created_at).getTime() / 1000);
+          return obj;
+        }));
       }).catch((err) => {
         reject();
       });

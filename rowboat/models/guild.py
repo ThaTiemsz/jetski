@@ -2,7 +2,7 @@ import yaml
 import logging
 
 from peewee import (
-    BigIntegerField, CharField, TextField, BooleanField, DateTimeField, CompositeKey, BlobField, IntegerField
+    BigIntegerField, CharField, TextField, BooleanField, DateTimeField, CompositeKey, BlobField
 )
 from holster.enum import Enum
 from time import time, mktime
@@ -215,7 +215,6 @@ class GuildConfigChange(BaseModel):
     after_raw = BlobField()
 
     created_at = DateTimeField(default=datetime.utcnow)
-    created_timestamp = IntegerField(default=int(time()))
 
     class Meta:
         db_table = 'guild_config_changes'
