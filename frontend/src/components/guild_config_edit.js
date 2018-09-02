@@ -94,7 +94,7 @@ export default class GuildConfigEdit extends Component {
     if (this.props.params.timestamp) {
       console.log("props.timestamp", this.props.params.timestamp);
       console.log("state.history", this.state.history);
-      history = this.state.history[0]
+      history = this.state.history ? this.state.history[0] : null
     }
 
     return (<div>
@@ -106,7 +106,7 @@ export default class GuildConfigEdit extends Component {
               <i className="fa fa-gear fa-fw"></i> Configuration Editor
             </div>
             <div className="panel-body">
-              { this.state.history && this.props.params.timestamp ? (
+              { this.props.params.timestamp && this.state.history ? (
                 <DiffEditor
                   mode="yaml"
                   theme="monokai"
