@@ -90,6 +90,8 @@ export default class GuildConfigEdit extends Component {
   render() {
     let history;
     if (this.props.params.timestamp) {
+      console.log(this.props.params.timestamp);
+      console.log(this.state.history);
       history = this.state.history[0]
     }
 
@@ -103,6 +105,15 @@ export default class GuildConfigEdit extends Component {
             </div>
             <div className="panel-body">
               { this.state.history && this.props.params.timestamp ? (
+                <DiffEditor
+                  mode="yaml"
+                  theme="monokai"
+                  width="100%"
+                  height="1000px"
+                  value={[history.before, history.after]}
+                  readOnly={true}
+                />
+              ) : (
                 <AceEditor
                   mode="yaml"
                   theme="monokai"
@@ -111,15 +122,6 @@ export default class GuildConfigEdit extends Component {
                   value={this.state.contents == null ? '' : this.state.contents}
                   onChange={(newValue) => this.onEditorChange(newValue)}
                   readOnly={this.state.guild && this.state.guild.role != 'viewer' ? false : true}
-                />
-              ) : (
-                <DiffEditor
-                  mode="yaml"
-                  theme="monokai"
-                  width="100%"
-                  height="1000px"
-                  value={[history.before, history.after]}
-                  readOnly={true}
                 />
               )}
             </div>
