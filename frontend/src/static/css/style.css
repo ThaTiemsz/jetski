@@ -453,7 +453,7 @@ table.dataTable thead .sorting:after {
   /* width: 100% !important; */
 }
 div:not(.ace_editor) + .ace_editor.ace-monokai::before {
-  content: "after";
+  content: "before";
   color: #008bdc;
   font-size: 25px;
   position: absolute;
