@@ -445,10 +445,26 @@ table.dataTable thead .sorting:after {
   padding-top: 10px;
 }
 
-/* Diff markup */
+/* Diff */
 .codeMarker {
   background: #004d7a;
   position: absolute;
   z-index: 20;
   /* width: 100% !important; */
+}
+div:not(.ace_editor) + .ace_editor.ace-monokai::before {
+  content: "after";
+  color: #008bdc;
+  font-size: 25px;
+  position: absolute;
+  z-index: 200;
+  right: 10px;
+}
+.ace_editor + .ace_editor.ace-monokai::before {
+  content: "after";
+  color: #008bdc;
+  font-size: 25px;
+  position: absolute;
+  z-index: 200;
+  right: 10px;
 }
