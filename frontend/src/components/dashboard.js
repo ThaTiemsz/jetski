@@ -187,7 +187,6 @@ class Stats extends Component {
   render() {
     // let panel = this.state.stats;
     const data = this.state.stats;
-    console.log(data);
     // if (!panel[0]) return (<div></div>);
 
     // let renderPanels = [];

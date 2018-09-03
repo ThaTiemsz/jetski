@@ -30,7 +30,7 @@ class ConfigHistory extends Component {
             </div>
             <div className="panel-body">
                 <div className="list-group">
-                    <NavLink key='config' to={`/guilds/${this.props.guild.id}/config`} className="list-group-item" activeClassName="active">
+                    <NavLink key='config' exact to={`/guilds/${this.props.guild.id}/config`} className="list-group-item" activeClassName="active">
                         <i className="fa fa-edit fa-fw"></i> Current version
                     </NavLink>
                     {this.props.history && buttonsList}
@@ -73,7 +73,6 @@ export default class GuildConfigEdit extends Component {
       })
       .then(guild.getConfigHistory)
       .then((history) => {
-        console.log("getConfigHistory", history);
         this.setState({
           history: history
         });
@@ -128,8 +127,6 @@ export default class GuildConfigEdit extends Component {
   render() {
     let history;
     if (this.props.params.timestamp) {
-      console.log("props.timestamp", this.props.params.timestamp);
-      console.log("state.history", this.state.history);
       history = this.state.history ? this.state.history.find(c => c.created_timestamp == this.props.params.timestamp) : null
     }
 
