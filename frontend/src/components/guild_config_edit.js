@@ -7,7 +7,23 @@ import 'brace/theme/monokai'
 
 class ConfigHistory extends Component {
   render() {
-    const buttonClass = this.props.timestamp ? `list-group-item` : `list-group-item active`
+    let buttonsList = []
+
+    if (this.props.history && this.props.timestamp) {
+      for (let change of this.props.history) {
+        buttonsList.push(
+          <a href="#" className={this.props.timestamp === change.created_timestamp ? "list-group-item active" : "list-group-item"}>
+            <i className="fa fa-history fa-fw"></i> {change.user.username}#{change.user.discriminator}
+            <span className="pull-right text-muted small" title={change.created_at}><em>4 minutes ago</em></span>
+          </a>
+        )
+      }
+    }
+
+    const buttonClass = 
+      (this.props.history && this.props.timestamp && this.props.history.find(c => c.created_timestamp == this.props.timestamp)) 
+      ? "list-group-item" 
+      : "list-group-item active"
 
     return (
       <div className="col-lg-3">
@@ -20,14 +36,7 @@ class ConfigHistory extends Component {
                     <a href="#" className={buttonClass}>
                         <i className="fa fa-edit fa-fw"></i> Current version
                     </a>
-                    <a href="#" className={buttonClass}>
-                        <i className="fa fa-history fa-fw"></i> Manny Both-Hanz#7097
-                        <span className="pull-right text-muted small" title="2018-08-30 01:03"><em>4 minutes ago</em></span>
-                    </a>
-                    <a href="#" className="list-group-item">
-                        <i className="fa fa-history fa-fw"></i> Tiemen#0001
-                        <span className="pull-right text-muted small" title="2018-08-29 17:41"><em>12 minutes ago</em></span>
-                    </a>
+                    {this.props.history && buttonsList}
                 </div>
             </div>
         </div>
@@ -136,13 +145,13 @@ export default class GuildConfigEdit extends Component {
               <i className="fa fa-gear fa-fw"></i> Configuration Editor
             </div>
             <div className="panel-body">
-              {this.props.params.timestamp && this.state.history ? (
+              {this.state.history && this.props.params.timestamp && this.state.history.find(c => c.created_timestamp == this.props.params.timestamp) ? (
                 <DiffEditor
                   mode="yaml"
                   theme="monokai"
                   width="100%"
                   height="1000px"
-                  value={[history.before, history.after]}
+                  value={[history.before, history.after]} // TO-DO
                   readOnly={true}
                 />
               ) : (
@@ -158,9 +167,9 @@ export default class GuildConfigEdit extends Component {
               )}
             </div>
             <div className="panel-footer">
-              { // check if diff
+              {
                 this.state.guild && !this.props.params.timestamp && this.state.guild.role != 'viewer' &&
-                  <button onClick={() => this.onSave()} type="button" className="btn btn-success btn-circle btn-lg">
+                <button onClick={() => this.onSave()} type="button" className="btn btn-success btn-circle btn-lg">
                   <i className="fa fa-check"></i>
                 </button>
               }
