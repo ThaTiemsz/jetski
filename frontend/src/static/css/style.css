@@ -467,7 +467,7 @@ div:not(.ace_editor) + .ace_editor.ace-monokai::before {
   font-size: 25px;
   position: absolute;
   z-index: 200;
-  right: 20px;
+  right: 25px;
 }
 .ace_editor + .ace_editor.ace-monokai::before {
   content: "after";
@@ -475,5 +475,5 @@ div:not(.ace_editor) + .ace_editor.ace-monokai::before {
   font-size: 25px;
   position: absolute;
   z-index: 200;
-  right: 20px;
+  right: 25px;
 }
