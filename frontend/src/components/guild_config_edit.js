@@ -174,7 +174,7 @@ export default class GuildConfigEdit extends Component {
             </div>
           </div>
         </div>
-        {this.state.history && <ConfigHistory guild={this.state.guild} history={this.state.history} timestamp={this.props.params.timestamp} />}
+        {this.state.guild && this.state.history && <ConfigHistory guild={this.state.guild} history={this.state.history} timestamp={this.props.params.timestamp} />}
       </div>
     </div>);
   }
