@@ -14,7 +14,7 @@ class ConfigHistory extends Component {
     if (this.props.history) {
       for (let change of this.props.history) {
         buttonsList.push(
-          <NavLink key={change.created_timestamp} to={`/guilds/${this.props.guild.id}/config/history/${change.created_timestamp}`} className="list-group-item" activeClassName="active">
+          <NavLink key={change.created_timestamp} to={`/guilds/${this.props.guild.id}/config/${change.created_timestamp}`} className="list-group-item" activeClassName="active">
             <i className="fa fa-history fa-fw"></i> {change.user.username}#{change.user.discriminator}
             <span className="pull-right text-muted small" title={change.created_at}><em>{moment(change.created_at).fromNow()}</em></span>
           </NavLink>
