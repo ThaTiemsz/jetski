@@ -11,6 +11,7 @@
     "css-loader": "^0.28.7",
     "eventemitter3": "^2.0.3",
     "lodash": "^4.17.4",
+    "moment": "^2.22.2",
     "react": "^16.0.0-rc.2",
     "react-ace": "^6.1.4",
     "react-dom": "^16.0.0-rc.2",

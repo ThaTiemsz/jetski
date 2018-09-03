@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AceEditor, { diff as DiffEditor } from 'react-ace';
 import {globalState} from '../state';
+import moment from 'moment';
 
 import 'brace/mode/yaml'
 import 'brace/theme/monokai'
@@ -9,12 +10,12 @@ class ConfigHistory extends Component {
   render() {
     let buttonsList = []
 
-    if (this.props.history && this.props.timestamp) {
+    if (this.props.history) {
       for (let change of this.props.history) {
         buttonsList.push(
           <a href="#" className={this.props.timestamp === change.created_timestamp ? "list-group-item active" : "list-group-item"}>
             <i className="fa fa-history fa-fw"></i> {change.user.username}#{change.user.discriminator}
-            <span className="pull-right text-muted small" title={change.created_at}><em>4 minutes ago</em></span>
+            <span className="pull-right text-muted small" title={change.created_at}><em>{moment(change.created_at).fromNow()}</em></span>
           </a>
         )
       }
@@ -133,7 +134,7 @@ export default class GuildConfigEdit extends Component {
     if (this.props.params.timestamp) {
       console.log("props.timestamp", this.props.params.timestamp);
       console.log("state.history", this.state.history);
-      history = this.state.history ? this.state.history[0] : null
+      history = this.state.history ? this.state.history.find(c => c.created_timestamp == this.props.params.timestamp) : null
     }
 
     return (<div>
@@ -151,7 +152,7 @@ export default class GuildConfigEdit extends Component {
                   theme="monokai"
                   width="100%"
                   height="1000px"
-                  value={[history.before, history.after]} // TO-DO
+                  value={[history.before, history.after]}
                   readOnly={true}
                 />
               ) : (
