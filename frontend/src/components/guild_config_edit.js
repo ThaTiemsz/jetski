@@ -17,17 +17,14 @@ class ConfigHistory extends Component {
                 <div class="list-group">
                     <a href="#" class="list-group-item">
                         <i class="fa fa-edit fa-fw"></i> Current version
-                        <span class="pull-right text-muted small"><em>12 minutes ago</em>
-                        </span>
                     </a>
-                    <a href="#" class="list-group-item">
-                        <i class="fa fa-history fa-fw"></i> Modified by Mek#2137
+                    <a href="#" class="list-group-item active">
+                        <i class="fa fa-history fa-fw"></i> Modified by Manny Both-Hanz#7097
                         <span class="pull-right text-muted small" title="2018-08-30 01:03"><em>4 minutes ago</em></span>
                     </a>
                     <a href="#" class="list-group-item">
                         <i class="fa fa-history fa-fw"></i> Modified by Tiemen#0001
-                        <span class="pull-right text-muted small" title="2018-08-29 17:41"><em>12 minutes ago</em>
-                        </span>
+                        <span class="pull-right text-muted small" title="2018-08-29 17:41"><em>12 minutes ago</em></span>
                     </a>
                 </div>
             </div>

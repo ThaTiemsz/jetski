@@ -444,6 +444,15 @@ table.dataTable thead .sorting:after {
 .row:first-of-type {
   padding-top: 10px;
 }
+.ReactTable .rt-thead.-filters input, .ReactTable .rt-thead.-filters select {
+  background: rgba(0,0,0,0.1) !important;
+}
+.ReactTable .-pagination input, .ReactTable .-pagination select {
+  background: rgba(0,0,0,0.1) !important;
+}
+.ReactTable .-pagination .-btn {
+  color: #ccc !important;
+}
 
 /* Diff */
 .codeMarker {
