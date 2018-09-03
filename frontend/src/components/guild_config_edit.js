@@ -8,7 +8,7 @@ import 'brace/theme/monokai'
 class ConfigHistory extends Component {
   render() {
     return (
-      <div class="col-lg-4">
+      <div class="col-lg-3">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <i class="fa fa-history fa-fw"></i> History
@@ -128,7 +128,7 @@ export default class GuildConfigEdit extends Component {
     return (<div>
       {this.state.message && <div className={"alert alert-" + this.state.message.type}>{this.state.message.contents}</div>}
       <div className="row">
-        <div className="col-md-8">
+        <div className="col-md-9">
           <div className="panel panel-default">
             <div className="panel-heading">
               <i className="fa fa-gear fa-fw"></i> Configuration Editor
