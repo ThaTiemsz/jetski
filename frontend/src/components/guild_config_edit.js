@@ -5,6 +5,37 @@ import {globalState} from '../state';
 import 'brace/mode/yaml'
 import 'brace/theme/monokai'
 
+class ConfigHistory extends Component {
+  render() {
+    return (
+      <div class="col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-history fa-fw"></i> History
+            </div>
+            <div class="panel-body">
+                <div class="list-group">
+                    <a href="#" class="list-group-item">
+                        <i class="fa fa-edit fa-fw"></i> Current version
+                        <span class="pull-right text-muted small"><em>12 minutes ago</em>
+                        </span>
+                    </a>
+                    <a href="#" class="list-group-item">
+                        <i class="fa fa-history fa-fw"></i> Modified by Mek#2137
+                        <span class="pull-right text-muted small" title="2018-08-30 01:03"><em>4 minutes ago</em></span>
+                    </a>
+                    <a href="#" class="list-group-item">
+                        <i class="fa fa-history fa-fw"></i> Modified by Tiemen#0001
+                        <span class="pull-right text-muted small" title="2018-08-29 17:41"><em>12 minutes ago</em>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+      </div>
+    );
+  }
+}
 
 export default class GuildConfigEdit extends Component {
   constructor() {
@@ -100,13 +131,13 @@ export default class GuildConfigEdit extends Component {
     return (<div>
       {this.state.message && <div className={"alert alert-" + this.state.message.type}>{this.state.message.contents}</div>}
       <div className="row">
-        <div className="col-md-12">
+        <div className="col-md-8">
           <div className="panel panel-default">
             <div className="panel-heading">
               <i className="fa fa-gear fa-fw"></i> Configuration Editor
             </div>
             <div className="panel-body">
-              { this.props.params.timestamp && this.state.history ? (
+              {this.props.params.timestamp && this.state.history ? (
                 <DiffEditor
                   mode="yaml"
                   theme="monokai"
@@ -138,6 +169,7 @@ export default class GuildConfigEdit extends Component {
             </div>
           </div>
         </div>
+        {this.props.params.timestamp && this.state.history && <ConfigHistory />}
       </div>
     </div>);
   }
