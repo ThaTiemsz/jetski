@@ -7,24 +7,26 @@ import 'brace/theme/monokai'
 
 class ConfigHistory extends Component {
   render() {
+    const buttonClass = this.props.timestamp ? `list-group-item` : `list-group-item active`
+
     return (
-      <div class="col-lg-3">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-history fa-fw"></i> History
+      <div className="col-lg-3">
+        <div className="panel panel-default">
+            <div className="panel-heading">
+                <i className="fa fa-history fa-fw"></i> History
             </div>
-            <div class="panel-body">
-                <div class="list-group">
-                    <a href="#" class="list-group-item">
-                        <i class="fa fa-edit fa-fw"></i> Current version
+            <div className="panel-body">
+                <div className="list-group">
+                    <a href="#" className={buttonClass}>
+                        <i className="fa fa-edit fa-fw"></i> Current version
                     </a>
-                    <a href="#" class="list-group-item active">
-                        <i class="fa fa-history fa-fw"></i> Modified by Manny Both-Hanz#7097
-                        <span class="pull-right text-muted small" title="2018-08-30 01:03"><em>4 minutes ago</em></span>
+                    <a href="#" className={buttonClass}>
+                        <i className="fa fa-history fa-fw"></i> Manny Both-Hanz#7097
+                        <span className="pull-right text-muted small" title="2018-08-30 01:03"><em>4 minutes ago</em></span>
                     </a>
-                    <a href="#" class="list-group-item">
-                        <i class="fa fa-history fa-fw"></i> Modified by Tiemen#0001
-                        <span class="pull-right text-muted small" title="2018-08-29 17:41"><em>12 minutes ago</em></span>
+                    <a href="#" className="list-group-item">
+                        <i className="fa fa-history fa-fw"></i> Tiemen#0001
+                        <span className="pull-right text-muted small" title="2018-08-29 17:41"><em>12 minutes ago</em></span>
                     </a>
                 </div>
             </div>
@@ -166,7 +168,7 @@ export default class GuildConfigEdit extends Component {
             </div>
           </div>
         </div>
-        {this.props.params.timestamp && this.state.history && <ConfigHistory />}
+        {this.props.params.timestamp && this.state.history && <ConfigHistory history={this.state.history} timestamp={this.props.params.timestamp} />}
       </div>
     </div>);
   }
