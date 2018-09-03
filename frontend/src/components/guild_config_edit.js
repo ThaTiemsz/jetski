@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AceEditor, { diff as DiffEditor } from 'react-ace';
-import {globalState} from '../state';
+import { globalState } from '../state';
+import { NavLink } from 'react-router-dom';
 import moment from 'moment';
 
 import 'brace/mode/yaml'
@@ -13,18 +14,13 @@ class ConfigHistory extends Component {
     if (this.props.history) {
       for (let change of this.props.history) {
         buttonsList.push(
-          <a href="#" className={this.props.timestamp === change.created_timestamp ? "list-group-item active" : "list-group-item"}>
+          <NavLink key={change.created_timestamp} to={`/guilds/${this.props.guild.id}/config/history/${change.created_timestamp}`} className="list-group-item" activeClassName="active">
             <i className="fa fa-history fa-fw"></i> {change.user.username}#{change.user.discriminator}
             <span className="pull-right text-muted small" title={change.created_at}><em>{moment(change.created_at).fromNow()}</em></span>
-          </a>
+          </NavLink>
         )
       }
     }
-
-    const buttonClass = 
-      (this.props.history && this.props.timestamp && this.props.history.find(c => c.created_timestamp == this.props.timestamp)) 
-      ? "list-group-item" 
-      : "list-group-item active"
 
     return (
       <div className="col-lg-3">
@@ -34,9 +30,9 @@ class ConfigHistory extends Component {
             </div>
             <div className="panel-body">
                 <div className="list-group">
-                    <a href="#" className={buttonClass}>
+                    <NavLink key='config' to={`/guilds/${this.props.guild.id}/config`} className="list-group-item" activeClassName="active">
                         <i className="fa fa-edit fa-fw"></i> Current version
-                    </a>
+                    </NavLink>
                     {this.props.history && buttonsList}
                 </div>
             </div>
@@ -178,7 +174,7 @@ export default class GuildConfigEdit extends Component {
             </div>
           </div>
         </div>
-        {this.props.params.timestamp && this.state.history && <ConfigHistory history={this.state.history} timestamp={this.props.params.timestamp} />}
+        {this.state.history && <ConfigHistory guild={this.state.guild} history={this.state.history} timestamp={this.props.params.timestamp} />}
       </div>
     </div>);
   }
