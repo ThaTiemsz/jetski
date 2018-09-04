@@ -6336,6 +6336,10 @@ button.list-group-item {
     color: #fff
 }
 
+.list-group-item.active .text-muted {
+    color: rgba(255, 255, 255, 0.7)
+}
+
 a.list-group-item .list-group-item-heading,
 button.list-group-item .list-group-item-heading {
     color: #333
