@@ -537,7 +537,7 @@ class UtilitiesPlugin(Plugin):
     @Plugin.command('remind', '<duration:str> <content:str...>', global_=True)
     def cmd_remind(self, event, duration, content):
         if Reminder.count_for_user(event.author.id) > 30:
-            return event.msg.reply(':warning: you an only have 15 reminders going at once!')
+            return event.msg.reply(':warning: you can only have 15 reminders going at once!')
 
         remind_at = parse_duration(duration)
         if remind_at > (datetime.utcnow() + timedelta(seconds=5 * YEAR_IN_SEC)):
