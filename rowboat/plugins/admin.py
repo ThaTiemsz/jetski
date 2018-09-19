@@ -1426,6 +1426,6 @@ class AdminPlugin(Plugin):
         )
 
         if interval > 0:
-            raise CommandSuccess(u'slowmode enabled {}'.format(name))
+            raise CommandSuccess('slowmode enabled')
         elif interval == 0:
-            raise CommandSuccess(u'slowmode disabled {}'.format(name))
+            raise CommandSuccess('slowmode disabled')
