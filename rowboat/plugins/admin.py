@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 
 from disco.bot import CommandLevels
 from disco.types.user import User as DiscoUser
+from disco.types.channel import Channel as DiscoChannel
 from disco.types.message import MessageTable, MessageEmbed, MessageEmbedField, MessageEmbedThumbnail
 from disco.types.permissions import Permissions
 from disco.util.functional import chunks
@@ -1408,3 +1409,23 @@ class AdminPlugin(Plugin):
 
         self.unlocked_roles[role_id] = time.time() + 300
         raise CommandSuccess('role is unlocked for 5 minutes')
+
+    @Plugin.command('slowmode', '[channel:channel|snowflake] <interval:int>', level=CommandLevels.MOD)
+    def slowmode(self, event, interval, channel=None):
+        if 0 <= interval <= 120:
+            raise CommandFail('rate limit interval must be between 0-120')
+        
+        if isinstance(channel, DiscoChannel):
+            channel = channel.id
+        
+        channel_id = channel or event.channel.id
+        self.bot.client.api.channels_modify(
+            channel_id,
+            rate_limit_per_user=length,
+            reason=u'{} by {} ({})'.format('Enabled' if interval > 0 else 'Disabled', event.msg.author, event.msg.author.id)
+        )
+
+        if interval > 0:
+            raise CommandSuccess(u'slowmode enabled {}'.format(name))
+        elif interval == 0:
+            raise CommandSuccess(u'slowmode disabled {}'.format(name))
