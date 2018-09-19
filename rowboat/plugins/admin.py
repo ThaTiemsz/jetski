@@ -1411,7 +1411,7 @@ class AdminPlugin(Plugin):
         raise CommandSuccess('role is unlocked for 5 minutes')
 
     @Plugin.command('slowmode', '<interval:int> [channel:channel|snowflake]', level=CommandLevels.MOD)
-    def slowmode(self, event, interval, channel=None):
+    def slowmode(self, event, interval=0, channel=None):
         if 0 <= interval <= 120:
             raise CommandFail('rate limit interval must be between 0-120')
         
