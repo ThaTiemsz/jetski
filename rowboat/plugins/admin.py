@@ -1421,7 +1421,7 @@ class AdminPlugin(Plugin):
         channel_id = channel or event.channel.id
         self.bot.client.api.channels_modify(
             channel_id,
-            rate_limit_per_user=length,
+            rate_limit_per_user=interval,
             reason=u'{} by {} ({})'.format('Enabled' if interval > 0 else 'Disabled', event.msg.author, event.msg.author.id)
         )
 
