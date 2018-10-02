@@ -416,7 +416,7 @@ class StarboardPlugin(Plugin):
         # Generate the embed and post it
         content, embed = self.get_embed(star, source_msg, config)
 
-		if not source_msg.guild.channels.get(starboard_id):
+        if not source_msg.guild.channels.get(starboard_id):
             target = self.bot.state.channels.get(starboard_id)
             if not (target and target.guild):
                 return
