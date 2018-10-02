@@ -144,6 +144,10 @@ class SQLPlugin(Plugin):
                 start = time.time()
                 cur.execute(event.codeblock.format(e=event))
                 dur = time.time() - start
+
+                if not cur.description:
+                    return event.msg.reply('_no result - took {}ms_'.format(int(dur * 1000)))
+
                 tbl.set_header(*[desc[0] for desc in cur.description])
 
                 for row in cur.fetchall():
