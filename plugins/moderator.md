@@ -138,6 +138,14 @@ The admin plugin provides a set of useful moderator commands. These commands are
       </td>
     </tr>
     <tr>
+      <td style="text-align:left"><code>!infractions (recent / latest)</code>
+      </td>
+      <td style="text-align:left">Presents information on the most recent infraction</td>
+      <td style="text-align:left">Moderator</td>
+      <td style="text-align:left"><code>!infractions recent</code>
+      </td>
+    </tr>
+    <tr>
       <td style="text-align:left"><code>!infractions duration {inf#} {duration}</code>
       </td>
       <td style="text-align:left">Updates the duration of the given infraction. Duration starts from time
