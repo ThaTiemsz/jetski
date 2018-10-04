@@ -490,7 +490,7 @@ class AdminPlugin(Plugin):
         except Infraction.DoesNotExist:
             raise CommandFail('cannot find an infraction with ID `{}`'.format(infraction))
 
-        msg = event.msg.reply('Ok, delete infraction #`{}`?'.format(infraction))
+        msg = event.msg.reply('Ok, delete infraction #{}?'.format(infraction))
         msg.chain(False).\
             add_reaction(GREEN_TICK_EMOJI).\
             add_reaction(RED_TICK_EMOJI)
@@ -514,7 +514,7 @@ class AdminPlugin(Plugin):
         inf.delete_instance()
         self.queue_infractions()
 
-        raise CommandSuccess('deleted infraction #`{}`.'.format(infraction))
+        raise CommandSuccess('deleted infraction #{}.'.format(infraction))
 
     @Plugin.command('duration', '<infraction:int> <duration:str>', group='infractions', level=CommandLevels.MOD)
     def infraction_duration(self, event, infraction, duration):
