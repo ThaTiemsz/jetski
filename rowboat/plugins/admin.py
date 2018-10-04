@@ -445,7 +445,6 @@ class AdminPlugin(Plugin):
 
     @Plugin.command('recent', aliases=['latest'], group='infractions', level=CommandLevels.MOD)
     def infractions_recent(self, event):
-        q = (Infraction.guild_id == event.guild.id)
         user = User.alias()
         actor = User.alias()
 
@@ -455,7 +454,9 @@ class AdminPlugin(Plugin):
         ).switch(Infraction).join(
             actor,
             on=((Infraction.actor_id == actor.user_id).alias('actor'))
-        ).where(q).order_by(Infraction.created_at.desc()).limit(1)
+        ).where(
+            (Infraction.guild_id == event.guild.id)
+        ).order_by(Infraction.created_at.desc()).limit(1).get()
         
         type_ = {i.index: i for i in Infraction.Types.attrs}[infraction.type_]
         embed = MessageEmbed()
