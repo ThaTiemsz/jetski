@@ -417,7 +417,7 @@ class StarboardPlugin(Plugin):
         content, embed = self.get_embed(star, source_msg, config)
 
         if not source_msg.guild.channels.get(starboard_id):
-            target = self.bot.state.channels.get(starboard_id)
+            target = self.state.channels.get(starboard_id)
             if not (target and target.guild):
                 return
             return self.log.exception((
