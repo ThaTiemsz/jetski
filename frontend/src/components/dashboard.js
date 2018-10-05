@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import CountUp from 'react-countup';
 
 import PageHeader from './page_header';
 import GuildsTable from './guilds_table';
 import {globalState} from '../state';
-
 
 class DashboardGuildsList extends Component {
   constructor() {
@@ -108,7 +108,9 @@ class StatsPanel extends Component {
                 <i className={iconClass}></i>
               </div>
               <div className="col-xs-9 text-right">
-                <div className="huge">{this.props.data || 'N/A'}</div>
+                <div className="large">
+                  <CountUp className={this.props.text.toLowerCase()} separator="," start={0} end={this.props.data || 0} useGrouping={true} duration={3} redraw={true} />
+                </div>
                 <div>{this.props.text}</div>
               </div>
             </div>
@@ -124,105 +126,39 @@ class Stats extends Component {
     super();
     this.state = {
       stats: {
-        messages: "0",
-        guilds: "0",
-        users: "0",
-        channels: "0"
+        messages: null,
+        guilds: null,
+        users: null,
+        channels: null
       }
     };
   }
 
-  componentWillMount() {
-    // let statsPanels = [];
+  render() {
     // if (globalState.user.admin) {
-    //   globalState.getStats((stats) => {
-    //     // statsPanels.push(
-    //     //     <StatsPanel color='primary' icon='comments' data={stats.messages} text='Messages' key='messages' />
-    //     // );
-    //     // statsPanels.push(
-    //     //     <StatsPanel color='green' icon='server' data={stats.guilds} text='Guilds' key='guilds' />
-    //     // );
-    //     // statsPanels.push(
-    //     //     <StatsPanel color='yellow' icon='user' data={stats.users} text='Users' key='users' />
-    //     // );
-    //     // statsPanels.push(
-    //     //     <StatsPanel color='red' icon='hashtag' data={stats.channels} text='Channels' key='channels' />
-    //     // );
-    //     statsPanels.push(stats);
-    //     this.setState({
-    //       panels: statsPanels
-    //     });
-    //   });
-    // }
-    if (globalState.user.admin) {
+    if (this.state.stats.guilds === null) {
       globalState.getStats().then((stats) => {
         this.setState({stats});
       });
     }
-  }
 
-  drawStats({ color, icon, data, text}) {
-    const panelClass = `panel panel-${color}`;
-    const iconClass = `fa fa-${icon} fa-5x`;
-
-    return (
-      <div className="col-lg-3 col-md-6">
-        <div className={panelClass}>
-          <div className="panel-heading">
-            <div className="row">
-              <div className="col-xs-3">
-                <i className={iconClass}></i>
-              </div>
-              <div className="col-xs-9 text-right">
-                <div className="huge">{data || 'N/A'}</div>
-                <div>{text}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    let statsPanels = [];
+    statsPanels.push(
+        <StatsPanel color='primary' icon='comments' data={this.state.stats.messages || 0} text='Messages' key='messages' />
     );
-  }
-  
-  render() {
-    // let panel = this.state.stats;
-    const data = this.state.stats;
-    // if (!panel[0]) return (<div></div>);
-
-    // let renderPanels = [];
-    // for (let panel in panels[0]) {
-    //   renderPanels.push(
-    //     <StatsPanel color='primary' icon='comments' data={panels[0][panel]} text='Messages' key={panels} />
-    //   );
-    // }
-    // console.log(renderPanels);
+    statsPanels.push(
+        <StatsPanel color='green' icon='server' data={this.state.stats.guilds || 0} text='Guilds' key='guilds' />
+    );
+    statsPanels.push(
+        <StatsPanel color='yellow' icon='user' data={this.state.stats.users || 0} text='Users' key='users' />
+    );
+    statsPanels.push(
+        <StatsPanel color='red' icon='hashtag' data={this.state.stats.channels || 0} text='Channels' key='channels' />
+    );
 
     return (
       <div>
-        {this.drawStats({
-          color: "primary",
-          icon: "comments",
-          data: data.messages || 0,
-          text: "Messages"
-        })}
-        {this.drawStats({
-          color: "green",
-          icon: "server",
-          data: data.guilds || 0,
-          text: "Guilds"
-        })}
-        {this.drawStats({
-          color: "yellow",
-          icon: "user",
-          data: data.users || 0,
-          text: "Users"
-        })}
-        {this.drawStats({
-          color: "red",
-          icon: "hashtag",
-          data: data.channels || 0,
-          text: "Channels"
-        })}
+        {statsPanels}
       </div>
     );
   }

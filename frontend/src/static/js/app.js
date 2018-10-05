@@ -5,7 +5,7 @@ function notify(level, msg) {
   div.delay(6000).fadeOut();
 }
 
-if (document.querySelector("div.panel-primary")) {
+/* if (document.querySelector("div.panel-primary")) {
   setTimeout(async() => {
     const res = await fetch("/api/stats", { method: "GET" });
     const stats = await res.json();
@@ -19,4 +19,4 @@ if (document.querySelector("div.panel-primary")) {
       $(`div.panel-${color[key]} .huge`).text(stats[key]);
     }
   }, 1500);
-}
+} */

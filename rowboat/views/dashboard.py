@@ -45,10 +45,14 @@ def stats():
     stats = json.loads(rdb.get('web:dashboard:stats') or '{}')
 
     if not stats or 'refresh' in request.args:
-        stats['messages'] = pretty_number(Message.select().count())
-        stats['guilds'] = pretty_number(Guild.select().count())
-        stats['users'] = pretty_number(User.select().count())
-        stats['channels'] = pretty_number(Channel.select().count())
+        # stats['messages'] = pretty_number(Message.select().count())
+        # stats['guilds'] = pretty_number(Guild.select().count())
+        # stats['users'] = pretty_number(User.select().count())
+        # stats['channels'] = pretty_number(Channel.select().count())
+        stats['messages'] = Message.select().count()
+        stats['guilds'] = Guild.select().count()
+        stats['users'] = User.select().count()
+        stats['channels'] = Channel.select().count()
 
         rdb.setex('web:dashboard:stats', json.dumps(stats), 300)
     
