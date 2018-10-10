@@ -295,7 +295,7 @@ class AdminPlugin(Plugin):
                 to_update[field] = getattr(role_before, field)
 
         if to_update:
-            self.log.warning('Rolling back update to roll %s (in %s), roll is locked', event.role.id, event.guild_id)
+            self.log.warning('Rolling back update to role %s (in %s), role is locked', event.role.id, event.guild_id)
             self.role_debounces[event.role.id] = time.time() + 60
             event.role.update(**to_update)
 
@@ -582,16 +582,38 @@ class AdminPlugin(Plugin):
 
         raise CommandSuccess('I\'ve updated the reason for infraction #{}'.format(inf.id))
 
-    @Plugin.command('roles', level=CommandLevels.MOD)
-    def roles(self, event):
+    # Full credit goes to: Xenthys
+    @Plugin.command('roles', '[pattern:str...]', level=CommandLevels.MOD)
+    def roles(self, event, pattern=None):
         buff = ''
-        for role in event.guild.roles.values():
-            role = S(u'{} - {}\n'.format(role.id, role.name), escape_codeblocks=True)
+        g = event.guild
+
+        total = {}
+        members = g.members.values()
+        for member in members:
+            for role_id in member.roles:
+                total[role_id] = total.get(role_id, 0) + 1
+
+        roles = g.roles.values()
+        roles = sorted(roles, key=lambda r: r.position, reverse=True)
+        for role in roles:
+            if pattern and role.name.lower().find(pattern.lower()) == -1: continue
+            role_members = total.get(role.id, 0) if role.id != g.id else len(g.members)
+            role = S(u'{} - {} ({} member{})\n'.format(
+                role.id,
+                role.name,
+                role_members,
+                's' if role_members != 1 else ''
+            ), escape_codeblocks=True)
             if len(role) + len(buff) > 1990:
-                event.msg.reply(u'```{}```'.format(buff))
+                event.msg.reply(u'```xl\n{}```'.format(buff))
                 buff = ''
             buff += role
-        return event.msg.reply(u'```{}```'.format(buff))
+
+        if not buff:
+            return
+
+        return event.msg.reply(u'```xl\n{}```'.format(buff))
 
     @Plugin.command('restore', '<user:user>', level=CommandLevels.MOD, group='backups')
     def restore(self, event, user):
