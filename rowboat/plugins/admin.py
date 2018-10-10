@@ -606,14 +606,14 @@ class AdminPlugin(Plugin):
                 's' if role_members != 1 else ''
             ), escape_codeblocks=True)
             if len(role) + len(buff) > 1990:
-                event.msg.reply(u'```xl\n{}```'.format(buff))
+                event.msg.reply(u'```dns\n{}```'.format(buff))
                 buff = ''
             buff += role
 
         if not buff:
             return
 
-        return event.msg.reply(u'```xl\n{}```'.format(buff))
+        return event.msg.reply(u'```dns\n{}```'.format(buff))
 
     @Plugin.command('restore', '<user:user>', level=CommandLevels.MOD, group='backups')
     def restore(self, event, user):
