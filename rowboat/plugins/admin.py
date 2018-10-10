@@ -1534,6 +1534,6 @@ class AdminPlugin(Plugin):
         elif interval == 0:
             raise CommandSuccess('slowmode disabled')
 
-    @Plugin.command('ping', level=CommandLevels.MOD):
+    @Plugin.command('ping', level=CommandLevels.MOD)
     def ping(self, event):
         raise CommandSuccess('Pong!')
