@@ -16,7 +16,7 @@ class ConfigHistory extends Component {
         buttonsList.push(
           <NavLink key={change.created_timestamp} to={`/guilds/${this.props.guild.id}/config/${change.created_timestamp}`} className="list-group-item" activeClassName="active">
             <i className="fa fa-history fa-fw"></i> {change.user.username}#{change.user.discriminator}
-            <span className="pull-right text-muted small" title={change.created_at}><em>{moment(change.created_at).fromNow()}</em></span>
+            <span className="pull-right text-muted small" title={change.created_at}><em>{moment(new Date(change.created_timestamp*1000).toLocaleString()).fromNow()}</em></span>
           </NavLink>
         )
       }
