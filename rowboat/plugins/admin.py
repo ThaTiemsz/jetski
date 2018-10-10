@@ -444,6 +444,7 @@ class AdminPlugin(Plugin):
 
         event.msg.reply(tbl.compile())
 
+    # Thanks OGNovuh / Terminator966
     @Plugin.command('recent', aliases=['latest'], group='infractions', level=CommandLevels.MOD)
     def infractions_recent(self, event):
         user = User.alias()
@@ -481,6 +482,7 @@ class AdminPlugin(Plugin):
         embed.timestamp = infraction.created_at.isoformat()
         event.msg.reply('', embed=embed)
 
+    # Thanks OGNovuh / Terminator966
     @Plugin.command('delete', '<infraction:int>', group='infractions', aliases=['remove', 'del', 'rem', 'rm', 'rmv'], level=-1)
     def infraction_delete(self, event, infraction):
         try:
