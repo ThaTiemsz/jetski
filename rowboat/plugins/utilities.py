@@ -561,10 +561,11 @@ class UtilitiesPlugin(Plugin):
             return event.msg.reply(':ok_hand: I cleared {} reminders for you'.format(count))
         else:
             try:
+                reminder = int(reminder)
                 r = Reminder.select(Reminder).where(
                     (Reminder.message_id << Reminder.with_message_join((Message.id, )).where(
                         Message.author_id == event.author.id
-                    )) & (Reminder.id == int(reminder))
+                    )) & (Reminder.id == reminder)
                 ).get()
             except Reminder.DoesNotExist:
                 return event.reply('<:{}> cannot find reminder #{}'.format(RED_TICK_EMOJI, reminder))
