@@ -487,7 +487,7 @@ class AdminPlugin(Plugin):
     def infraction_delete(self, event, infraction):
         try:
             inf = Infraction.select(Infraction).where(
-                    (Infraction.id == infraction)
+                (Infraction.id == infraction)
             ).get()
         except Infraction.DoesNotExist:
             raise CommandFail('cannot find an infraction with ID `{}`'.format(infraction))
@@ -1534,6 +1534,6 @@ class AdminPlugin(Plugin):
         elif interval == 0:
             raise CommandSuccess('slowmode disabled')
 
-    @Plugin.command('ping', level=CommandLevels.MOD)
+    @Plugin.command('pong', level=CommandLevels.MOD)
     def ping(self, event):
-        raise CommandSuccess('Pong!')
+        raise CommandSuccess('Pang!')

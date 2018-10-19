@@ -563,7 +563,7 @@ class UtilitiesPlugin(Plugin):
             try:
                 r = Reminder.select(Reminder).where(
                     (Reminder.message_id << Reminder.with_message_join((Message.id, )).where(
-                        Message.author_id == user_id
+                        Message.author_id == event.author.id
                     )) & (Reminder.id == int(reminder))
                 ).get()
             except Reminder.DoesNotExist:
