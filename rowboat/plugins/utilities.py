@@ -28,7 +28,7 @@ from rowboat.models.user import User, Infraction
 from rowboat.models.message import Message, Reminder
 from rowboat.util.images import get_dominant_colors_user, get_dominant_colors_guild
 from rowboat.constants import (
-    STATUS_EMOJI, SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID,
+    STATUS_EMOJI, SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI, RED_TICK_EMOJI_ID, 
     EMOJI_RE, USER_MENTION_RE, YEAR_IN_SEC, CDN_URL
 )
 
@@ -528,10 +528,70 @@ class UtilitiesPlugin(Plugin):
 
         reminder.delete_instance()
 
-    @Plugin.command('clear', group='r', global_=True)
-    def cmd_remind_clear(self, event):
-        count = Reminder.delete_for_user(event.author.id)
-        return event.msg.reply(':ok_hand: I cleared {} reminders for you'.format(count))
+    @Plugin.command('clear', '[reminder:str]', group='r', global_=True)
+    def cmd_remind_clear(self, event, reminder='all'):
+        if reminder == 'all':
+            count = Reminder.count_for_user(event.author.id)
+
+            if Reminder.count_for_user(event.author.id) == 0:
+                return event.reply('<:{}> cannot clear reminders when you don\'t have any'.format(RED_TICK_EMOJI))
+            
+            msg = event.msg.reply('Ok, clear {} reminders?'.format(count))
+            msg.chain(False).\
+                add_reaction(GREEN_TICK_EMOJI).\
+                add_reaction(RED_TICK_EMOJI)
+
+            try:
+                mra_event = self.wait_for_event(
+                    'MessageReactionAdd',
+                    message_id=msg.id,
+                    conditional=lambda e: (
+                        e.emoji.id in (GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI_ID) and
+                        e.user_id == event.author.id
+                    )).get(timeout=10)
+            except gevent.Timeout:
+                return
+            finally:
+                msg.delete()
+
+            if mra_event.emoji.id != GREEN_TICK_EMOJI_ID:
+                return
+            
+            count = Reminder.delete_all_for_user(event.author.id)
+            return event.msg.reply(':ok_hand: I cleared {} reminders for you'.format(count))
+        else:
+            try:
+                r = Reminder.select(Reminder).where(
+                    (Reminder.message_id << Reminder.with_message_join((Message.id, )).where(
+                        Message.author_id == user_id
+                    )) & (Reminder.id == int(reminder))
+                ).get()
+            except Reminder.DoesNotExist:
+                return event.reply('<:{}> cannot find reminder #{}'.format(RED_TICK_EMOJI, reminder))
+            
+            msg = event.msg.reply('Ok, clear reminder #{}?'.format(reminder))
+            msg.chain(False).\
+                add_reaction(GREEN_TICK_EMOJI).\
+                add_reaction(RED_TICK_EMOJI)
+
+            try:
+                mra_event = self.wait_for_event(
+                    'MessageReactionAdd',
+                    message_id=msg.id,
+                    conditional=lambda e: (
+                        e.emoji.id in (GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI_ID) and
+                        e.user_id == event.author.id
+                    )).get(timeout=10)
+            except gevent.Timeout:
+                return
+            finally:
+                msg.delete()
+
+            if mra_event.emoji.id != GREEN_TICK_EMOJI_ID:
+                return
+            
+            Reminder.delete_for_user(event.author.id, r.id)
+            return event.msg.reply(':ok_hand: I cleared reminder #{} for you'.format(r.id))
 
     @Plugin.command('add', '<duration:str> <content:str...>', group='r', global_=True)
     @Plugin.command('remind', '<duration:str> <content:str...>', global_=True)
@@ -553,3 +613,10 @@ class UtilitiesPlugin(Plugin):
             r.remind_at.isoformat(),
             humanize.naturaldelta(r.remind_at - datetime.utcnow()),
         ))
+    
+    @Plugin.command('list', '[count:int]', context={'mode': 'server'}, group='r', global_=True)
+    @Plugin.command('reminders all', '[count:int]', context={'mode': 'all'}, global_=True)
+    @Plugin.command('reminders', '[count:int]', context={'mode': 'server'}, global_=True)
+    def cmd_remind_list(self, event, count=0, mode=None):
+        # TO-DO
+        return event.msg.reply('mode: {}\ncount: {}'.format(mode, count))

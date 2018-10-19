@@ -366,7 +366,8 @@ class StarboardEntry(BaseModel):
 
 @BaseModel.register
 class Reminder(BaseModel):
-    message_id = BigIntegerField(primary_key=True)
+    id = PrimaryKeyField()
+    message_id = BigIntegerField()
 
     created_at = DateTimeField(default=datetime.utcnow)
     remind_at = DateTimeField()
@@ -390,11 +391,19 @@ class Reminder(BaseModel):
         ).count()
 
     @classmethod
-    def delete_for_user(cls, user_id):
+    def delete_all_for_user(cls, user_id):
         return cls.delete().where(
             (cls.message_id << cls.with_message_join((Message.id, )).where(
                 Message.author_id == user_id
             ))
+        ).execute()
+
+    @classmethod
+    def delete_for_user(cls, user_id, id):
+        return cls.delete().where(
+            (cls.message_id << cls.with_message_join((Message.id, )).where(
+                Message.author_id == user_id
+            )) & (cls.id == id)
         ).execute()
 
 
