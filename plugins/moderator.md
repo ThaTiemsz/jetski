@@ -191,6 +191,14 @@ The admin plugin provides a set of useful moderator commands. These commands are
         </p>
       </td>
     </tr>
+    <tr>
+      <td style="text-align:left"><code>!pong</code>
+      </td>
+      <td style="text-align:left">Ping pong pang</td>
+      <td style="text-align:left">Moderator</td>
+      <td style="text-align:left"><code>!pong</code>
+      </td>
+    </tr>
   </tbody>
 </table>## Configuration Options
 
