@@ -5,7 +5,7 @@ import uuid
 import traceback
 
 from peewee import (
-    BigIntegerField, ForeignKeyField, TextField, DateTimeField,
+    PrimaryKeyField, BigIntegerField, ForeignKeyField, TextField, DateTimeField,
     BooleanField, UUIDField
 )
 from yaml import load
