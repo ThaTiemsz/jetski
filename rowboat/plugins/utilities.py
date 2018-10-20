@@ -615,9 +615,41 @@ class UtilitiesPlugin(Plugin):
             humanize.naturaldelta(r.remind_at - datetime.utcnow()),
         ))
     
-    @Plugin.command('list', '[count:int]', context={'mode': 'server'}, group='r', global_=True)
-    @Plugin.command('reminders all', '[count:int]', context={'mode': 'all'}, global_=True)
-    @Plugin.command('reminders', '[count:int]', context={'mode': 'server'}, global_=True)
-    def cmd_remind_list(self, event, count=0, mode=None):
-        # TO-DO
-        return event.msg.reply('mode: {}\ncount: {}'.format(mode, count))
+    # @Plugin.command('list global', '[count:int]', context={'mode': 'global'}, group='r', global_=True)
+    @Plugin.command('list', '[limit:int]', context={'mode': 'server'}, group='r', global_=True)
+    # @Plugin.command('reminders global', '[count:int]', context={'mode': 'global'}, global_=True)
+    @Plugin.command('reminders', '[limit:int]', context={'mode': 'server'}, global_=True)
+    def cmd_remind_list(self, event, limit=None, mode=None):
+        user = event.msg.author
+        count = Reminder.count_for_user(user.id)
+        avatar = u'https://cdn.discordapp.com/avatars/{}/{}.png'.format(
+            user.id,
+            user.avatar,
+        )
+
+        embed = MessageEmbed()
+        embed.title = '{} reminder{}'.format(count, '' if count == 1 else 's')
+
+        embed.set_author(name=u'{}#{}'.format(
+            user.username,
+            user.discriminator,
+        ), icon_url=avatar)
+        embed.color = get_dominant_colors_user(user, avatar)
+        embed.set_footer(text='You can cancel reminders with !r clear [ID]')
+
+        if count == 0:
+            embed.description = 'You have no upcoming reminders.'
+        else:
+            query = Reminder.select(Reminder).where(
+                (Reminder.message_id << Reminder.with_message_join((Message.id, )).where(
+                    Message.author_id == event.author.id
+                )) & (Reminder.remind_at > (datetime.utcnow() + timedelta(seconds=1)))
+            ).order_by(Reminder.remind_at).limit(limit)
+
+            for reminder in query:
+                time = humanize.naturaldelta(reminder.remind_at - datetime.utcnow())
+                channel = Message.select().where(Message.id == reminder.message_id).get().channel_id
+
+                embed.add_field(name=u'#{} in {} (#{})'.format(reminder.id, time, channel), value=S(reminder.content))
+
+        return event.msg.reply(embed=embed)
