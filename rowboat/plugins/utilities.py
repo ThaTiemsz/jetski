@@ -653,7 +653,8 @@ class UtilitiesPlugin(Plugin):
 
             for reminder in query:
                 time = humanize.naturaldelta(reminder.remind_at - datetime.utcnow())
-                channel = Message.select().where(Message.id == reminder.message_id).get().name
+                channel = Message.select().where(Message.id == reminder.message_id).get().channel_id
+                channel = self.state.channels.get(channel).name
 
                 embed.add_field(name=u'#{} in {} (#{})'.format(reminder.id, time, channel), value=S(reminder.content))
 
