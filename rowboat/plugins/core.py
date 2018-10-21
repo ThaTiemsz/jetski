@@ -166,7 +166,8 @@ class CorePlugin(Plugin):
         super(CorePlugin, self).unload(ctx)
 
     def update_rowboat_guild_access(self):
-        if ROWBOAT_GUILD_ID not in self.state.guilds or ENV != 'prod':
+        # if ROWBOAT_GUILD_ID not in self.state.guilds or ENV != 'prod':
+        if ROWBOAT_GUILD_ID not in self.state.guilds or ENV not in ('prod', 'docker'):
             return
 
         rb_guild = self.state.guilds.get(ROWBOAT_GUILD_ID)
@@ -472,7 +473,8 @@ class CorePlugin(Plugin):
             # Otherwise, default to requiring mentions
             commands = list(self.bot.get_commands_for_message(True, {}, '', event.message))
         else:
-            if ENV != 'prod':
+            # if ENV != 'prod':
+            if ENV not in ('prod', 'docker'):
                 if not event.message.content.startswith(ENV + '!'):
                     return
                 event.message.content = event.message.content[len(ENV) + 1:]
