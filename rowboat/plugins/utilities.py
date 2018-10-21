@@ -534,7 +534,7 @@ class UtilitiesPlugin(Plugin):
             count = Reminder.count_for_user(event.author.id)
 
             if Reminder.count_for_user(event.author.id) == 0:
-                return event.reply('<:{}> cannot clear reminders when you don\'t have any'.format(RED_TICK_EMOJI))
+                return event.msg.reply('<:{}> cannot clear reminders when you don\'t have any'.format(RED_TICK_EMOJI))
             
             msg = event.msg.reply('Ok, clear {} reminders?'.format(count))
             msg.chain(False).\
@@ -561,14 +561,19 @@ class UtilitiesPlugin(Plugin):
             return event.msg.reply(':ok_hand: I cleared {} reminders for you'.format(count))
         else:
             try:
-                reminder = int(reminder)
+                # stupid catch because python sucks
+                try:
+                    reminder = int(reminder)
+                except:
+                    return event.msg.reply('cannot convert `{}` to `int`'.format(S(reminder)))
+                
                 r = Reminder.select(Reminder).where(
                     (Reminder.message_id << Reminder.with_message_join((Message.id, )).where(
                         Message.author_id == event.author.id
                     )) & (Reminder.id == reminder)
                 ).get()
             except Reminder.DoesNotExist:
-                return event.reply('<:{}> cannot find reminder #{}'.format(RED_TICK_EMOJI, reminder))
+                return event.msg.reply('<:{}> cannot find reminder #{}'.format(RED_TICK_EMOJI, reminder))
             
             msg = event.msg.reply('Ok, clear reminder #{}?'.format(reminder))
             msg.chain(False).\
@@ -648,7 +653,7 @@ class UtilitiesPlugin(Plugin):
 
             for reminder in query:
                 time = humanize.naturaldelta(reminder.remind_at - datetime.utcnow())
-                channel = Message.select().where(Message.id == reminder.message_id).get().channel_id
+                channel = Message.select().where(Message.id == reminder.message_id).get().name
 
                 embed.add_field(name=u'#{} in {} (#{})'.format(reminder.id, time, channel), value=S(reminder.content))
 
