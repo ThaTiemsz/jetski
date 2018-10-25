@@ -566,7 +566,7 @@ class AdminPlugin(Plugin):
     def infraction_delete(self, event, infraction):
         try:
             inf = Infraction.select(Infraction).where(
-                    (Infraction.id == infraction)
+                (Infraction.id == infraction)
             ).get()
         except Infraction.DoesNotExist:
             raise CommandFail('cannot find an infraction with ID `{}`'.format(infraction))
