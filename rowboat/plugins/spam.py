@@ -164,7 +164,7 @@ class SpamPlugin(Plugin):
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Mute', violation.event.guild.name), embed=embed)
                     except APIException:
-                        raise
+                        pass
                 
                 Infraction.mute(
                     self,
@@ -179,7 +179,7 @@ class SpamPlugin(Plugin):
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Temp-mute', violation.event.guild.name), embed=embed)
                     except APIException:
-                        raise
+                        pass
                 
                 Infraction.tempmute(
                     self,
@@ -194,7 +194,7 @@ class SpamPlugin(Plugin):
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Kick', violation.event.guild.name), embed=embed)
                     except APIException:
-                        raise
+                        pass
                 
                 Infraction.kick(
                     self,
@@ -209,7 +209,7 @@ class SpamPlugin(Plugin):
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Temp-ban', violation.event.guild.name), embed=embed)
                     except APIException:
-                        raise
+                        pass
                 
                 Infraction.tempban(
                     self,
@@ -224,7 +224,7 @@ class SpamPlugin(Plugin):
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Ban', violation.event.guild.name), embed=embed)
                     except APIException:
-                        raise
+                        pass
                 
                 Infraction.ban(
                     self,
