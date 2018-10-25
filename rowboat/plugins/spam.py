@@ -8,11 +8,13 @@ from collections import defaultdict
 from holster.enum import Enum
 from holster.emitter import Priority
 from disco.util.sanitize import ZERO_WIDTH_SPACE
+from disco.api.http import APIException
 
 from rowboat.plugins import RowboatPlugin as Plugin
 from rowboat.redis import rdb
 from rowboat.plugins.modlog import Actions
 from rowboat.plugins.censor import URL_RE
+from rowboat.plugins.admin import infraction_message
 from rowboat.util.leakybucket import LeakyBucket
 from rowboat.util.stats import timed
 from rowboat.types.plugin import PluginConfig
@@ -55,6 +57,7 @@ class SubConfig(SlottedModel):
 
     punishment = Field(PunishmentType, default=PunishmentType.NONE)
     punishment_duration = Field(int, default=300)
+    punishment_dms = Field(bool, default=False)
 
     clean = Field(bool, default=False)
     clean_count = Field(int, default=100)
@@ -155,32 +158,74 @@ class SpamPlugin(Plugin):
             punishment_duration = violation.check.punishment_duration or violation.rule.punishment_duration
 
             if punishment == PunishmentType.MUTE:
+                if violation.rule.punishment_dms:
+                    try:
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'mute', violation.event.guild.name, 'Jetski', 'Spam Detected', auto=True)
+                        dm = self.client.api.users_me_dms_create(violation.member.id)
+                        dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Mute', violation.event.guild.name), embed=embed)
+                    except APIException:
+                        raise
+                
                 Infraction.mute(
                     self,
                     violation.event,
                     violation.member,
                     'Spam Detected')
             elif punishment == PunishmentType.TEMPMUTE:
+                expiration_date = datetime.utcnow() + timedelta(seconds=punishment_duration)
+                if violation.rule.punishment_dms:
+                    try:
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'tempmute', violation.event.guild.name, 'Jetski', 'Spam Detected', expires=expiration_date, auto=True)
+                        dm = self.client.api.users_me_dms_create(violation.member.id)
+                        dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Temp-mute', violation.event.guild.name), embed=embed)
+                    except APIException:
+                        raise
+                
                 Infraction.tempmute(
                     self,
                     violation.event,
                     violation.member,
                     'Spam Detected',
-                    datetime.utcnow() + timedelta(seconds=punishment_duration))
+                    expiration_date)
             elif punishment == PunishmentType.KICK:
+                if violation.rule.punishment_dms:
+                    try:
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'kick', violation.event.guild.name, 'Jetski', 'Spam Detected', auto=True)
+                        dm = self.client.api.users_me_dms_create(violation.member.id)
+                        dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Kick', violation.event.guild.name), embed=embed)
+                    except APIException:
+                        raise
+                
                 Infraction.kick(
                     self,
                     violation.event,
                     violation.member,
                     'Spam Detected')
             elif punishment == PunishmentType.TEMPBAN:
+                expiration_date = datetime.utcnow() + timedelta(seconds=punishment_duration)
+                if violation.rule.punishment_dms:
+                    try:
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'tempban', violation.event.guild.name, 'Jetski', 'Spam Detected', expires=expiration_date, auto=True)
+                        dm = self.client.api.users_me_dms_create(violation.member.id)
+                        dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Temp-ban', violation.event.guild.name), embed=embed)
+                    except APIException:
+                        raise
+                
                 Infraction.tempban(
                     self,
                     violation.event,
                     violation.member,
                     'Spam Detected',
-                    datetime.utcnow() + timedelta(seconds=punishment_duration))
+                    expiration_date)
             elif punishment == PunishmentType.BAN:
+                if violation.rule.punishment_dms:
+                    try:
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'ban', violation.event.guild.name, 'Jetski', 'Spam Detected', auto=True)
+                        dm = self.client.api.users_me_dms_create(violation.member.id)
+                        dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format('Ban', violation.event.guild.name), embed=embed)
+                    except APIException:
+                        raise
+                
                 Infraction.ban(
                     self,
                     violation.event,

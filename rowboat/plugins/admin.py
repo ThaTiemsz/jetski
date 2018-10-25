@@ -98,6 +98,75 @@ class AdminConfig(PluginConfig):
     mute_role = Field(snowflake, default=None)
     reason_edit_level = Field(int, default=int(CommandLevels.ADMIN))
 
+    # Infraction DMs
+    infraction_dms = Field(bool, default=False)
+    dms_include_mod = Field(bool, default=True)
+
+def infraction_message(event, user, action, server, moderator, reason, expires='Never', auto=False):
+    infractions = {
+        'warn': {
+            'single': 'Warn',
+            'passed': 'Warned'
+        },
+        'mute': {
+            'single': 'Mute',
+            'passed': 'Muted'
+        },
+        'tempmute': {
+            'single': 'Temp-mute',
+            'passed': 'Temp-muted'
+        },
+        'kick': {
+            'single': 'Kick',
+            'passed': 'Kicked'
+        },
+        'ban': {
+            'single': 'Ban',
+            'passed': 'Banned'
+        },
+        'tempban': {
+            'single': 'Temp-ban',
+            'passed': 'Temp-banned'
+        }
+    }
+    if reason == None:
+        reason = '*Not specified*'
+    if expires != 'Never':
+        # Hacky time humanizer
+        now = datetime.utcnow()
+        diff_delta = expires - now
+        diff = int(diff_delta.total_seconds())
+        minutes, seconds = divmod(diff, 60)
+        hours, minutes = divmod(minutes, 60)
+        days, hours = divmod(hours, 24)
+        weeks, days = divmod(days, 30)
+        units = [weeks, days, hours, minutes, seconds]
+        unit_strs = ['week', 'day', 'hour', 'minute', 'second']
+        expires = ''
+        for x in range(0, 5):
+            if units[x] == 0:
+                continue
+            else:
+                if units[x] > 1:
+                    expires += '{} {}s, '.format(units[x], unit_strs[x])
+                else:
+                    expires += '{} {}, '.format(units[x], unit_strs[x])
+        expires = expires[:-2]
+    embed = MessageEmbed()
+    embed.title = 'Moderation action on {}'.format(server)
+    embed.description = 'A moderation action has been taken against you'
+    embed.set_footer(text='This is an automated message. Contact the moderators for more information')
+    embed.color = 0x950714
+    embed.add_field(name='Action', value=infractions[action]['passed'], inline=True)
+    # Also hacky method to avoid SpamPlugin attribute errors on dms_include_mod
+    if auto:
+        embed.add_field(name='Moderator', value=moderator, inline=True)
+    else:
+        if event.config.dms_include_mod:
+            embed.add_field(name='Moderator', value=moderator, inline=True)
+    embed.add_field(name='Reason', value=reason, inline=True)
+    embed.add_field(name='Expires', value=expires, inline=True)
+    return infractions, embed
 
 @Plugin.with_config(AdminConfig)
 class AdminPlugin(Plugin):
@@ -110,6 +179,16 @@ class AdminPlugin(Plugin):
 
         self.unlocked_roles = {}
         self.role_debounces = {}
+    
+    def send_infraction_dm(self, event, user, action, server, moderator, reason, expires='Never'):
+        if not event.config.infraction_dms:
+            return
+        infractions, embed = infraction_message(event, user, action, server, moderator, reason, expires)
+        try:
+            dm = self.client.api.users_me_dms_create(user)
+            return dm.send_message('Hi\n\nYou\'ve received a __**{}**__ on **{}**'.format(infractions[action]['single'], server), embed=embed)
+        except:
+            raise
 
     def queue_infractions(self):
         next_infraction = list(Infraction.select().where(
@@ -487,7 +566,7 @@ class AdminPlugin(Plugin):
     def infraction_delete(self, event, infraction):
         try:
             inf = Infraction.select(Infraction).where(
-                (Infraction.id == infraction)
+                    (Infraction.id == infraction)
             ).get()
         except Infraction.DoesNotExist:
             raise CommandFail('cannot find an infraction with ID `{}`'.format(infraction))
@@ -675,6 +754,10 @@ class AdminPlugin(Plugin):
             # If we have a duration set, this is a tempmute
             if duration:
                 # Create the infraction
+                try:
+                    self.send_infraction_dm(event, member.id, 'tempmute', event.msg.guild.name, event.author.username, reason, duration)
+                except APIException:
+                    pass
                 Infraction.tempmute(self, event, member, reason, duration)
                 self.queue_infractions()
 
@@ -697,6 +780,10 @@ class AdminPlugin(Plugin):
                     if not existed:
                         raise CommandFail(u'{} is already muted'.format(member.user))
 
+                try:
+                    self.send_infraction_dm(event, member.id, 'mute', event.msg.guild.name, event.author.username, reason)
+                except APIException:
+                    pass
                 Infraction.mute(self, event, member, reason)
 
                 if event.config.confirm_actions:
@@ -783,6 +870,10 @@ class AdminPlugin(Plugin):
         member = event.guild.get_member(user)
         if member:
             self.can_act_on(event, member.id)
+            try:
+                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, event.author.username, reason)
+            except APIException:
+                pass
             Infraction.kick(self, event, member, reason)
             if event.config.confirm_actions:
                 event.msg.reply(maybe_string(
@@ -832,6 +923,10 @@ class AdminPlugin(Plugin):
             return
 
         for member in members:
+            try:
+                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, event.author.username, args.reason)
+            except APIException:
+                pass
             Infraction.kick(self, event, member, args.reason)
 
         raise CommandSuccess('kicked {} users'.format(len(members)))
@@ -844,6 +939,10 @@ class AdminPlugin(Plugin):
         if isinstance(user, (int, long)):
             self.can_act_on(event, user)
             try:
+                self.send_infraction_dm(event, user, 'ban', event.msg.guild.name, event.author.username, reason)
+            except APIException:
+                pass
+            try:
                 Infraction.ban(self, event, user, reason, guild=event.guild)
             except APIException:
                 raise CommandFail('invalid user')
@@ -851,6 +950,10 @@ class AdminPlugin(Plugin):
             member = event.guild.get_member(user)
             if member:
                 self.can_act_on(event, member.id)
+                try:
+                    self.send_infraction_dm(event, member.id, 'ban', event.msg.guild.name, event.author.username, reason)
+                except APIException:
+                    pass
                 Infraction.ban(self, event, member, reason, guild=event.guild)
             else:
                 raise CommandFail('invalid user')
@@ -900,6 +1003,10 @@ class AdminPlugin(Plugin):
             return
 
         for member in members:
+            try:
+                self.send_infraction_dm(event, member.id, 'ban', event.msg.guild.name, event.author.username, args.reason)
+            except APIException:
+                pass
             Infraction.ban(self, event, member, args.reason, guild=event.guild)
 
         raise CommandSuccess('banned {} users'.format(len(members)))
@@ -912,6 +1019,10 @@ class AdminPlugin(Plugin):
         member = event.guild.get_member(user)
         if member:
             self.can_act_on(event, member.id)
+            try:
+                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, event.author.username, reason)
+            except APIException:
+                pass
             Infraction.softban(self, event, member, reason)
             if event.config.confirm_actions:
                 event.msg.reply(maybe_string(
@@ -929,6 +1040,10 @@ class AdminPlugin(Plugin):
         if member:
             self.can_act_on(event, member.id)
             expires_dt = parse_duration(duration)
+            try:
+                self.send_infraction_dm(event, member.id, 'tempban', event.msg.guild.name, event.author.username, reason, expires_dt)
+            except APIException:
+                pass
             Infraction.tempban(self, event, member, reason, expires_dt)
             self.queue_infractions()
             if event.config.confirm_actions:
@@ -949,6 +1064,10 @@ class AdminPlugin(Plugin):
         member = event.guild.get_member(user)
         if member:
             self.can_act_on(event, member.id)
+            try:
+                self.send_infraction_dm(event, member.id, 'warn', event.msg.guild.name, event.author.username, reason)
+            except APIException:
+                pass
             Infraction.warn(self, event, member, reason, guild=event.guild)
         else:
             raise CommandFail('invalid user')
