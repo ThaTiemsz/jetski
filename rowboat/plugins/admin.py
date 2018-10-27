@@ -754,7 +754,7 @@ class AdminPlugin(Plugin):
                 return False
             raise CommandFail('missing permissions')
         
-        if event.action in ('kick', 'ban'):
+        if event.action and event.action in ('kick', 'ban'):
             member_me = event.guild.get_member(self.state.me)
             member = event.guild.get_member(victim_id)
             if member.roles:
