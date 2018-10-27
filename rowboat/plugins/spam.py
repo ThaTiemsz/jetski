@@ -156,10 +156,9 @@ class SpamPlugin(Plugin):
 
             punishment = violation.check.punishment or violation.rule.punishment
             punishment_duration = violation.check.punishment_duration or violation.rule.punishment_duration
-            punishment_dms = violation.check.punishment_dms or violation.rule.punishment_dms
 
             if punishment == PunishmentType.MUTE:
-                if punishment_dms:
+                if violation.rule.punishment_dms:
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'mute', violation.event.guild.name, self.state.me, 'Spam Detected', auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
@@ -174,7 +173,7 @@ class SpamPlugin(Plugin):
                     'Spam Detected')
             elif punishment == PunishmentType.TEMPMUTE:
                 expiration_date = datetime.utcnow() + timedelta(seconds=punishment_duration)
-                if punishment_dms:
+                if violation.rule.punishment_dms:
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'tempmute', violation.event.guild.name, self.state.me, 'Spam Detected', expires=expiration_date, auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
@@ -189,7 +188,7 @@ class SpamPlugin(Plugin):
                     'Spam Detected',
                     expiration_date)
             elif punishment == PunishmentType.KICK:
-                if punishment_dms:
+                if violation.rule.punishment_dms:
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'kick', violation.event.guild.name, self.state.me, 'Spam Detected', auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
@@ -204,7 +203,7 @@ class SpamPlugin(Plugin):
                     'Spam Detected')
             elif punishment == PunishmentType.TEMPBAN:
                 expiration_date = datetime.utcnow() + timedelta(seconds=punishment_duration)
-                if punishment_dms:
+                if violation.rule.punishment_dms:
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'tempban', violation.event.guild.name, self.state.me, 'Spam Detected', expires=expiration_date, auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
@@ -219,7 +218,7 @@ class SpamPlugin(Plugin):
                     'Spam Detected',
                     expiration_date)
             elif punishment == PunishmentType.BAN:
-                if punishment_dms:
+                if violation.rule.punishment_dms:
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'ban', violation.event.guild.name, self.state.me, 'Spam Detected', auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
