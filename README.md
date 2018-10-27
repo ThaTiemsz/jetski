@@ -39,6 +39,7 @@ By turning on Rowboat's spam prevention, r/Overwatch took a huge burden off mode
 * Administration
   * Banning, kicking, muting
   * Managing and tracking infractions and reasons per user and moderator
+  * Optional DM sent on receiving a infraction
   * User persistence \(resetting roles/nickname/etc when users leave and rejoin\)
   * Chat cleaning and archiving
   * Granular role management \(adding/removing roles\)

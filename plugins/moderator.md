@@ -209,6 +209,8 @@ The admin plugin provides a set of useful moderator commands. These commands are
 | confirm\_actions\_expiry | The duration after which to delete the confirmed action message. If zero the message will never be deleted | int | 0 |
 | mute\_role | Role ID that is set for users who are muted | id | none |
 | reason\_edit\_level | Minimum level to allow users to edit other users' infraction reasons | int | 100 |
+| infraction\_dms | Whether to DM a user when they receive an infraction | bool | false |
+| dms\_include\_mod | Whether the infraction DM should include the moderator who performed the action | bool | true |
 
 ## Configuration Example
 
