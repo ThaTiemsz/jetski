@@ -317,7 +317,7 @@ class SpamPlugin(Plugin):
 
     @Plugin.listen('MessageCreate', priority=Priority.AFTER)
     def on_message_create(self, event):
-        if event.author.id == str(self.state.me).id:
+        if event.author.id == self.state.me.id:
             return
 
         if event.webhook_id:
