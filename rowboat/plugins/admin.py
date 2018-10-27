@@ -470,7 +470,7 @@ class AdminPlugin(Plugin):
         type_ = {i.index: i for i in Infraction.Types.attrs}[infraction.type_]
         embed = MessageEmbed()
 
-        if type_ in (Infraction.Types.MUTE, Infraction.Types.TEMPMUTE, Infraction.Types.TEMPROLE):
+        if type_ in (Infraction.Types.MUTE, Infraction.Types.TEMPMUTE, Infraction.Types.TEMPROLE, Infraction.Types.WARNING):
             embed.color = 0xfdfd96
         elif type_ in (Infraction.Types.KICK, Infraction.Types.SOFTBAN):
             embed.color = 0xffb347
@@ -564,7 +564,7 @@ class AdminPlugin(Plugin):
         type_ = {i.index: i for i in Infraction.Types.attrs}[infraction.type_]
         embed = MessageEmbed()
 
-        if type_ in (Infraction.Types.MUTE, Infraction.Types.TEMPMUTE, Infraction.Types.TEMPROLE):
+        if type_ in (Infraction.Types.MUTE, Infraction.Types.TEMPMUTE, Infraction.Types.TEMPROLE, Infraction.Types.WARNING):
             embed.color = 0xfdfd96
         elif type_ in (Infraction.Types.KICK, Infraction.Types.SOFTBAN):
             embed.color = 0xffb347
