@@ -162,7 +162,7 @@ class SpamPlugin(Plugin):
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'mute', violation.event.guild.name, self.state.me, 'Spam Detected', auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
-                        dm.send_message('You\'ve been {} in **{}**'.format('muted', violation.event.guild.name), embed=embed)
+                        dm.send_message('You\'ve been {} in **{}**.'.format('muted', violation.event.guild.name), embed=embed)
                     except APIException:
                         pass
                 
@@ -177,7 +177,7 @@ class SpamPlugin(Plugin):
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'tempmute', violation.event.guild.name, self.state.me, 'Spam Detected', expires=expiration_date, auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
-                        dm.send_message('You\'ve been {} in **{}**'.format('temporarily muted', violation.event.guild.name), embed=embed)
+                        dm.send_message('You\'ve been {} in **{}**.'.format('temporarily muted', violation.event.guild.name), embed=embed)
                     except APIException:
                         pass
                 
@@ -192,7 +192,7 @@ class SpamPlugin(Plugin):
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'kick', violation.event.guild.name, self.state.me, 'Spam Detected', auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
-                        dm.send_message('You\'ve been {} from **{}**'.format('kicked', violation.event.guild.name), embed=embed)
+                        dm.send_message('You\'ve been {} from **{}**.'.format('kicked', violation.event.guild.name), embed=embed)
                     except APIException:
                         pass
                 
@@ -207,7 +207,7 @@ class SpamPlugin(Plugin):
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'tempban', violation.event.guild.name, self.state.me, 'Spam Detected', expires=expiration_date, auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
-                        dm.send_message('You\'ve been {} from **{}**'.format('temporarily banned', violation.event.guild.name), embed=embed)
+                        dm.send_message('You\'ve been {} from **{}**.'.format('temporarily banned', violation.event.guild.name), embed=embed)
                     except APIException:
                         pass
                 
@@ -222,7 +222,7 @@ class SpamPlugin(Plugin):
                     try:
                         infractions, embed = infraction_message(violation.event, violation.member.id, 'ban', violation.event.guild.name, self.state.me, 'Spam Detected', auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
-                        dm.send_message('You\'ve been {} from **{}**'.format('banned', violation.event.guild.name), embed=embed)
+                        dm.send_message('You\'ve been {} from **{}**.'.format('banned', violation.event.guild.name), embed=embed)
                     except APIException:
                         pass
                 

@@ -208,7 +208,7 @@ class AdminPlugin(Plugin):
             else:
                 preposition = 'in'
             
-            return dm.send_message('You\'ve been {} {} **{}**'.format(infractions[action]['context'], preposition, server), embed=embed)
+            return dm.send_message('You\'ve been {} {} **{}**.'.format(infractions[action]['context'], preposition, server), embed=embed)
         except:
             raise
 
