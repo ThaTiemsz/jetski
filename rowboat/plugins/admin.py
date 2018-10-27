@@ -743,12 +743,34 @@ class AdminPlugin(Plugin):
             raise CommandFail('cannot execute that action on yourself')
 
         victim_level = self.bot.plugins.get('CorePlugin').get_level(event.guild, victim_id)
-
         if event.user_level <= victim_level:
             if not throw:
                 return False
             raise CommandFail('invalid permissions')
-
+        
+        perms = event.guild.get_permissions(self.state.me)
+        if not perms.ban_members and not perms.administrator:
+            if not throw:
+                return False
+            raise CommandFail('missing permissions')
+        
+        if event.action in ('kick', 'ban'):
+            member_me = event.guild.get_member(self.state.me)
+            member = event.guild.get_member(victim_id)
+            if member.roles:
+                highest_role_me = sorted(
+                    [member_me.guild.roles.get(r) for r in member_me.roles],
+                    key=lambda r: r.position,
+                    reverse=True)
+                highest_role = sorted(
+                    [event.guild.roles.get(r) for r in member.roles],
+                    key=lambda i: i.position,
+                    reverse=True)
+                if member.owner and (highest_role or highest_role[0].position >= highest_role_me[0].position):
+                    if not throw:
+                        return False
+                    raise CommandFail('cannot execute that action on that member')
+        
         return True
 
     @Plugin.command('mute', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
@@ -889,6 +911,7 @@ class AdminPlugin(Plugin):
 
     @Plugin.command('kick', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     def kick(self, event, user, reason=None):
+        event.action = 'kick'
         member = event.guild.get_member(user)
         if member:
             self.can_act_on(event, member.id)
@@ -911,6 +934,7 @@ class AdminPlugin(Plugin):
     @Plugin.parser.add_argument('users', type=long, nargs='+')
     @Plugin.parser.add_argument('-r', '--reason', default='', help='reason for modlog')
     def mkick(self, event, args):
+        event.action = 'kick'
         members = []
         for user_id in args.users:
             member = event.guild.get_member(user_id)
@@ -956,6 +980,7 @@ class AdminPlugin(Plugin):
     @Plugin.command('ban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     @Plugin.command('forceban', '<user:snowflake> [reason:str...]', level=CommandLevels.MOD)
     def ban(self, event, user, reason=None):
+        event.action = 'ban'
         member = None
 
         if isinstance(user, (int, long)):
@@ -992,6 +1017,7 @@ class AdminPlugin(Plugin):
     @Plugin.parser.add_argument('users', type=long, nargs='+')
     @Plugin.parser.add_argument('-r', '--reason', default='', help='reason for modlog')
     def mban(self, event, args):
+        event.action = 'ban'
         members = []
         for user_id in args.users:
             member = event.guild.get_member(user_id)
@@ -1038,6 +1064,7 @@ class AdminPlugin(Plugin):
         """
         Ban then unban a user from the server (with an optional reason for the modlog)
         """
+        event.action = 'kick'
         member = event.guild.get_member(user)
         if member:
             self.can_act_on(event, member.id)
@@ -1058,6 +1085,7 @@ class AdminPlugin(Plugin):
 
     @Plugin.command('tempban', '<user:user|snowflake> <duration:str> [reason:str...]', level=CommandLevels.MOD)
     def tempban(self, event, duration, user, reason=None):
+        event.action = 'ban'
         member = event.guild.get_member(user)
         if member:
             self.can_act_on(event, member.id)
