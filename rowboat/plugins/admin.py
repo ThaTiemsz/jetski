@@ -766,11 +766,11 @@ class AdminPlugin(Plugin):
                     [event.guild.roles.get(r) for r in member.roles],
                     key=lambda i: i.position,
                     reverse=True)
-                if member.owner and (highest_role or highest_role[0].position >= highest_role_me[0].position):
+                if member.owner or (highest_role[0].position >= highest_role_me[0].position):
                     if not throw:
                         return False
                     raise CommandFail('cannot execute that action on that member')
-        
+
         return True
 
     @Plugin.command('mute', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
@@ -980,7 +980,6 @@ class AdminPlugin(Plugin):
     @Plugin.command('ban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     @Plugin.command('forceban', '<user:snowflake> [reason:str...]', level=CommandLevels.MOD)
     def ban(self, event, user, reason=None):
-        event.action = 'ban'
         member = None
 
         if isinstance(user, (int, long)):
@@ -994,6 +993,7 @@ class AdminPlugin(Plugin):
             except APIException:
                 raise CommandFail('invalid user')
         else:
+            event.action = 'ban'
             member = event.guild.get_member(user)
             if member:
                 self.can_act_on(event, member.id)
@@ -1017,7 +1017,6 @@ class AdminPlugin(Plugin):
     @Plugin.parser.add_argument('users', type=long, nargs='+')
     @Plugin.parser.add_argument('-r', '--reason', default='', help='reason for modlog')
     def mban(self, event, args):
-        event.action = 'ban'
         members = []
         for user_id in args.users:
             member = event.guild.get_member(user_id)
