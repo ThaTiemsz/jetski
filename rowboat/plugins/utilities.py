@@ -664,8 +664,8 @@ class UtilitiesPlugin(Plugin):
                         time
                     ),
                     value=u'[`#{}`](https://discordapp.com/channels/{}/{}/{}) {}'.format(
-                        channel.name if channel.type == ChannelType.DM else 'Jetski',
-                        channel.guild_id if channel.type == ChannelType.DM else '@me',
+                        channel.name if channel.type != ChannelType.DM else 'Jetski',
+                        channel.guild_id if channel.type != ChannelType.DM else '@me',
                         channel.id,
                         reminder.message_id,
                         S(reminder.content)
