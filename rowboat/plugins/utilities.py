@@ -13,6 +13,7 @@ from collections import defaultdict, namedtuple
 
 from disco.types.user import GameType, Status
 from disco.types.message import MessageEmbed
+from disco.types.channel import ChannelType
 from disco.util.snowflake import to_datetime
 from disco.util.sanitize import S
 from disco.api.http import Routes, APIException
@@ -663,8 +664,8 @@ class UtilitiesPlugin(Plugin):
                         time
                     ),
                     value=u'[`#{}`](https://discordapp.com/channels/{}/{}/{}) {}'.format(
-                        channel.name if channel.type != 'dm' else 'Jetski',
-                        channel.guild_id if channel.type != 'dm' else '@me',
+                        channel.name if channel.type == ChannelType.DM else 'Jetski',
+                        channel.guild_id if channel.type == ChannelType.DM else '@me',
                         channel.id,
                         reminder.message_id,
                         S(reminder.content)
