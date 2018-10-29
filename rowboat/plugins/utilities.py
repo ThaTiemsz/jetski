@@ -615,9 +615,10 @@ class UtilitiesPlugin(Plugin):
             content=content
         )
         self.reminder_task.set_next_schedule(r.remind_at)
-        event.msg.reply(':ok_hand: I\'ll remind you at {} ({})'.format(
+        event.msg.reply(':ok_hand: I\'ll remind you at {} ({}) #{}'.format(
             r.remind_at.isoformat(),
             humanize.naturaldelta(r.remind_at - datetime.utcnow()),
+            r.id
         ))
     
     # @Plugin.command('list global', '[count:int]', context={'mode': 'global'}, group='r', global_=True)
@@ -654,8 +655,20 @@ class UtilitiesPlugin(Plugin):
             for reminder in query:
                 time = humanize.naturaldelta(reminder.remind_at - datetime.utcnow())
                 channel = Message.select().where(Message.id == reminder.message_id).get().channel_id
-                channel = self.state.channels.get(channel).name
+                channel = self.state.channels.get(channel)
 
-                embed.add_field(name=u'#{} in {} (#{})'.format(reminder.id, time, channel), value=S(reminder.content))
+                embed.add_field(
+                    name=u'#{} in {}'.format(
+                        reminder.id,
+                        time
+                    ),
+                    value=u'[`#{}`](https://discordapp.com/channels/{}/{}/{}) {}'.format(
+                        channel.name if channel.type != 'dm' else 'Jetski',
+                        channel.guild_id if channel.type != 'dm' else '@me',
+                        channel.id,
+                        reminder.message_id,
+                        S(reminder.content)
+                    )
+                )
 
         return event.msg.reply(embed=embed)
