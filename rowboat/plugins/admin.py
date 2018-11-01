@@ -485,7 +485,7 @@ class AdminPlugin(Plugin):
         embed.add_field(name='Active', value='yes' if infraction.active else 'no', inline=True)
         if infraction.active and infraction.expires_at:
             embed.add_field(name='Expires in', value=humanize_duration(infraction.expires_at - datetime.utcnow()))
-        embed.add_field(name='Reason', value=infraction.reason or '_No Reason Given', inline=False)
+        embed.add_field(name='Reason', value=infraction.reason or '*Not specified*', inline=False)
         embed.timestamp = infraction.created_at.isoformat()
         event.msg.reply('', embed=embed)
 
@@ -579,7 +579,7 @@ class AdminPlugin(Plugin):
         embed.add_field(name='Active', value='yes' if infraction.active else 'no', inline=True)
         if infraction.active and infraction.expires_at:
             embed.add_field(name='Expires in', value=humanize_duration(infraction.expires_at - datetime.utcnow()))
-        embed.add_field(name='Reason', value=infraction.reason or '_No Reason Given', inline=False)
+        embed.add_field(name='Reason', value=infraction.reason or '*Not specified*', inline=False)
         embed.timestamp = infraction.created_at.isoformat()
         event.msg.reply('', embed=embed)
 
