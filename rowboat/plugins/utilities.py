@@ -529,6 +529,13 @@ class UtilitiesPlugin(Plugin):
 
         reminder.delete_instance()
 
+    @Plugin.command('delete', '[reminder:str]', group='reminder', global_=True)
+    @Plugin.command('remove', '[reminder:str]', group='reminder', global_=True)
+    @Plugin.command('clean', '[reminder:str]', group='reminder', global_=True)
+    @Plugin.command('clear', '[reminder:str]', group='reminder', global_=True)
+    @Plugin.command('delete', '[reminder:str]', group='r', global_=True)
+    @Plugin.command('remove', '[reminder:str]', group='r', global_=True)
+    @Plugin.command('clean', '[reminder:str]', group='r', global_=True)
     @Plugin.command('clear', '[reminder:str]', group='r', global_=True)
     def cmd_remind_clear(self, event, reminder='all'):
         if reminder == 'all':
@@ -624,6 +631,7 @@ class UtilitiesPlugin(Plugin):
     
     # @Plugin.command('list global', '[count:int]', context={'mode': 'global'}, group='r', global_=True)
     @Plugin.command('list', '[limit:int]', context={'mode': 'server'}, group='r', global_=True)
+    @Plugin.command('list', '[limit:int]', context={'mode': 'server'}, group='remind', global_=True)
     # @Plugin.command('reminders global', '[count:int]', context={'mode': 'global'}, global_=True)
     @Plugin.command('reminders', '[limit:int]', context={'mode': 'server'}, global_=True)
     def cmd_remind_list(self, event, limit=None, mode=None):
