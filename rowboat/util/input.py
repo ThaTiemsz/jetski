@@ -37,3 +37,33 @@ def parse_duration(raw, source=None, negative=False, safe=False):
         value = value * -1
 
     return (source or datetime.utcnow()) + timedelta(seconds=value + 1)
+
+def humanize_duration(duration, format='full'):
+    now = datetime.utcnow()
+    diff_delta = duration - now
+    diff = int(diff_delta.total_seconds())
+
+    minutes, seconds = divmod(diff, 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    weeks, days = divmod(days, 7)
+    units = [weeks, days, hours, minutes, seconds]
+
+    if format == 'full':
+        unit_strs = ['week', 'day', 'hour', 'minute', 'second']
+    elif format == 'short':
+        unit_strs = ['w', 'd', 'h', 'm', 's']
+
+    expires = []
+    for x in range(0, 5):
+        if units[x] == 0:
+            continue
+        else:
+            if format == 'short':
+                expires.append('{}{}'.format(units[x], unit_strs[x]))
+            elif units[x] > 1:
+                expires.append('{} {}s'.format(units[x], unit_strs[x]))
+            else:
+                expires.append('{} {}'.format(units[x], unit_strs[x]))
+    
+    return ', '.join(expires)

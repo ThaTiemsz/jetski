@@ -18,6 +18,7 @@ from disco.util.sanitize import S
 
 from rowboat import ENV
 from rowboat.util import LocalProxy
+from rowboat.util.input import humanize_duration
 from rowboat.util.stats import timed
 from rowboat.plugins import BasePlugin as Plugin
 from rowboat.plugins import CommandResponse
@@ -619,13 +620,13 @@ class CorePlugin(Plugin):
         embed.set_author(name='Jetski', icon_url=self.client.state.me.avatar_url, url='https://jetski.ga/')
         embed.description = BOT_INFO
         embed.add_field(name='Servers', value=str(Guild.select().count()), inline=True)
-        embed.add_field(name='Uptime', value=humanize.naturaldelta(datetime.utcnow() - self.startup), inline=True)
+        embed.add_field(name='Uptime', value=humanize_duration(datetime.utcnow() - self.startup), inline=True)
         event.msg.reply(embed=embed)
 
     @Plugin.command('uptime', level=-1)
     def command_uptime(self, event):
         event.msg.reply('Jetski was started {}'.format(
-            humanize.naturaldelta(datetime.utcnow() - self.startup)
+            humanize_duration(datetime.utcnow() - self.startup)
         ))
 
     @Plugin.command('source', '<command>', level=-1)

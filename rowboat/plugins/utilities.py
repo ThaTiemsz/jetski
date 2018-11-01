@@ -20,7 +20,7 @@ from disco.api.http import Routes, APIException
 
 from rowboat.plugins import RowboatPlugin as Plugin, CommandFail
 from rowboat.util.timing import Eventual
-from rowboat.util.input import parse_duration
+from rowboat.util.input import parse_duration, humanize_duration
 from rowboat.util.gevent import wait_many
 from rowboat.util.stats import statsd, to_tags
 from rowboat.types.plugin import PluginConfig
@@ -246,7 +246,7 @@ class UtilitiesPlugin(Plugin):
 
         event.msg.reply(u'I last saw {} {} ago (at {})'.format(
             user,
-            humanize.naturaldelta(datetime.utcnow() - msg.timestamp),
+            humanize_duration(datetime.utcnow() - msg.timestamp),
             msg.timestamp
         ))
 
@@ -427,11 +427,11 @@ class UtilitiesPlugin(Plugin):
 
             content.append(u'\n **\u276F Activity**')
             content.append('Last Message: {} ago ({})'.format(
-                humanize.naturaldelta(datetime.utcnow() - newest_msg.timestamp),
+                humanize_duration(datetime.utcnow() - newest_msg.timestamp),
                 newest_msg.timestamp.isoformat(),
             ))
             content.append('First Message: {} ago ({})'.format(
-                humanize.naturaldelta(datetime.utcnow() - oldest_msg.timestamp),
+                humanize_duration(datetime.utcnow() - oldest_msg.timestamp),
                 oldest_msg.timestamp.isoformat(),
             ))
 
@@ -496,7 +496,7 @@ class UtilitiesPlugin(Plugin):
         msg = channel.send_message(u'<@{}> you asked me at {} ({} ago) to remind you about: {}'.format(
             message.author_id,
             reminder.created_at,
-            humanize.naturaldelta(reminder.created_at - datetime.utcnow()),
+            humanize_duration(reminder.created_at - datetime.utcnow()),
             S(reminder.content)
         ))
 
@@ -618,7 +618,7 @@ class UtilitiesPlugin(Plugin):
         self.reminder_task.set_next_schedule(r.remind_at)
         event.msg.reply(':ok_hand: I\'ll remind you at {} ({}) #{}'.format(
             r.remind_at.isoformat(),
-            humanize.naturaldelta(r.remind_at - datetime.utcnow()),
+            humanize_duration(r.remind_at - datetime.utcnow()),
             r.id
         ))
     
@@ -654,7 +654,7 @@ class UtilitiesPlugin(Plugin):
             ).order_by(Reminder.remind_at).limit(limit)
 
             for reminder in query:
-                time = humanize.naturaldelta(reminder.remind_at - datetime.utcnow())
+                time = humanize_duration(reminder.remind_at - datetime.utcnow())
                 channel = Message.select().where(Message.id == reminder.message_id).get().channel_id
                 channel = self.state.channels.get(channel)
 
