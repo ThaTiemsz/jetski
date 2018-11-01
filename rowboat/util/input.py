@@ -41,7 +41,10 @@ def parse_duration(raw, source=None, negative=False, safe=False):
 def humanize_duration(duration, format='full'):
     now = datetime.utcnow()
     if isinstance(duration, timedelta):
-        duration = datetime.utcnow() - timedelta(seconds=duration.total_seconds())
+        if duration.total_seconds() > 0:
+            duration = datetime.today() + duration
+        else:
+            duration = datetime.utcnow() - timedelta(seconds=duration.total_seconds())
     diff_delta = duration - now
     diff = int(diff_delta.total_seconds())
 
