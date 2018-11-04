@@ -41,7 +41,7 @@ class RedditConfig(PluginConfig):
 
 @Plugin.with_config(RedditConfig)
 class RedditPlugin(Plugin):
-    @Plugin.schedule(30, init=False)
+    @Plugin.schedule(60, init=False)
     def check_subreddits(self):
         # TODO: sharding
         # TODO: filter in query
@@ -135,7 +135,7 @@ class RedditPlugin(Plugin):
         r = requests.get(
             'https://www.reddit.com/r/{}/new.json'.format(sub),
             headers={
-                'User-Agent': 'discordBot/Jetski v1.0'
+                'User-Agent': 'discord/Jetski v1.0 (by /u/ThaTiemsz)'
             }
         )
         r.raise_for_status()
