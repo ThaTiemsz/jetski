@@ -200,7 +200,7 @@ class UtilitiesPlugin(Plugin):
     # Full credit goes to: Xenthys
     def get_emoji_url(self, emoji):
         name = '-'.join(char.encode("unicode_escape").decode("utf-8")[2:].lstrip("0") for char in emoji)
-        return self.cdn_url.format(name) if name.find('--') == -1 else None
+        return 'https://cdn.oceanlord.me/emoji/{}.png'.format(name) if name.find('--') == -1 else None
     
     @Plugin.command('jumbo', '<emojis:str...>', global_=True)
     def jumbo(self, event, emojis):
