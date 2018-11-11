@@ -197,6 +197,7 @@ class UtilitiesPlugin(Plugin):
         r.raise_for_status()
         return event.msg.reply('\n'.join(fields), attachments=[('emoji.'+ext, r.content)])
 
+    # Full credit goes to: Xenthys
     @Plugin.command('jumbo', '<emojis:str...>', global_=True)
     def jumbo(self, event, emojis):
         emojis = emojis.split(' ')
@@ -214,7 +215,7 @@ class UtilitiesPlugin(Plugin):
             if not url:
                 raise CommandFail('provided emoji is invalid')
 
-            r = self.req(url)
+            r = requests.get(url)
             try:
                 r.raise_for_status()
             except requests.HTTPError:
@@ -233,7 +234,7 @@ class UtilitiesPlugin(Plugin):
 
             width, height, images = 0, 0, []
 
-            for r in Pool(6).imap(self.req, urls):
+            for r in Pool(6).imap(requests.get, urls):
                 try:
                     r.raise_for_status()
                 except requests.HTTPError:
