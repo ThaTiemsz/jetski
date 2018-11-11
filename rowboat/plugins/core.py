@@ -617,6 +617,7 @@ class CorePlugin(Plugin):
     @Plugin.command('about')
     def command_about(self, event):
         embed = MessageEmbed()
+        embed.color = 0x7289da
         embed.set_author(name='Jetski', icon_url=self.client.state.me.avatar_url, url='https://jetski.ga/')
         embed.description = BOT_INFO
         embed.add_field(name='Servers', value=str(Guild.select().count()), inline=True)
