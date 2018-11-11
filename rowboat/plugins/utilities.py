@@ -199,41 +199,64 @@ class UtilitiesPlugin(Plugin):
 
     @Plugin.command('jumbo', '<emojis:str...>', global_=True)
     def jumbo(self, event, emojis):
-        urls = []
-        names = []
-
-        for emoji in emojis.split(' ')[:5]:
+        emojis = emojis.split(' ')
+        if len(emojis) == 1:
+            url = ext = ''
+            emoji = emojis[0]
             if EMOJI_RE.match(emoji):
                 _, eid = EMOJI_RE.findall(emoji)[0]
-                urls.append('https://discordapp.com/api/emojis/{}.png'.format(eid))
-                names.append(_)
+                ext = 'gif' if emoji.startswith('<a:') else 'png'
+                url = 'https://discordapp.com/api/emojis/{}.{}'.format(eid, ext)
             else:
-                urls.append(get_emoji_url(emoji))
-                names.append('emoji')
+                ext = 'png'
+                url = self.get_emoji_url(emoji)
 
-        width, height, images = 0, 0, []
+            if not url:
+                raise CommandFail('provided emoji is invalid')
 
-        for r in Pool(6).imap(requests.get, urls):
+            r = self.req(url)
             try:
                 r.raise_for_status()
             except requests.HTTPError:
-                return
+                raise CommandFail('provided emoji is invalid')
+            return event.msg.reply('', attachments=[('emoji.'+ext, r.content)])
 
-            img = Image.open(BytesIO(r.content))
-            height = img.height if img.height > height else height
-            width += img.width + 10
-            images.append(img)
+        else:
+            urls = []
+            for emoji in emojis[:5]:
+                if EMOJI_RE.match(emoji):
+                    _, eid = EMOJI_RE.findall(emoji)[0]
+                    urls.append('https://discordapp.com/api/emojis/{}.png'.format(eid))
+                else:
+                    url = self.get_emoji_url(emoji)
+                    urls.append(url) if url else None
 
-        image = Image.new('RGBA', (width, height))
-        width_offset = 0
-        for img in images:
-            image.paste(img, (width_offset, 0))
-            width_offset += img.width + 10
+            width, height, images = 0, 0, []
 
-        combined = BytesIO()
-        image.save(combined, 'png', quality=55)
-        combined.seek(0)
-        return event.msg.reply('', attachments=[('{}.png'.format('-'.join(names)), combined)])
+            for r in Pool(6).imap(self.req, urls):
+                try:
+                    r.raise_for_status()
+                except requests.HTTPError:
+                    continue
+
+                img = Image.open(BytesIO(r.content))
+                height = img.height if img.height > height else height
+                width += img.width + 10
+                images.append(img)
+
+            if not images:
+                raise CommandFail('provided emojis are invalid')
+
+            image = Image.new('RGBA', (width, height))
+            width_offset = 0
+            for img in images:
+                image.paste(img, (width_offset, 0))
+                width_offset += img.width + 10
+
+            combined = BytesIO()
+            image.save(combined, 'png', quality=55)
+            combined.seek(0)
+            return event.msg.reply('', attachments=[('emoji.png', combined)])
 
     @Plugin.command('seen', '<user:user>', global_=True)
     def seen(self, event, user):
