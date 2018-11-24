@@ -18,3 +18,6 @@ cli:
 
 worker-logs:
 	docker-compose exec workers tail -F worker-0.log
+
+logs:
+	docker-compose logs -f --tail="1500" $(image)
