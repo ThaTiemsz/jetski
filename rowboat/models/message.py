@@ -237,8 +237,11 @@ class MessageArchive(BaseModel):
 
     @staticmethod
     def encode_message_text(msg):
-        return u'{m.timestamp} ({m.id} / {m.channel_id} / {m.author.id}) {m.author}: {m.content} ({attach})'.format(
-            m=msg, attach=', '.join(map(unicode, msg.attachments or [])))
+        attachments = msg.attachments or []
+        return u'{m.timestamp} ({m.id} / {m.channel_id} / {m.author.id}) {m.author}: {m.content}{attach}'.format(
+            m=msg,
+            attach=' ({})'.format(', '.join(unicode(i).replace('cdn.discordapp.com', 'media.discordapp.net', 1) for i in attachments)) if len(attachments) > 0 else ''
+        )
 
     @staticmethod
     def encode_message_csv(msg):

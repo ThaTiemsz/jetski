@@ -545,7 +545,9 @@ class ModLogPlugin(Plugin):
                 channel=channel,
                 msg=contents,
                 attachments='' if not msg.attachments else u'({})'.format(
-                    ', '.join(u'<{}>'.format(i) for i in msg.attachments)))
+                    ', '.join(u'<{}>'.format(
+                        unicode(i).replace('cdn.discordapp.com', 'media.discordapp.net', 1)
+                    ) for i in msg.attachments)))
 
     @Plugin.listen('MessageDeleteBulk')
     def on_message_delete_bulk(self, event):
