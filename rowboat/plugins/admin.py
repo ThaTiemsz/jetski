@@ -799,7 +799,7 @@ class AdminPlugin(Plugin):
             if duration:
                 # Create the infraction
                 try:
-                    self.send_infraction_dm(event, member.id, 'tempmute', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), reason, duration)
+                    self.send_infraction_dm(event, member.id, 'tempmute', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason, duration)
                 except APIException:
                     pass
                 Infraction.tempmute(self, event, member, reason, duration)
@@ -825,7 +825,7 @@ class AdminPlugin(Plugin):
                         raise CommandFail(u'{} is already muted'.format(member.user))
 
                 try:
-                    self.send_infraction_dm(event, member.id, 'mute', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), reason)
+                    self.send_infraction_dm(event, member.id, 'mute', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
                 except APIException:
                     pass
                 Infraction.mute(self, event, member, reason)
@@ -916,7 +916,7 @@ class AdminPlugin(Plugin):
         if member:
             self.can_act_on(event, member.id)
             try:
-                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), reason)
+                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
             except APIException:
                 pass
             Infraction.kick(self, event, member, reason)
@@ -970,7 +970,7 @@ class AdminPlugin(Plugin):
 
         for member in members:
             try:
-                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), args.reason)
+                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
             except APIException:
                 pass
             Infraction.kick(self, event, member, args.reason)
@@ -985,7 +985,7 @@ class AdminPlugin(Plugin):
         if isinstance(user, (int, long)):
             self.can_act_on(event, user)
             try:
-                self.send_infraction_dm(event, user, 'ban', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), reason)
+                self.send_infraction_dm(event, user, 'ban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
             except APIException:
                 pass
             try:
@@ -998,7 +998,7 @@ class AdminPlugin(Plugin):
             if member:
                 self.can_act_on(event, member.id)
                 try:
-                    self.send_infraction_dm(event, member.id, 'ban', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), reason)
+                    self.send_infraction_dm(event, member.id, 'ban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
                 except APIException:
                     pass
                 Infraction.ban(self, event, member, reason, guild=event.guild)
@@ -1051,7 +1051,7 @@ class AdminPlugin(Plugin):
 
         for member in members:
             try:
-                self.send_infraction_dm(event, member.id, 'ban', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), args.reason)
+                self.send_infraction_dm(event, member.id, 'ban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
             except APIException:
                 pass
             Infraction.ban(self, event, member, args.reason, guild=event.guild)
@@ -1068,7 +1068,7 @@ class AdminPlugin(Plugin):
         if member:
             self.can_act_on(event, member.id)
             try:
-                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), reason)
+                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
             except APIException:
                 pass
             Infraction.softban(self, event, member, reason)
@@ -1090,7 +1090,7 @@ class AdminPlugin(Plugin):
             self.can_act_on(event, member.id)
             expires_dt = parse_duration(duration)
             try:
-                self.send_infraction_dm(event, member.id, 'tempban', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), reason, expires_dt)
+                self.send_infraction_dm(event, member.id, 'tempban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason, expires_dt)
             except APIException:
                 pass
             Infraction.tempban(self, event, member, reason, expires_dt)
@@ -1114,7 +1114,7 @@ class AdminPlugin(Plugin):
         if member:
             self.can_act_on(event, member.id)
             try:
-                self.send_infraction_dm(event, member.id, 'warn', event.msg.guild.name, '{}#{}'.format(event.author.username, event.author.discriminator), reason)
+                self.send_infraction_dm(event, member.id, 'warn', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
             except APIException:
                 pass
             Infraction.warn(self, event, member, reason, guild=event.guild)
