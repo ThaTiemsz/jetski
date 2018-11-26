@@ -6,8 +6,8 @@ The modlog plugin provides a mechanisim for logging various events and actions t
 
 | Name | Description | Default Level | Usage |
 | :--- | :--- | :--- | :--- |
-| `!modlog hush` | Disables tracking of message deletes in modlog | Administrator | `!modlog hush` |
-| `!modlog unhush` | Re-enables tracking of message deletes | Administrator | `!modlog unhush` |
+| `!modlog hush` | Disables tracking of message deletes in modlog | Global Admin | `!modlog hush` |
+| `!modlog unhush` | Re-enables tracking of message deletes | Global Admin | `!modlog unhush` |
 
 ## Configuration Options
 
