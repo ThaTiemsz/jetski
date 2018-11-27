@@ -62,6 +62,6 @@ xxhash==1.0.1
 fuzzywuzzy==0.15.0
 pytest==3.0.7
 python-Levenshtein==0.12.0
--e git+https://github.com/b1naryth1ef/peewee.git@1b7d9f34d5f93464aa647cea4faab68cc45c1496#egg=peewee
+-e git+https://github.com/b1naryth1ef/peewee.git@3f1f843ac2d94c212053f46d95ae7040e2f5d753#egg=peewee
 gevent_inotifyx==0.1.1
 datadog==0.16.0
