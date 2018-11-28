@@ -14,7 +14,7 @@ All commands only usable by global administrators of the bot.
 | `!guilds invite {guild ID}` | Generate a temporary invite to a server the bot is in | Global Admin | `!guilds invite 348832158590435328` |
 | `!guilds wh {guild ID}` | Whitelist a server (bot won't instantly leave) | Global Admin | `!guilds wh 348832158590435328` |
 | `!guilds unwh {guild ID}` | Unwhitelist a server | Global Admin | `!guilds unwh 348832158590435328` |
-| `!plugins disable {name}` | Disable a plugin | Global Admin | `!plugins disable utilities` |
+| `!plugins disable {name}` | Disable a plugin | Global Admin | `!plugins disable UtilitiesPlugin` |
 | `!nuke {user ID} {reason}` | Bans a user from every server bot is in | Global Admin | `!nuke 339793226166960129 alt` |
 
 ## Admin
