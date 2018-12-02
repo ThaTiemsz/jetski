@@ -496,7 +496,7 @@ class AdminPlugin(Plugin):
         if query and isinstance(query, list) and isinstance(query[0], DiscoUser):
             query = query[0].id
         elif query:
-            query = ' '.join(query)
+            query = u' '.join(map(unicode, query))
 
         if query and (isinstance(query, int) or query.isdigit()):
             q &= (
@@ -515,7 +515,10 @@ class AdminPlugin(Plugin):
         ).switch(Infraction).join(
             actor,
             on=((Infraction.actor_id == actor.user_id).alias('actor'))
-        ).where(q).order_by(Infraction.created_at.desc()).limit(6)
+        ).where(q).order_by(Infraction.created_at.desc()).limit(8)
+
+        if not infractions:
+            return event.msg.reply('No infraction found for the given query.')
 
         tbl = MessageTable()
 
@@ -533,6 +536,8 @@ class AdminPlugin(Plugin):
             else:
                 active = 'no'
 
+            old_size = tbl.size_index.copy()
+
             tbl.add(
                 inf.id,
                 inf.created_at.isoformat(),
@@ -542,6 +547,11 @@ class AdminPlugin(Plugin):
                 active,
                 clamp(reason, 128)
             )
+
+            if len(tbl.compile()) > 2000:
+                tbl.entries.pop()
+                tbl.size_index = old_size.copy()
+                break
 
         event.msg.reply(tbl.compile())
 
