@@ -518,7 +518,7 @@ class AdminPlugin(Plugin):
         ).where(q).order_by(Infraction.created_at.desc()).limit(8)
 
         if not infractions:
-            return event.msg.reply('No infraction found for the given query.')
+            return event.msg.reply('No infractions found for the given query.')
 
         tbl = MessageTable()
 
