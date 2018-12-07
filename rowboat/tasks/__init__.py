@@ -19,6 +19,7 @@ def get_client():
 
     config = ClientConfig()
     config.token = token
+    config.max_reconnects = 0
     return Client(config)
 
 
