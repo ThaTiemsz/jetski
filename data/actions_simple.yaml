@@ -6,6 +6,10 @@ CHANNEL_DELETE:
   emoji: wastebasket
   format: 'channel #{e.name} was deleted'
 
+CATEGORY_CREATE:
+  emoji: pen_ballpoint
+  format: 'category #{e.name} was created'
+
 CATEGORY_DELETE:
   emoji: wastebasket
   format: 'category #{e.name} was deleted'

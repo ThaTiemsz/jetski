@@ -325,7 +325,10 @@ class ModLogPlugin(Plugin):
 
     @Plugin.listen('ChannelCreate')
     def on_channel_create(self, event):
-        self.log_action(Actions.CHANNEL_CREATE, event)
+        if event.channel.type == ChannelType.GUILD_CATEGORY:
+            self.log_action(Actions.CATEGORY_CREATE, event)
+        else:
+            self.log_action(Actions.CHANNEL_CREATE, event)
 
     @Plugin.listen('ChannelDelete')
     def on_channel_delete(self, event):
