@@ -6,6 +6,10 @@ CHANNEL_DELETE:
   emoji: wastebasket
   format: 'channel #{e.name} was deleted'
 
+CATEGORY_DELETE:
+  emoji: wastebasket
+  format: 'category #{e.name} was deleted'
+
 GUILD_BAN_ADD:
   emoji: rotating_light
   format: '{e.user!s} (`{e.user.id}`) was banned'

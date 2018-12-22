@@ -13,6 +13,7 @@ from collections import defaultdict
 
 from disco.bot import CommandLevels
 from disco.types.base import UNSET, cached_property
+from disco.types.channel import ChannelType
 from disco.util.snowflake import to_unix, to_datetime
 from disco.util.sanitize import S
 
@@ -328,7 +329,10 @@ class ModLogPlugin(Plugin):
 
     @Plugin.listen('ChannelDelete')
     def on_channel_delete(self, event):
-        self.log_action(Actions.CHANNEL_DELETE, event)
+        if event.channel.type == ChannelType.GUILD_CATEGORY:
+            self.log_action(Actions.CATEGORY_DELETE, event)
+        else:
+            self.log_action(Actions.CHANNEL_DELETE, event)
 
     @Plugin.listen('GuildBanAdd')
     def on_guild_ban_add(self, event):
