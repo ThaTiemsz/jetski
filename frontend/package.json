@@ -10,8 +10,10 @@
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.7",
     "eventemitter3": "^2.0.3",
+    "highlight.js": "^9.13.1",
     "lodash": "^4.17.4",
     "moment": "^2.22.2",
+    "punycode": "^2.1.1",
     "react": "^16.5.2",
     "react-ace": "^6.1.4",
     "react-countup": "^4.0.0-alpha.6",
@@ -20,6 +22,7 @@
     "react-router-dom": "^4.1.2",
     "react-table": "^6.5.3",
     "recharts": "^1.0.0-apha.5",
+    "simple-markdown": "^0.4.2",
     "style-loader": "^0.18.2",
     "webpack-dev-server": "^2.5.1"
   },
