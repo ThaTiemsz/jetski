@@ -26,19 +26,19 @@ class Topbar extends Component {
   render() {
     const expandIcon = this.state.showAllGuilds ? 'fa fa-folder-open-o fa-fw' : ' fa fa-folder-o fa-fw';
 
-		return(
-			<nav className="navbar navbar-default navbar-static-top" role="navigation" style={{marginBottom: 0}}>
-				<div className="navbar-header">
-					<a className="navbar-brand">Jetski</a>
-				</div>
+    return(
+      <nav className="navbar navbar-default navbar-static-top" role="navigation" style={{marginBottom: 0}}>
+        <div className="navbar-header">
+          <a className="navbar-brand">Jetski</a>
+        </div>
 
-				<ul className="nav navbar-top-links navbar-right">
-					<li><a onClick={this.onLogoutClicked.bind(this)}><i className="fa fa-sign-out fa-fw" title="Log Out"></i></a></li>
-					<li><a onClick={this.onExpandClicked.bind(this)}><i className={expandIcon} title="Toggle All Servers"></i></a></li>
-				</ul>
+        <ul className="nav navbar-top-links navbar-right">
+          <li><a onClick={this.onLogoutClicked.bind(this)}><i className="fa fa-sign-out fa-fw" title="Log Out"></i></a></li>
+          <li><a onClick={this.onExpandClicked.bind(this)}><i className={expandIcon} title="Toggle All Servers"></i></a></li>
+        </ul>
 
         <Sidebar />
-			</nav>
+      </nav>
     );
   }
 }

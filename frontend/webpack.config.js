@@ -7,17 +7,17 @@ if (process.env.NODE_ENV == 'docker') {
 }
 
 module.exports = {
-	// entry file - starting point for the app
-	entry: './src',
+  // entry file - starting point for the app
+  entry: './src',
 
-	// where to dump the output of a production build
-	output: {
-		path: path.join(__dirname, 'build'),
-		filename: 'bundle.js'
-	},
+  // where to dump the output of a production build
+  output: {
+    path: path.join(__dirname, 'build'),
+    filename: 'bundle.js'
+  },
 
-	module: {
-		rules: [
+  module: {
+    rules: [
       {
         test: /\.css$/,
         loader: 'style-loader'
@@ -30,35 +30,35 @@ module.exports = {
           localIdentName: '[name]'
         }
       },
-			{
-				test: /\.jsx?/i,
-				loader: 'babel-loader',
-				options: {
-					presets: [
-						'es2015'
-					],
-					plugins: [
-						['transform-react-jsx']
-					]
-				}
-			}
-		]
-	},
+      {
+        test: /\.jsx?/i,
+        loader: 'babel-loader',
+        options: {
+          presets: [
+            'es2015'
+          ],
+          plugins: [
+            ['transform-react-jsx']
+          ]
+        }
+      }
+    ]
+  },
 
-	// enable Source Maps
-	devtool: 'source-map',
+  // enable Source Maps
+  devtool: 'source-map',
 
-	devServer: {
+  devServer: {
     host: '0.0.0.0',
     disableHostCheck: true,
-		// serve up any static files from src/
-		contentBase: path.join(__dirname, 'src'),
+    // serve up any static files from src/
+    contentBase: path.join(__dirname, 'src'),
 
-		// enable gzip compression:
-		compress: true,
+    // enable gzip compression:
+    compress: true,
 
-		// enable pushState() routing, as used by preact-router et al:
-		historyApiFallback: true,
+    // enable pushState() routing, as used by preact-router et al:
+    historyApiFallback: true,
 
     proxy: {
       '/api': {
@@ -66,7 +66,7 @@ module.exports = {
         secure: false
       }
     }
-	},
+  },
 
   resolve: {
     alias: {
@@ -74,12 +74,12 @@ module.exports = {
     }
   }
 
-	// resolve: {
-	// 		alias: {
-	// 				'react': 'preact-compat',
-	// 				'react-dom': 'preact-compat',
-	// 				// Not necessary unless you consume a module using `createClass`
-	// 				'create-react-class': 'preact-compat/lib/create-react-class'
-	// 		}
-	// }
+  // resolve: {
+  //   alias: {
+  //     'react': 'preact-compat',
+  //     'react-dom': 'preact-compat',
+  //     // Not necessary unless you consume a module using `createClass`
+  //     'create-react-class': 'preact-compat/lib/create-react-class'
+  //   }
+  // }
 };

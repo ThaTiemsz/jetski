@@ -1,7 +1,7 @@
 import json
 import subprocess
 
-from flask import Blueprint, request, g, make_response, jsonify
+from flask import Blueprint, request, g, make_response, jsonify, render_template
 from datetime import datetime
 
 from rowboat.redis import rdb
@@ -76,6 +76,9 @@ def archive(aid, fmt):
         mime_type = 'text/plain'
     elif fmt == 'csv':
         mime_type = 'text/csv'
+
+    if fmt == 'html':
+        return render_template('archive.html')
 
     res = make_response(archive.encode(fmt))
     res.headers['Content-Type'] = mime_type

@@ -8,6 +8,7 @@ import GuildOverview from './guild_overview';
 import GuildConfigEdit from './guild_config_edit';
 import GuildInfractions from './guild_infractions';
 import GuildStats from './guild_stats';
+import Archive from './archive';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 class AppWrapper extends Component {
@@ -73,6 +74,7 @@ export default function router() {
         <Route exact path='/guilds/:gid/config/:timestamp?' component={wrapped(GuildConfigEdit)} />
         <Route exact path='/guilds/:gid' component={wrapped(GuildOverview)} />
         <Route exact path='/' component={wrapped(Dashboard)} />
+        <Route exact path='/api/archive/:aid.html' component={Archive} />
       </Switch>
     </BrowserRouter>
   );

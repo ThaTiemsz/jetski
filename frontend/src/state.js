@@ -87,12 +87,16 @@ class State {
         reject();
       })
     })
-    // return axios.get('/api/stats').then((res) => {
-    //   this.stats = res.data;
-    //   if (typeof cb === 'function') cb(this.stats)
-    // }).catch((err) => {
-    //   throw err;
-    // })
+  }
+
+  getArchive(archiveID) {
+    return new Promise((resolve, reject) => {
+      axios.get(`/api/archive/${archiveID}.json`).then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject();
+      });
+    });
   }
 
   deploy() {

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jetski Archives</title>
+
+    <link href="/static/jetski.png" rel="icon" type="image/png" />
+    <link href="/static/archive.css" rel="stylesheet" type="text/css" />
+
+    <meta name="robots" content="noindex, nofollow" />
+</head>
+
+<body>
+{% block realbody %}
+    <div id="archive"></div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" async></script>
+    <script src="/bundle.js" async></script>
+    <script src="/static/archive.js" async></script>
+    {% block scripts %}
+    {% endblock %}
+{% endblock %}
+</body>
+</html>

@@ -234,6 +234,8 @@ class MessageArchive(BaseModel):
             return json.dumps({
                 'messages': map(self.encode_message_json, q)
             })
+        elif fmt == 'html':
+            return q
 
     @staticmethod
     def encode_message_text(msg):
@@ -264,8 +266,9 @@ class MessageArchive(BaseModel):
             id=str(msg.id),
             timestamp=str(msg.timestamp),
             author_id=str(msg.author.id),
+            channel_id=str(msg.channel.id),
             username=msg.author.username,
-            discriminator=msg.author.discriminator,
+            discriminator=str(msg.author.discriminator).zfill(4),
             content=msg.content,
             deleted=msg.deleted,
             attachments=msg.attachments)

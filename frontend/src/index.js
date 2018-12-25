@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 function init() {
-	// HMR requires that this be a require()
-	let App = require('./components/app').default;
-  ReactDOM.render(<App />, document.getElementById('app'));
+  // HMR requires that this be a require()
+  let App = require('./components/app').default;
+  const archive = document.getElementById('archive');
+  ReactDOM.render(<App />, archive ? archive : document.getElementById('app'));
 }
 
 init();
