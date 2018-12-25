@@ -72,7 +72,9 @@ module.exports = {
     alias: {
       config: path.join(__dirname, 'src', 'config', process.env.NODE_ENV || 'development')
     }
-  }
+  },
+
+  stats: 'verbose',
 
   // resolve: {
   //   alias: {
