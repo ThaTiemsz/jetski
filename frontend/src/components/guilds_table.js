@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { globalState, state, VIEWS } from '../state';
+import { globalState, state } from '../state';
 import { Link } from 'react-router-dom';
 import sortBy from 'lodash/sortBy';
 
@@ -42,18 +42,6 @@ class GuildTableRowActions extends Component {
         {parts}
       </div>
     );
-  }
-
-  onInfo(guild) {
-    state.setView(VIEWS.GUILD_OVERVIEW, {
-      guild: guild,
-    });
-  }
-
-  onEdit(guild) {
-    state.setView(VIEWS.GUILD_CONFIG_EDIT, {
-      guild: guild,
-    });
   }
 
   onDelete() {
