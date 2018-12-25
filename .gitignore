@@ -4,5 +4,5 @@ config.yaml
 .venv/
 *.log
 .data
-src/
+/src/
 .vscode/
