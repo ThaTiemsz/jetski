@@ -266,7 +266,7 @@ class MessageArchive(BaseModel):
             id=str(msg.id),
             timestamp=str(msg.timestamp),
             author_id=str(msg.author.id),
-            channel_id=str(msg.channel.id),
+            channel_id=str(msg.channel_id),
             username=msg.author.username,
             discriminator=str(msg.author.discriminator).zfill(4),
             content=msg.content,
