@@ -11,14 +11,14 @@ export default class Archive extends Component {
   }
 
   componentWillMount() {
-    globalState.getArchive(this.props.params.aid).then((archive) => {
+    globalState.getArchive(window.location.pathname.slice(13, -5)).then((archive) => {
       this.setState({archive});
     });
   }
 
   render() {
     console.log("state", this.state.archive);
-    console.log("id", this.props.params.aid);
+    console.log("id", window.location.pathname);
 
     if (!this.state.archive) {
       return <h3>Loading...</h3>;
