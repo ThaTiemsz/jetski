@@ -275,7 +275,7 @@ export default class Archive extends Component {
       return <h3>Loading...</h3>;
     }
 
-    let data = groupBy(this.state.archive.messages, "channel_id"); // group by channel
+    let data = this.groupBy(this.state.archive.messages, "channel_id"); // group by channel
     data = Object.entries(grouped).sort((a, b) => a[1][0].timestamp - b[1][0].timestamp); // sort by first message chronologically
 
     let channels = []
