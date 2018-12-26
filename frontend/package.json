@@ -38,6 +38,6 @@
   },
   "scripts": {
     "build": "NODE_ENV=production webpack",
-    "serve": "cross-env NODE_OPTIONS=--max_old_space_size=2048 webpack-dev-server --progress --hot --inline --host 0.0.0.0 --json ---profile > \"logs/webpack-build-log.`date +%Y-%m-%d_%H-%M-%S`.json\""
+    "serve": "cross-env NODE_OPTIONS=--max_old_space_size=2048 webpack-dev-server --progress --hot --inline --host 0.0.0.0"
   }
 }
