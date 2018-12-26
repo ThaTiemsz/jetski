@@ -16,6 +16,10 @@ class Divider extends Component {
 }
 
 class Message extends Component {
+  constructor() {
+    super();
+  }
+
   depunycodeLink(target) {
       try {
         const urlObject = url.parse(target);
@@ -28,7 +32,6 @@ class Message extends Component {
 
   parseLink(capture) {
     const target = this.depunycodeLink(capture[1]);
-  
     return {
       type: 'link',
       content: [
@@ -57,7 +60,8 @@ class Message extends Component {
           };
         },
         html: (node, output) => {
-          return `<a href="${output(node.content)}" className="anchor-3Z-8Bb anchorUnderlineOnHover-2ESHQB" rel="noreferrer noopener" target="_blank">${output(node.content)}</a>`;
+          const url = output(node.context).replace("cdn.discordapp.com", "media.discordapp.net");
+          return `<a href="${url}" className="anchor-3Z-8Bb anchorUnderlineOnHover-2ESHQB" rel="noreferrer noopener" target="_blank">${url}</a>`;
         }
       },
       autolink: {
@@ -200,7 +204,7 @@ class Message extends Component {
 
   getAttachments(attachments) {
     if (attachments.length > 0) {
-      attachments = attachments.map(a => `<a href="${a}" target="_blank">${a}</a>`)
+      attachments = attachments.map(a => `<a href="${a.replace("cdn.discordapp.com", "media.discordapp.net")}" target="_blank">${a.replace("cdn.discordapp.com", "media.discordapp.net")}</a>`)
       const list = attachments.join(", ")
       return `<span>(<strong>Attachment${attachments.length > 1 ? "s" : ""}</strong>: ${list})</span>`
     } else {
@@ -256,23 +260,34 @@ export default class Archive extends Component {
     });
   }
 
+  groupBy(items, key) {
+    return items.reduce((result, item) => ({
+      ...result,
+      [item[key]]: [
+        ...(result[item[key]] || []),
+        item,
+      ]
+    }), {});
+  }
+
   render() {
     if (!this.state.archive) {
       return <h3>Loading...</h3>;
     }
 
-    let messages = []
-    for (const message of this.state.archive.messages) {
-      messages.push(
-        <Message message={message} />
-      );
+    let data = groupBy(this.state.archive.messages, "channel_id"); // group by channel
+    data = Object.entries(grouped).sort((a, b) => a[1][0].timestamp - b[1][0].timestamp); // sort by first message chronologically
+
+    let channels = []
+    for (const [channel, messages] of data) {
+      channels.push(
+        <div className="theme-dark messagesWrapper">
+          <Divider name={messages[0].channel} id={channel} />
+          {messages.map(m => <Message key={m.id} message={m} />)}
+        </div>
+      )
     }
 
-    return (
-      <div className="theme-dark messagesWrapper">
-        <Divider name="bot-spam" id="522859278546108416" />
-        {messages}
-      </div>
-    );
+    return channels;
   }
 }

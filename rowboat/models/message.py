@@ -16,6 +16,7 @@ from disco.types.base import UNSET
 from rowboat import REV
 from rowboat.util import default_json
 from rowboat.models.user import User
+from rowboat.models.channel import Channel
 from rowboat.sql import BaseModel
 
 EMOJI_RE = re.compile(r'<:.+:([0-9]+)>')
@@ -268,6 +269,7 @@ class MessageArchive(BaseModel):
             id=str(msg.id),
             timestamp=str(msg.timestamp),
             author_id=str(msg.author.id),
+            channel=Channel.get(Channel.channel_id == msg.channel_id).name,
             channel_id=str(msg.channel_id),
             username=msg.author.username,
             discriminator=str(msg.author.discriminator).zfill(4),
