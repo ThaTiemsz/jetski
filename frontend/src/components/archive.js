@@ -4,7 +4,6 @@ import SimpleMarkdown from 'simple-markdown';
 import url from 'url';
 import punycode from 'punycode';
 import highlight from 'highlight.js';
-import 'highlight.js/styles/solarized-dark.css'
 
 class Divider extends Component {
   render() {
