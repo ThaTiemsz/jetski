@@ -210,13 +210,9 @@ class Message extends Component {
 
   render() {
     const msg = this.props.message;
-    const date = {
-      get date() {
-        return new Date(msg.timestamp);
-      },
-      timestamp: this.date.getTime(),
-      iso: this.date.replace(/(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).\d{6}/, "$1 GMT+0")
-    };
+    const date = new Date(msg.timestamp);
+    const isoDate = date.getTime();
+    const timestamp = date.replace(/(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).\d{6}/, "$1 GMT+0");
 
     return (
       <div className="containerCompactBounded-cYR5cW containerCompact-3V0ioj container-1YxwTf">
@@ -228,7 +224,7 @@ class Message extends Component {
                 <span className="messageId">({msg.id})</span>
               </div>
             </div>
-            <div className="markup-2BOw-j isCompact-1hsne1"><h2 className="headerCompact-3wRt2W"><time className="latin12CompactTimeStamp-3v5WB3 timestampCompact-MHgFLv timestampCompactBase-26h38e" dateTime={date.timestamp}><i className="separatorLeft-3DZD2Q separator-1xUax1">[</i>{date.iso}<i className="separatorRight-3ctgKv separator-1xUax1">] </i></time><span><span className="username-_4ZSMR">{msg.username}<span className="discriminator">#{msg.discriminator}</span></span><i className="separatorRight-3ctgKv separator-1xUax1">:</i></span></h2> {this.parseMarkdown(msg.content)}{this.getAttachments(msg.attachments)}</div>
+            <div className="markup-2BOw-j isCompact-1hsne1"><h2 className="headerCompact-3wRt2W"><time className="latin12CompactTimeStamp-3v5WB3 timestampCompact-MHgFLv timestampCompactBase-26h38e" dateTime={timestamp}><i className="separatorLeft-3DZD2Q separator-1xUax1">[</i>{isoDate}<i className="separatorRight-3ctgKv separator-1xUax1">] </i></time><span><span className="username-_4ZSMR">{msg.username}<span className="discriminator">#{msg.discriminator}</span></span><i className="separatorRight-3ctgKv separator-1xUax1">:</i></span></h2> {this.parseMarkdown(msg.content)}{this.getAttachments(msg.attachments)}</div>
           </div>
           <div className="containerCompact-3bB5aN container-1e22Ot"></div>
         </div>
