@@ -118,17 +118,9 @@ class Message(BaseModel):
 
     @staticmethod
     def convert_message(obj):
-        conn = database.obj.get_conn()
-        channel_name = None
-        with conn.cursor() as cur:
-            cur.execute('SELECT name FROM channels WHERE channel_id = {};'.format(int(obj.channel_id)))
-            row = cur.fetchone()
-            channel_name = row[0] if row else None
-
         return {
             'id': obj.id,
             'channel_id': obj.channel_id,
-            'channel': channel_name,
             'guild_id': (obj.guild and obj.guild.id),
             'author': User.from_disco_user(obj.author),
             'content': obj.with_proper_mentions,
@@ -272,11 +264,18 @@ class MessageArchive(BaseModel):
 
     @staticmethod
     def encode_message_json(msg):
+        conn = database.obj.get_conn()
+        channel_name = None
+        with conn.cursor() as cur:
+            cur.execute('SELECT name FROM channels WHERE channel_id = {};'.format(int(msg.channel_id)))
+            row = cur.fetchone()
+            channel_name = row[0] if row else None
+
         return dict(
             id=str(msg.id),
             timestamp=str(msg.timestamp),
             author_id=str(msg.author.id),
-            # channel=Channel.get(Channel.channel_id == msg.channel_id).name,
+            channel=channel_name,
             channel_id=str(msg.channel_id),
             username=msg.author.username,
             discriminator=str(msg.author.discriminator).zfill(4),
