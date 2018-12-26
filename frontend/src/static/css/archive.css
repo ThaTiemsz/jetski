@@ -43,6 +43,9 @@ body {
     font-size: 14px;
     font-weight: 500;
     line-height: 19px;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 .theme-dark .divider-3gKybi:not(.dividerRed-MKoLlr) .dividerContent-2L12VI:after, .theme-dark .divider-3gKybi:not(.dividerRed-MKoLlr) .dividerContent-2L12VI:before {
     border-color: #474a4f;

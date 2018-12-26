@@ -18,6 +18,10 @@ class Divider extends Component {
 class Message extends Component {
   constructor() {
     super();
+    this.depunycodeLink = this.depunycodeLink.bind(this);
+    this.parseLink = this.parseLink.bind(this);
+    this.parseMarkdown = this.parseMarkdown.bind(this);
+    this.getAttachments = this.getAttachments.bind(this);
   }
 
   depunycodeLink(target) {
@@ -245,6 +249,8 @@ export default class Archive extends Component {
     this.state = {
       archive: null
     };
+
+    this.groupBy = this.groupBy.bind(this);
   }
 
   get archiveId() {
