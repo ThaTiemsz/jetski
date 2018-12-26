@@ -4,6 +4,7 @@ import SimpleMarkdown from 'simple-markdown';
 import url from 'url';
 import punycode from 'punycode';
 import highlight from 'highlight.js';
+import 'highlight.js/styles/solarized-dark.css'
 
 class Divider extends Component {
   render() {
@@ -202,7 +203,7 @@ class Message extends Component {
     if (attachments.length > 0) {
       attachments = attachments.map(a => `<a href="${a}" target="_blank">${a}</a>`)
       const list = attachments.join(", ")
-      return `<br /><span>(<strong>Attachment${attachments.length > 1 ? "s" : ""}</strong>: ${list})</span>`
+      return `<span>(<strong>Attachment${attachments.length > 1 ? "s" : ""}</strong>: ${list})</span>`
     } else {
       return
     }
@@ -224,7 +225,7 @@ class Message extends Component {
                 <span className="messageId">({msg.id})</span>
               </div>
             </div>
-            <div className="markup-2BOw-j isCompact-1hsne1"><h2 className="headerCompact-3wRt2W"><time className="latin12CompactTimeStamp-3v5WB3 timestampCompact-MHgFLv timestampCompactBase-26h38e" dateTime={timestamp}><i className="separatorLeft-3DZD2Q separator-1xUax1">[</i>{isoDate}<i className="separatorRight-3ctgKv separator-1xUax1">] </i></time><span><span className="username-_4ZSMR">{msg.username}<span className="discriminator">#{msg.discriminator}</span></span><i className="separatorRight-3ctgKv separator-1xUax1">:</i></span></h2> {this.parseMarkdown(msg.content)}{this.getAttachments(msg.attachments)}</div>
+            <div className="markup-2BOw-j isCompact-1hsne1"><h2 className="headerCompact-3wRt2W"><time className="latin12CompactTimeStamp-3v5WB3 timestampCompact-MHgFLv timestampCompactBase-26h38e" dateTime={timestamp}><i className="separatorLeft-3DZD2Q separator-1xUax1">[</i>{isoDate}<i className="separatorRight-3ctgKv separator-1xUax1">] </i></time><span><span className="username-_4ZSMR">{msg.username}<span className="discriminator">#{msg.discriminator}</span></span><i className="separatorRight-3ctgKv separator-1xUax1">:</i></span></h2> {this.parseMarkdown(msg.content)}<br />{this.getAttachments(msg.attachments)}</div>
           </div>
           <div className="containerCompact-3bB5aN container-1e22Ot"></div>
         </div>

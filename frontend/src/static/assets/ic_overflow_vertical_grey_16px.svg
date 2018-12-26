@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.3 (33839) - http://www.bohemiancoding.com/sketch -->
+    <title>ic_overflow_vertical_grey_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_overflow_vertical_grey_16px">
+            <g id="Group-22" transform="translate(8.000000, 8.000000) rotate(90.000000) translate(-8.000000, -8.000000) ">
+                <rect id="Rectangle-8" x="0" y="0" width="16" height="16"></rect>
+                <g id="dots-horizontal-(1)" transform="translate(2.666667, 6.666667)" fill="#99AAB5">
+                    <path d="M8,1.33333333 C8,0.596953667 8.59695367,0 9.33333333,0 C10.069713,0 10.6666667,0.596953667 10.6666667,1.33333333 C10.6666667,2.069713 10.069713,2.66666667 9.33333333,2.66666667 C8.59695367,2.66666667 8,2.069713 8,1.33333333 L8,1.33333333 Z M4,1.33333333 C4,0.596953667 4.59695367,0 5.33333333,0 C6.069713,0 6.66666667,0.596953667 6.66666667,1.33333333 C6.66666667,2.069713 6.069713,2.66666667 5.33333333,2.66666667 C4.59695367,2.66666667 4,2.069713 4,1.33333333 L4,1.33333333 Z M0,1.33333333 C0,0.596953667 0.596953667,0 1.33333333,0 C2.069713,0 2.66666667,0.596953667 2.66666667,1.33333333 C2.66666667,2.069713 2.069713,2.66666667 1.33333333,2.66666667 C0.596953667,2.66666667 0,2.069713 0,1.33333333 L0,1.33333333 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
