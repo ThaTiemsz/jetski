@@ -64,7 +64,7 @@ class Message extends Component {
           };
         },
         html: (node, output) => {
-          const url = output(node.context).replace("cdn.discordapp.com", "media.discordapp.net");
+          const url = output(node.content).replace("cdn.discordapp.com", "media.discordapp.net");
           return `<a href="${url}" className="anchor-3Z-8Bb anchorUnderlineOnHover-2ESHQB" rel="noreferrer noopener" target="_blank">${url}</a>`;
         }
       },
@@ -88,7 +88,19 @@ class Message extends Component {
           return "<br />";
         }
       },
-      text: SimpleMarkdown.defaultRules.text,
+      text: {
+        ...SimpleMarkdown.defaultRules.text,
+        html(node, output) {
+          const SANITIZE_TEXT_R = /[<>&]/g;
+          const SANITIZE_TEXT_CODES = {
+            '<': '&lt;',
+            '>': '&gt;',
+            '&': '&amp;'
+          };
+          const sanitizeText = (text) => String(text).replace(SANITIZE_TEXT_R, (chr) => SANITIZE_TEXT_CODES[chr]);
+          return sanitizeText(node.content);
+        }
+      },
     
       inlineCode: {
         ...SimpleMarkdown.defaultRules.inlineCode,
