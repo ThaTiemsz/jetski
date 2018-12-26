@@ -13,10 +13,10 @@
     "lodash": "^4.17.4",
     "moment": "^2.22.2",
     "punycode": "^2.1.1",
-    "react": "^16.5.2",
+    "react": "^16.7.0",
     "react-ace": "^6.1.4",
     "react-countup": "^4.0.0-alpha.6",
-    "react-dom": "^16.5.2",
+    "react-dom": "^16.7.0",
     "react-router": "^4.1.2",
     "react-router-dom": "^4.1.2",
     "react-table": "^6.5.3",
@@ -32,11 +32,12 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "cross-env": "^5.2.0",
     "webpack": "^4.28.2",
     "webpack-cli": "^3.1.2"
   },
   "scripts": {
     "build": "NODE_ENV=production webpack",
-    "serve": "webpack-dev-server --progress --hot --inline --host 0.0.0.0 --json ---profile > \"logs/webpack-build-log.`date +%Y-%m-%d_%H-%M-%S`.json\""
+    "serve": "cross-env NODE_OPTIONS=--max_old_space_size=2048 webpack-dev-server --progress --hot --inline --host 0.0.0.0 --json ---profile > \"logs/webpack-build-log.`date +%Y-%m-%d_%H-%M-%S`.json\""
   }
 }
