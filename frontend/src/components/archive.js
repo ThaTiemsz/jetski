@@ -63,9 +63,9 @@ class Message extends Component {
             title: capture[3],
           };
         },
-        html: (node, output) => {
+        react: (node, output) => {
           const url = output(node.content).replace("cdn.discordapp.com", "media.discordapp.net");
-          return `<a href="${url}" className="anchor-3Z-8Bb anchorUnderlineOnHover-2ESHQB" rel="noreferrer noopener" target="_blank">${url}</a>`;
+          return <a href={url} className="anchor-3Z-8Bb anchorUnderlineOnHover-2ESHQB" rel="noreferrer noopener" target="_blank">{url}</a>;
         }
       },
       autolink: {
@@ -84,13 +84,13 @@ class Message extends Component {
         match(source) {
           return /^\n/.exec(source);
         },
-        html(node, output) {
-          return "<br />";
+        react(node, output) {
+          return <br />;
         }
       },
       text: {
         ...SimpleMarkdown.defaultRules.text,
-        html(node, output) {
+        react(node, output) {
           const SANITIZE_TEXT_R = /[<>&]/g;
           const SANITIZE_TEXT_CODES = {
             '<': '&lt;',
@@ -104,8 +104,8 @@ class Message extends Component {
     
       inlineCode: {
         ...SimpleMarkdown.defaultRules.inlineCode,
-        html(node, output) {
-          return `<code className="inline">${node.content}</code>`;
+        react(node, output) {
+          return <code className="inline">{node.content}</code>;
         }
       },
     
@@ -163,8 +163,8 @@ class Message extends Component {
         match(source) {
           return /^<@&(\d+)>/.exec(source);
         },
-        html(node, output) {
-          return `<span className="mention wrapperHover-1GktnT wrapper-3WhCwL">${node.content}</span>`;
+        react(node, output) {
+          return <span className="mention wrapperHover-1GktnT wrapper-3WhCwL">{node.content}</span>;
         }
       },
     
@@ -173,8 +173,8 @@ class Message extends Component {
         match(source) {
           return /^<@!?(\d+)>|^(@(?:everyone|here))/.exec(source);
         },
-        html(node, output) {
-          return `<span className="mention wrapperHover-1GktnT wrapper-3WhCwL">${node.content}</span>`;
+        react(node, output) {
+          return <span className="mention wrapperHover-1GktnT wrapper-3WhCwL">{node.content}</span>;
         }
       },
     
@@ -183,8 +183,8 @@ class Message extends Component {
         match(source) {
           return /^<#(\d+)>/.exec(source);
         },
-        html(node, output) {
-          return `<span className="mention wrapperHover-1GktnT wrapper-3WhCwL">${node.content}</span>`;
+        react(node, output) {
+          return <span className="mention wrapperHover-1GktnT wrapper-3WhCwL">{node.content}</span>;
         }
       },
 
@@ -205,8 +205,8 @@ class Message extends Component {
         order: SimpleMarkdown.defaultRules.u.order,
         match: SimpleMarkdown.inlineRegex(/^~~([\s\S]+?)~~(?!_)/),
         parse: SimpleMarkdown.defaultRules.u.parse,
-        html(node, output) {
-          return `<s>${output(node.content)}</s>`;
+        react(node, output) {
+          return <s>{output(node.content)}</s>;
         }
       },
     
@@ -220,22 +220,22 @@ class Message extends Component {
             content: capture[1]
           };
         },
-        html(node, output) {
-          return `<span className="spoilerText-3p6IlD hidden-HHr2R9"><span className="inlineContent-3ZjPuv">${node.content}</span></span>`;
+        react(node, output) {
+          return <span className="spoilerText-3p6IlD hidden-HHr2R9"><span className="inlineContent-3ZjPuv">{node.content}</span></span>;
         }
       }
     };
     
     const parse = SimpleMarkdown.parserFor(DEFAULT_RULES);
-    const output = SimpleMarkdown.htmlFor(SimpleMarkdown.ruleOutput(DEFAULT_RULES, 'html'));
+    const output = SimpleMarkdown.reactFor(SimpleMarkdown.ruleOutput(DEFAULT_RULES, 'react'));
     return output(parse(content, {inline: true}));
   }
 
   getAttachments(attachments) {
     if (attachments.length > 0) {
-      attachments = attachments.map(a => `<a href="${a.replace("cdn.discordapp.com", "media.discordapp.net")}" target="_blank">${a.replace("cdn.discordapp.com", "media.discordapp.net")}</a>`)
+      attachments = attachments.map(a => <a href={a.replace("cdn.discordapp.com", "media.discordapp.net")} target="_blank">{a.replace("cdn.discordapp.com", "media.discordapp.net")}</a>)
       const list = attachments.join(", ")
-      return `<span>(<strong>Attachment${attachments.length > 1 ? "s" : ""}</strong>: ${list})</span>`
+      return <span>(<strong>Attachment{attachments.length > 1 ? "s" : ""}</strong>: {list})</span>;
     } else {
       return
     }
