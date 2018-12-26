@@ -74,8 +74,6 @@ module.exports = {
     }
   },
 
-  stats: 'verbose',
-
   // resolve: {
   //   alias: {
   //     'react': 'preact-compat',
