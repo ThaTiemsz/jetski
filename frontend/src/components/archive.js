@@ -63,8 +63,8 @@ class Message extends Component {
             title: capture[3],
           };
         },
-        react: (node, output, state) => {
-          const url = output(node.content, state).replace("cdn.discordapp.com", "media.discordapp.net");
+        react: (node, output) => {
+          const url = output(node.content)[0].replace("cdn.discordapp.com", "media.discordapp.net");
           return <a href={url} className="anchor-3Z-8Bb anchorUnderlineOnHover-2ESHQB" rel="noreferrer noopener" target="_blank">{url}</a>;
         }
       },
@@ -150,7 +150,7 @@ class Message extends Component {
             return (
               <pre>
                 <code className="hljs">
-                  {output(node.content, state)}
+                  {output(node.content)}
                 </code>
               </pre>
             );
@@ -205,8 +205,8 @@ class Message extends Component {
         order: SimpleMarkdown.defaultRules.u.order,
         match: SimpleMarkdown.inlineRegex(/^~~([\s\S]+?)~~(?!_)/),
         parse: SimpleMarkdown.defaultRules.u.parse,
-        react(node, output, state) {
-          return <s>{output(node.content, state)}</s>;
+        react(node, output) {
+          return <s>{output(node.content)}</s>;
         }
       },
     
