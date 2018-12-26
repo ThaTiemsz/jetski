@@ -16,7 +16,7 @@ from disco.types.base import UNSET
 from rowboat import REV
 from rowboat.util import default_json
 from rowboat.models.user import User
-from rowboat.sql import BaseModel
+from rowboat.sql import BaseModel, database
 
 EMOJI_RE = re.compile(r'<:.+:([0-9]+)>')
 
@@ -118,9 +118,17 @@ class Message(BaseModel):
 
     @staticmethod
     def convert_message(obj):
+        conn = database.obj.get_conn()
+        channel_name = None
+        with conn.cursor() as cur:
+            cur.execute('SELECT name FROM channels WHERE channel_id = {};'.format(int(obj.channel_id)))
+            row = cur.fetchone()
+            channel_name = row[0] if row else None
+
         return {
             'id': obj.id,
             'channel_id': obj.channel_id,
+            'channel': channel_name,
             'guild_id': (obj.guild and obj.guild.id),
             'author': User.from_disco_user(obj.author),
             'content': obj.with_proper_mentions,
