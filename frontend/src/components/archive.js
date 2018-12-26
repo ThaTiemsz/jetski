@@ -211,8 +211,8 @@ class Message extends Component {
   render() {
     const msg = this.props.message;
     const date = new Date(msg.timestamp);
-    const isoDate = date.getTime();
-    const timestamp = date.replace(/(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).\d{6}/, "$1 GMT+0");
+    const timestamp = date.getTime();
+    const isoDate = msg.timestamp.replace(/(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).\d{6}/, "$1 GMT+0");
 
     return (
       <div className="containerCompactBounded-cYR5cW containerCompact-3V0ioj container-1YxwTf">
