@@ -187,6 +187,19 @@ class Message extends Component {
           return `<span className="mention wrapperHover-1GktnT wrapper-3WhCwL">${node.content}</span>`;
         }
       },
+
+      customEmoji: {
+        order: SimpleMarkdown.defaultRules.text.order,
+        match(source) {
+          return /^<:(\w+):(\d+)>/.exec(source);
+        },
+        parse(capture) {
+          return {
+            type: 'text',
+            content: `:${capture[1]}:`,
+          };
+        }
+      },
     
       s: {
         order: SimpleMarkdown.defaultRules.u.order,
