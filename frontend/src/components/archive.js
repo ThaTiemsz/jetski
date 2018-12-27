@@ -276,7 +276,6 @@ class Message extends Component {
             <div className="buttonContainer-KtQ8wc">
               <div className="buttonContainer-37UsAw">
                 <div className="button-3Jq0g9" onClick={() => this.onButton(msg)} ref={el => this.button = el}></div>
-                <span className="messageId">({msg.id})</span>
               </div>
             </div>
             <div className="markup-2BOw-j isCompact-1hsne1"><h2 className="headerCompact-3wRt2W"><time className="latin12CompactTimeStamp-3v5WB3 timestampCompact-MHgFLv timestampCompactBase-26h38e" dateTime={timestamp}><i className="separatorLeft-3DZD2Q separator-1xUax1">[</i>{isoDate}<i className="separatorRight-3ctgKv separator-1xUax1">] </i></time><span><span className="username-_4ZSMR">{msg.username}<span className="discriminator">#{msg.discriminator}</span></span><i className="separatorRight-3ctgKv separator-1xUax1">:</i></span></h2> {this.parseMarkdown(msg.content)}<br />{this.getAttachments(msg.attachments)}</div>
@@ -346,7 +345,7 @@ class Popout extends Component {
     let menu;
 
     if (type === "options" && this.props.msg && this.props.modalCB) {
-      return (
+      menu = (
         <div className="container-3cGP6G" role="menu">
           <button role="menuitem" type="button" onClick={() => this.props.modalCB(true, this.props.msg.content)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div className="contents-18-Yxp">Raw</div>
@@ -360,7 +359,7 @@ class Popout extends Component {
         </div>
       );
     } else if (type === "format") {
-      return (
+      menu = (
         <div className="popout-2sKjHu lookMinimal-2OMO3G sizeMedium-6vZ9JV filterBrowsingSelectPopout-2kjxuc">
           <div className="optionLabel-2CkCZx optionActive-KkAdqq option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.html`)}>HTML</div>
           <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.txt`)}>TXT</div>
@@ -483,7 +482,7 @@ export default class Archive extends Component {
           <div className="filterAndSort-gLX1Ym">
             <div className="filterBrowsing-20BUwa">
               <label>Format:</label>
-              <div className="selectClosed-2un0PJ select-1Pkeg4 lookMinimal-2OMO3G sizeMedium-6vZ9JV filterBrowsingSelectValue-2QrN9m" onClick={() => this.onClick()} ref={el => this.select = el}>
+              <div className="selectClosed-2un0PJ select-1Pkeg4 lookMinimal-2OMO3G sizeMedium-6vZ9JV filterBrowsingSelectValue-2QrN9m" onClick={() => this.onSelect()} ref={el => this.select = el}>
                 <div className="selectLabel-2ltwlE" style={{ flex: '1 1 auto'}}>HTML</div>
                 <svg className="arrow-2KJjTM transition-27fFQS directionDown-26e7eE" width="24" height="24" viewBox="0 0 24 24">
                   <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 10L12 15 17 10"></path>
