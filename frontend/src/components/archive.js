@@ -244,7 +244,7 @@ class Message extends Component {
 
   onButton() {
     const { offsetLeft, offsetTop } = this.button;
-    Archive.togglePopout(offsetLeft, offsetTop);
+    this.props.popoutCB(offsetLeft, offsetTop);
   }
 
   render() {
@@ -309,6 +309,7 @@ export default class Archive extends Component {
     };
 
     this.groupBy = this.groupBy.bind(this);
+    this.togglePopout = this.togglePopout.bind(this);
   }
 
   get archiveId() {
@@ -336,7 +337,7 @@ export default class Archive extends Component {
     }), {});
   }
 
-  static togglePopout(left, top) {
+  togglePopout(left, top) {
     this.setState({
       popout: <Popout left={left} top={top} />
     })
@@ -355,7 +356,7 @@ export default class Archive extends Component {
       channels.push(
         <div className="theme-dark messagesWrapper">
           <Divider name={messages[0].channel} id={channel} />
-          {messages.map(m => <Message key={m.id} message={m} />)}
+          {messages.map(m => <Message key={m.id} message={m} popoutCB={this.togglePopout} />)}
         </div>
       )
     }
