@@ -5,6 +5,22 @@ import url from 'url';
 import punycode from 'punycode';
 import highlight from 'highlight.js';
 
+function copy(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'absolute';
+  textArea.style.top = '-9999px';
+  textArea.style.left = '-9999px';
+  const body = document.body;
+  body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  const success = document.execCommand('copy');
+  body.removeChild(textArea);
+
+  return success;
+}
+
 class Divider extends Component {
   render() {
     return (
@@ -259,7 +275,7 @@ class Message extends Component {
           <div className="contentCompact-1QLHBj content-3dzVd8 containerCompact-3pGPJs container-206Blv">
             <div className="buttonContainer-KtQ8wc">
               <div className="buttonContainer-37UsAw">
-                <div className="button-3Jq0g9" onClick={() => this.onButton(msg.id)} ref={el => this.button = el}></div>
+                <div className="button-3Jq0g9" onClick={() => this.onButton(msg)} ref={el => this.button = el}></div>
                 <span className="messageId">({msg.id})</span>
               </div>
             </div>
@@ -284,13 +300,13 @@ class Popout extends Component {
         transform: 'translateX(-50%) translateY(0%) translateZ(0px)'
       }}>
         <div class="container-3cGP6G" role="menu">
-          <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+          <button role="menuitem" type="button" onClick={} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div class="contents-18-Yxp">Raw</div>
           </button>
-          <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+          <button role="menuitem" type="button" onClick={() => copy(msg.author_id)} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div class="contents-18-Yxp">User ID</div>
           </button>
-          <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+          <button role="menuitem" type="button" onClick={() => copy(msg.id)} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div class="contents-18-Yxp">Copy ID</div>
           </button>
         </div>
@@ -340,8 +356,8 @@ export default class Archive extends Component {
 
   togglePopout(msg, left, top) {
     this.setState({
-      popout: this.state.popoutMsg !== msg ? <Popout left={left} top={top} /> : null,
-      popoutMsg: this.state.popoutMsg !== msg ? msg : null
+      popout: this.state.popoutMsg !== msg.id ? <Popout left={left} top={top} msg={msg} /> : null,
+      popoutMsg: this.state.popoutMsg !== msg.id ? msg.id : null
     })
   }
 
