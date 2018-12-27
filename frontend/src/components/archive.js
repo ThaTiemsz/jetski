@@ -303,10 +303,10 @@ class Popout extends Component {
           <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div class="contents-18-Yxp">Raw</div>
           </button>
-          <button role="menuitem" type="button" onClick={() => copy(msg.author_id)} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+          <button role="menuitem" type="button" onClick={() => copy(this.props.msg.author_id)} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div class="contents-18-Yxp">User ID</div>
           </button>
-          <button role="menuitem" type="button" onClick={() => copy(msg.id)} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+          <button role="menuitem" type="button" onClick={() => copy(this.props.msg.id)} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div class="contents-18-Yxp">Copy ID</div>
           </button>
         </div>
