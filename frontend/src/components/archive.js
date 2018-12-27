@@ -4,7 +4,6 @@ import SimpleMarkdown from 'simple-markdown';
 import url from 'url';
 import punycode from 'punycode';
 import highlight from 'highlight.js';
-import crypto from 'crypto';
 
 class Divider extends Component {
   render() {
@@ -260,7 +259,7 @@ class Message extends Component {
           <div className="contentCompact-1QLHBj content-3dzVd8 containerCompact-3pGPJs container-206Blv">
             <div className="buttonContainer-KtQ8wc">
               <div className="buttonContainer-37UsAw">
-                <div className="button-3Jq0g9" id={crypto.randomBytes(4).toString('hex')} onClick={() => this.onButton()} ref={el => this.button = el}></div>
+                <div className="button-3Jq0g9" id={Math.random().toString(36).substr(5)} onClick={() => this.onButton()} ref={el => this.button = el}></div>
                 <span className="messageId">({msg.id})</span>
               </div>
             </div>
@@ -289,7 +288,7 @@ class Popout extends Component {
             <div class="contents-18-Yxp">Raw</div>
           </button>
           <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
-            <div class="contents-18-Yxp">Copy User ID</div>
+            <div class="contents-18-Yxp">User ID</div>
           </button>
           <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div class="contents-18-Yxp">Copy ID</div>
