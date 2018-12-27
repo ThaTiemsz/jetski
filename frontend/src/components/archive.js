@@ -327,7 +327,7 @@ class Modal extends Component {
               </div>
               <div className="flex-1xMQg5 flex-1O1GKY horizontalReverse-2eTKWD horizontalReverse-3tRjY7 flex-1O1GKY directionRowReverse-m8IjIq justifyStart-2NDFzi alignStretch-DpGPf3 noWrap-3jynv6 footer-2yfCgX" style={{flex:'0 0 auto'}}>
                 <button type="submit" className="button-38aScr lookFilled-1Gx00P colorBrand-3pXr91 sizeMedium-1AC_Sl grow-q77ONN">
-                  <div className="contents-18-Yxp" onClick={() => this.props.callback(false)}>Back</div>
+                  <div className="contents-18-Yxp" onClick={(e) => e.preventDefault() && this.props.callback(false)}>Back</div>
                 </button>
               </div>
             </form>
@@ -361,10 +361,10 @@ class Popout extends Component {
     } else if (type === "format") {
       menu = (
         <div className="popout-2sKjHu lookMinimal-2OMO3G sizeMedium-6vZ9JV filterBrowsingSelectPopout-2kjxuc">
-          <div className="optionLabel-2CkCZx optionActive-KkAdqq option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.html`)}>HTML</div>
-          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.txt`)}>TXT</div>
-          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.csv`)}>CSV</div>
-          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.json`)}>JSON</div>
+          <div className="optionLabel-2CkCZx optionActive-KkAdqq option-1mJRMP" onClick={() => location.href(`${location.pathname.slice(0, -5)}.html`)}>HTML</div>
+          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => location.href(`${location.pathname.slice(0, -5)}.txt`)}>TXT</div>
+          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => location.href(`${location.pathname.slice(0, -5)}.csv`)}>CSV</div>
+          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => location.href(`${location.pathname.slice(0, -5)}.json`)}>JSON</div>
         </div>
       );
     }
@@ -440,7 +440,7 @@ export default class Archive extends Component {
       this.setState({
         popout: {
           type: "format",
-          component: this.state.popout.type === "format" ? null : <Popout type={type} left={left} top={top} />,
+          component: (!this.state.popout.type || this.state.popout.type === "options") ? <Popout type={type} left={left} top={top} /> : null,
           msgId: null
         }
       });
@@ -477,7 +477,7 @@ export default class Archive extends Component {
     }
 
     return (
-      <div>
+      <div className="chat">
         <div className="theme-dark sortFilterBar-3hePOV">
           <div className="filterAndSort-gLX1Ym">
             <div className="filterBrowsing-20BUwa">
