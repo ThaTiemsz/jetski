@@ -260,7 +260,7 @@ class Message extends Component {
 
   onButton(msg) {
     const { offsetLeft, offsetTop } = this.button;
-    this.props.popoutCB(msg, offsetLeft, offsetTop);
+    this.props.popoutCB("options", offsetLeft, offsetTop, msg);
   }
 
   render() {
@@ -289,29 +289,98 @@ class Message extends Component {
   }
 }
 
+class Modal extends Component {
+  render() {
+    const space = <div style={{width:'1px',height:'0px',padding:'0px',overflow:'hidden',position:'fixed',top:'1px',left:'1px'}}></div>;
+
+    return (
+      <div className="theme-dark">
+        <div className="backdrop-1wrmKB" onClick={() => this.props.callback(false)} style={{opacity:'0.85','background-color':'rgb(0,0,0)','z-index':'1000','transform':'translateZ(0px)'}}></div>
+        <div className="modal-1UGdnR" style={{transform:'scale(1) translateZ(0px)'}}>
+          {space}
+          {space}
+          <div className="inner-1JeGVc">
+            <form className="modal-3HD5ck container-SaXBYZ sizeSmall-Sf4iOi">
+              <div className="flex-1xMQg5 flex-1O1GKY horizontal-1ae9ci horizontal-2EEEnY flex-1O1GKY directionRow-3v3tfG justifyStart-2NDFzi alignCenter-1dQNNs noWrap-3jynv6 header-1R_AjF" style={{flex:'0 0 auto'}}>
+                <h4 className="h4-AQvcAz title-3sZWYQ size16-14cGz5 height20-mO2eIN weightSemiBold-NJexzi defaultColor-1_ajX0 header-3OkTu9">Raw Message</h4>
+              </div>
+              <div className="content-2BXhLs scrollerThemed-2oenus themeGhostHairline-DBD-2d">
+                <div className="inner-3wn6Q5 content-KhOrDM">
+                  <div className="spacing-2P-ODW marginBottom20-32qID7 medium-zmzTW- size16-14cGz5 height20-mO2eIN primary-jw0I4K"></div>
+                  <div className="message-2qRu38">
+                    <div className="containerCozyBounded-1rKFAn containerCozy-jafyvG container-1YxwTf">
+                      <div className="messageCozy-2JPAPA message-1PNnaP">
+                        <textarea style={{
+                          width: '100%',
+                          height: '15em',
+                          margin: '-20px 0px -26px',
+                          border: '0px',
+                          'font-family': 'Whitney,Helvetica Neue,Helvetica,Arial,sans-serif',
+                          'font-size': '15px'
+                        }} readonly>
+                          {this.props.msg}
+                        </textarea>
+                      </div>
+                      <hr className="dividerEnabled-2TTlcf divider-32i8lo" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1xMQg5 flex-1O1GKY horizontalReverse-2eTKWD horizontalReverse-3tRjY7 flex-1O1GKY directionRowReverse-m8IjIq justifyStart-2NDFzi alignStretch-DpGPf3 noWrap-3jynv6 footer-2yfCgX" style={{flex:'0 0 auto'}}>
+                <button type="submit" className="button-38aScr lookFilled-1Gx00P colorBrand-3pXr91 sizeMedium-1AC_Sl grow-q77ONN">
+                  <div className="contents-18-Yxp" onClick={() => this.props.callback(false)}>Back</div>
+                </button>
+              </div>
+            </form>
+          </div>
+          {space}
+        </div>
+      </div>
+    );
+  }
+}
+
 class Popout extends Component {
   render() {
+    const type = this.props.type;
+    let menu;
+
+    if (type === "options" && this.props.msg && this.props.modalCB) {
+      return (
+        <div className="container-3cGP6G" role="menu">
+          <button role="menuitem" type="button" onClick={() => this.props.modalCB(true, this.props.msg.content)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+            <div className="contents-18-Yxp">Raw</div>
+          </button>
+          <button role="menuitem" type="button" onClick={() => copy(this.props.msg.author_id)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+            <div className="contents-18-Yxp">User ID</div>
+          </button>
+          <button role="menuitem" type="button" onClick={() => copy(this.props.msg.id)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+            <div className="contents-18-Yxp">Copy ID</div>
+          </button>
+        </div>
+      );
+    } else if (type === "format") {
+      return (
+        <div className="popout-2sKjHu lookMinimal-2OMO3G sizeMedium-6vZ9JV filterBrowsingSelectPopout-2kjxuc">
+          <div className="optionLabel-2CkCZx optionActive-KkAdqq option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.html`)}>HTML</div>
+          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.txt`)}>TXT</div>
+          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.csv`)}>CSV</div>
+          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => window.open(`${location.pathname.slice(0, -5)}.json`)}>JSON</div>
+        </div>
+      );
+    }
+
     return (
-      <div role="dialog" class="noArrow-3BYQ0Z popout-3sVMXz popoutBottom-1YbShG arrowAlignmentTop-iGQczz popoutbottom theme-undefined" style={{
+      <div role="dialog" className="noArrow-3BYQ0Z popout-3sVMXz popoutBottom-1YbShG arrowAlignmentTop-iGQczz popoutbottom theme-undefined" style={{
         'z-index': '1001',
         visibility: 'visible',
         left: `${this.props.left + 8}px`,
         top: `${this.props.top + 10}px`,
         transform: 'translateX(-50%) translateY(0%) translateZ(0px)'
       }}>
-        <div class="container-3cGP6G" role="menu">
-          <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
-            <div class="contents-18-Yxp">Raw</div>
-          </button>
-          <button role="menuitem" type="button" onClick={() => copy(this.props.msg.author_id)} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
-            <div class="contents-18-Yxp">User ID</div>
-          </button>
-          <button role="menuitem" type="button" onClick={() => copy(this.props.msg.id)} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
-            <div class="contents-18-Yxp">Copy ID</div>
-          </button>
-        </div>
+        {menu}
       </div>
-    )
+    );
   }
 }
 
@@ -321,12 +390,17 @@ export default class Archive extends Component {
 
     this.state = {
       archive: null,
-      popout: null,
-      popoutMsg: null
+      popout: {
+        type: null,
+        component: null,
+        msgId: null
+      },
+      modal: null
     };
 
     this.groupBy = this.groupBy.bind(this);
     this.togglePopout = this.togglePopout.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
   }
 
   get archiveId() {
@@ -354,11 +428,35 @@ export default class Archive extends Component {
     }), {});
   }
 
-  togglePopout(msg, left, top) {
+  togglePopout(type, left, top, msg = null) {
+    if (type === "options") {
+      this.setState({
+        popout: {
+          type: "options",
+          component: this.state.popout.msgId !== msg.id ? <Popout type={type} left={left} top={top} msg={msg} modalCB={this.toggleModal} /> : null,
+          msgId: this.state.popout.msgId !== msg.id ? msg.id : null
+        }
+      });
+    } else {
+      this.setState({
+        popout: {
+          type: "format",
+          component: this.state.popout.type === "format" ? null : <Popout type={type} left={left} top={top} />,
+          msgId: null
+        }
+      });
+    }
+  }
+
+  onSelect() {
+    const { offsetLeft, offsetTop } = this.select;
+    this.togglePopout("format", offsetLeft, offsetTop);
+  }
+
+  toggleModal(show, content) {
     this.setState({
-      popout: this.state.popoutMsg !== msg.id ? <Popout left={left} top={top} msg={msg} /> : null,
-      popoutMsg: this.state.popoutMsg !== msg.id ? msg.id : null
-    })
+      modal: show ? <Modal callback={this.toggleModal} msg={content} /> : null
+    });
   }
 
   render() {
@@ -381,9 +479,23 @@ export default class Archive extends Component {
 
     return (
       <div>
+        <div className="theme-dark sortFilterBar-3hePOV">
+          <div className="filterAndSort-gLX1Ym">
+            <div className="filterBrowsing-20BUwa">
+              <label>Format:</label>
+              <div className="selectClosed-2un0PJ select-1Pkeg4 lookMinimal-2OMO3G sizeMedium-6vZ9JV filterBrowsingSelectValue-2QrN9m" onClick={() => this.onClick()} ref={el => this.select = el}>
+                <div className="selectLabel-2ltwlE" style={{ flex: '1 1 auto'}}>HTML</div>
+                <svg className="arrow-2KJjTM transition-27fFQS directionDown-26e7eE" width="24" height="24" viewBox="0 0 24 24">
+                  <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 10L12 15 17 10"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
         {channels}
+        {this.state.modal}
         <div className="theme-dark popouts-3dRSmE">
-          {this.state.popout}
+          {this.state.popout.component}
         </div>
       </div>
     );
