@@ -259,7 +259,7 @@ class Message extends Component {
           <div className="contentCompact-1QLHBj content-3dzVd8 containerCompact-3pGPJs container-206Blv">
             <div className="buttonContainer-KtQ8wc">
               <div className="buttonContainer-37UsAw">
-                <div className="button-3Jq0g9" onclick={() => this.onButton()} ref={el => this.button = el}></div>
+                <div className="button-3Jq0g9" onClick={() => this.onButton()} ref={el => this.button = el}></div>
                 <span className="messageId">({msg.id})</span>
               </div>
             </div>
