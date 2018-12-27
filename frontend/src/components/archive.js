@@ -326,8 +326,8 @@ class Modal extends Component {
                 </div>
               </div>
               <div className="flex-1xMQg5 flex-1O1GKY horizontalReverse-2eTKWD horizontalReverse-3tRjY7 flex-1O1GKY directionRowReverse-m8IjIq justifyStart-2NDFzi alignStretch-DpGPf3 noWrap-3jynv6 footer-2yfCgX" style={{flex:'0 0 auto'}}>
-                <button type="submit" className="button-38aScr lookFilled-1Gx00P colorBrand-3pXr91 sizeMedium-1AC_Sl grow-q77ONN">
-                  <div className="contents-18-Yxp" onClick={(e) => e.preventDefault() && this.props.callback(false)}>Back</div>
+                <button type="button" className="button-38aScr lookFilled-1Gx00P colorBrand-3pXr91 sizeMedium-1AC_Sl grow-q77ONN">
+                  <div className="contents-18-Yxp" onClick={() => this.props.callback(false)}>Back</div>
                 </button>
               </div>
             </form>
@@ -343,38 +343,44 @@ class Popout extends Component {
   render() {
     const type = this.props.type;
     let menu;
+    let left = this.props.left;
+    let top = this.props.top;
 
     if (type === "options" && this.props.msg && this.props.modalCB) {
       menu = (
         <div className="container-3cGP6G" role="menu">
-          <button role="menuitem" type="button" onClick={() => this.props.modalCB(true, this.props.msg.content)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+          <button role="menuitem" type="button" onClick={() => this.props.popoutCB("options", null, null, this.props.msg) & this.props.modalCB(true, this.props.msg.content)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div className="contents-18-Yxp">Raw</div>
           </button>
-          <button role="menuitem" type="button" onClick={() => copy(this.props.msg.author_id)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+          <button role="menuitem" type="button" onClick={() => this.props.popoutCB("options", null, null, this.props.msg) & copy(this.props.msg.author_id)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div className="contents-18-Yxp">User ID</div>
           </button>
-          <button role="menuitem" type="button" onClick={() => copy(this.props.msg.id)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+          <button role="menuitem" type="button" onClick={() => this.props.popoutCB("options", null, null, this.props.msg) & copy(this.props.msg.id)} className="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div className="contents-18-Yxp">Copy ID</div>
           </button>
         </div>
       );
+      left += 8;
+      top += 10;
     } else if (type === "format") {
       menu = (
         <div className="popout-2sKjHu lookMinimal-2OMO3G sizeMedium-6vZ9JV filterBrowsingSelectPopout-2kjxuc">
-          <div className="optionLabel-2CkCZx optionActive-KkAdqq option-1mJRMP" onClick={() => location.href(`${location.pathname.slice(0, -5)}.html`)}>HTML</div>
-          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => location.href(`${location.pathname.slice(0, -5)}.txt`)}>TXT</div>
-          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => location.href(`${location.pathname.slice(0, -5)}.csv`)}>CSV</div>
-          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => location.href(`${location.pathname.slice(0, -5)}.json`)}>JSON</div>
+          <div className="optionLabel-2CkCZx optionActive-KkAdqq option-1mJRMP" onClick={() => location.href = `${location.pathname.slice(0, -5)}.html`}>HTML</div>
+          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => location.href = `${location.pathname.slice(0, -5)}.txt`}>TXT</div>
+          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => location.href = `${location.pathname.slice(0, -5)}.csv`}>CSV</div>
+          <div className="optionLabel-2CkCZx optionNormal-12VR9V option-1mJRMP" onClick={() => location.href = `${location.pathname.slice(0, -5)}.json`}>JSON</div>
         </div>
       );
+      left += 70;
+      top += 20;
     }
 
     return (
       <div role="dialog" className="noArrow-3BYQ0Z popout-3sVMXz popoutBottom-1YbShG arrowAlignmentTop-iGQczz popoutbottom theme-undefined" style={{
         'z-index': '1001',
         visibility: 'visible',
-        left: `${this.props.left + 8}px`,
-        top: `${this.props.top + 10}px`,
+        left: `${left}px`,
+        top: `${top}px`,
         transform: 'translateX(-50%) translateY(0%) translateZ(0px)'
       }}>
         {menu}
@@ -431,16 +437,16 @@ export default class Archive extends Component {
     if (type === "options") {
       this.setState({
         popout: {
-          type: "options",
-          component: this.state.popout.msgId !== msg.id ? <Popout type={type} left={left} top={top} msg={msg} modalCB={this.toggleModal} /> : null,
+          type: this.state.popout.msgId !== msg.id ? "options" : null,
+          component: this.state.popout.msgId !== msg.id ? <Popout type={type} left={left} top={top} msg={msg} modalCB={this.toggleModal} popoutCB={this.togglePopout} /> : null,
           msgId: this.state.popout.msgId !== msg.id ? msg.id : null
         }
       });
     } else {
       this.setState({
         popout: {
-          type: "format",
-          component: (!this.state.popout.type || this.state.popout.type === "options") ? <Popout type={type} left={left} top={top} /> : null,
+          type: this.state.popout.type !== "format" ? "format" : null,
+          component: this.state.popout.type !== "format" ? <Popout type={type} left={left} top={top} /> : null,
           msgId: null
         }
       });
