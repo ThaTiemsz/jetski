@@ -300,7 +300,7 @@ class Popout extends Component {
         transform: 'translateX(-50%) translateY(0%) translateZ(0px)'
       }}>
         <div class="container-3cGP6G" role="menu">
-          <button role="menuitem" type="button" onClick={} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+          <button role="menuitem" type="button" onClick={() => {}} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
             <div class="contents-18-Yxp">Raw</div>
           </button>
           <button role="menuitem" type="button" onClick={() => copy(msg.author_id)} class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
