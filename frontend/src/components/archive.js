@@ -242,9 +242,9 @@ class Message extends Component {
     }
   }
 
-  onButton() {
-    const { id, offsetLeft, offsetTop } = this.button;
-    this.props.popoutCB(id, offsetLeft, offsetTop);
+  onButton(msg) {
+    const { offsetLeft, offsetTop } = this.button;
+    this.props.popoutCB(msg, offsetLeft, offsetTop);
   }
 
   render() {
@@ -259,7 +259,7 @@ class Message extends Component {
           <div className="contentCompact-1QLHBj content-3dzVd8 containerCompact-3pGPJs container-206Blv">
             <div className="buttonContainer-KtQ8wc">
               <div className="buttonContainer-37UsAw">
-                <div className="button-3Jq0g9" id={Math.random().toString(36).substr(5)} onClick={() => this.onButton()} ref={el => this.button = el}></div>
+                <div className="button-3Jq0g9" onClick={() => this.onButton(msg.id)} ref={el => this.button = el}></div>
                 <span className="messageId">({msg.id})</span>
               </div>
             </div>
@@ -306,7 +306,7 @@ export default class Archive extends Component {
     this.state = {
       archive: null,
       popout: null,
-      popoutId: null
+      popoutMsg: null
     };
 
     this.groupBy = this.groupBy.bind(this);
@@ -338,9 +338,10 @@ export default class Archive extends Component {
     }), {});
   }
 
-  togglePopout(id, left, top) {
+  togglePopout(msg, left, top) {
     this.setState({
-      popout: this.state.popoutId !== id ? <Popout left={left} top={top} /> : null
+      popout: this.state.popoutMsg !== msg ? <Popout left={left} top={top} /> : null,
+      popoutMsg: this.state.popoutMsg !== msg ? msg : null
     })
   }
 
