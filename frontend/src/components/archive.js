@@ -242,6 +242,11 @@ class Message extends Component {
     }
   }
 
+  onButton() {
+    const { offsetLeft, offsetTop } = this.button;
+    Archive.togglePopout(offsetLeft, offsetTop);
+  }
+
   render() {
     const msg = this.props.message;
     const date = new Date(msg.timestamp);
@@ -254,7 +259,7 @@ class Message extends Component {
           <div className="contentCompact-1QLHBj content-3dzVd8 containerCompact-3pGPJs container-206Blv">
             <div className="buttonContainer-KtQ8wc">
               <div className="buttonContainer-37UsAw">
-                <div className="button-3Jq0g9"></div>
+                <div className="button-3Jq0g9" onclick={() => this.onButton()} ref={el => this.button = el}></div>
                 <span className="messageId">({msg.id})</span>
               </div>
             </div>
@@ -268,12 +273,39 @@ class Message extends Component {
   }
 }
 
+class Popout extends Component {
+  render() {
+    return (
+      <div role="dialog" class="noArrow-3BYQ0Z popout-3sVMXz popoutBottom-1YbShG arrowAlignmentTop-iGQczz popoutbottom theme-undefined" style={{
+        'z-index': '1001',
+        visibility: 'visible',
+        left: `${this.props.left + 8}px`,
+        top: `${this.props.top + 10}px`,
+        transform: 'translateX(-50%) translateY(0%) translateZ(0px)'
+      }}>
+        <div class="container-3cGP6G" role="menu">
+          <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+            <div class="contents-18-Yxp">Raw</div>
+          </button>
+          <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+            <div class="contents-18-Yxp">Copy User ID</div>
+          </button>
+          <button role="menuitem" type="button" class="item-2J1YMK button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN">
+            <div class="contents-18-Yxp">Copy ID</div>
+          </button>
+        </div>
+      </div>
+    )
+  }
+}
+
 export default class Archive extends Component {
   constructor() {
     super();
 
     this.state = {
-      archive: null
+      archive: null,
+      popout: null
     };
 
     this.groupBy = this.groupBy.bind(this);
@@ -288,7 +320,9 @@ export default class Archive extends Component {
 
   componentWillMount() {
     globalState.getArchive(this.archiveId).then((archive) => {
-      this.setState({archive});
+      this.setState({
+        archive
+      });
     });
   }
 
@@ -300,6 +334,12 @@ export default class Archive extends Component {
         item,
       ]
     }), {});
+  }
+
+  static togglePopout(left, top) {
+    this.setState({
+      popout: <Popout left={left} top={top} />
+    })
   }
 
   render() {
@@ -320,6 +360,13 @@ export default class Archive extends Component {
       )
     }
 
-    return channels;
+    return (
+      <div>
+        {channels}
+        <div className="theme-dark popouts-3dRSmE">
+          {this.state.popout}
+        </div>
+      </div>
+    );
   }
 }
