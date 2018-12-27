@@ -4,6 +4,7 @@ import SimpleMarkdown from 'simple-markdown';
 import url from 'url';
 import punycode from 'punycode';
 import highlight from 'highlight.js';
+import crypto from 'crypto';
 
 class Divider extends Component {
   render() {
@@ -243,8 +244,8 @@ class Message extends Component {
   }
 
   onButton() {
-    const { offsetLeft, offsetTop } = this.button;
-    this.props.popoutCB(offsetLeft, offsetTop);
+    const { id, offsetLeft, offsetTop } = this.button;
+    this.props.popoutCB(id, offsetLeft, offsetTop);
   }
 
   render() {
@@ -259,7 +260,7 @@ class Message extends Component {
           <div className="contentCompact-1QLHBj content-3dzVd8 containerCompact-3pGPJs container-206Blv">
             <div className="buttonContainer-KtQ8wc">
               <div className="buttonContainer-37UsAw">
-                <div className="button-3Jq0g9" onClick={() => this.onButton()} ref={el => this.button = el}></div>
+                <div className="button-3Jq0g9" id={crypto.randomBytes(4).toString('hex')} onClick={() => this.onButton()} ref={el => this.button = el}></div>
                 <span className="messageId">({msg.id})</span>
               </div>
             </div>
@@ -305,7 +306,8 @@ export default class Archive extends Component {
 
     this.state = {
       archive: null,
-      popout: null
+      popout: null,
+      popoutId: null
     };
 
     this.groupBy = this.groupBy.bind(this);
@@ -337,9 +339,9 @@ export default class Archive extends Component {
     }), {});
   }
 
-  togglePopout(left, top) {
+  togglePopout(id, left, top) {
     this.setState({
-      popout: <Popout left={left} top={top} />
+      popout: this.state.popoutId !== id ? <Popout left={left} top={top} /> : null
     })
   }
 
