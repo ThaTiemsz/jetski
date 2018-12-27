@@ -5,7 +5,6 @@ body {
     font-family: Whitney,Helvetica Neue,Helvetica,Arial,sans-serif;
     line-height: 1;
     margin: 0;
-    overflow: hidden;
     padding: 0;
     user-select: none;
     background-color: #202225;
@@ -40,7 +39,7 @@ body {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     line-height: 19px;
     -moz-user-select: text;

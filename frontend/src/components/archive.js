@@ -233,8 +233,9 @@ class Message extends Component {
 
   getAttachments(attachments) {
     if (attachments.length > 0) {
-      attachments = attachments.map(a => <a href={a.replace("cdn.discordapp.com", "media.discordapp.net")} target="_blank">{a.replace("cdn.discordapp.com", "media.discordapp.net")}</a>)
-      const list = attachments.join(", ")
+      const list = attachments
+        .map(a => <a href={a.replace("cdn.discordapp.com", "media.discordapp.net")} target="_blank">{a.replace("cdn.discordapp.com", "media.discordapp.net")}</a>)
+        .reduce((prev, curr) => [prev, ', ', curr])
       return <span>(<strong>Attachment{attachments.length > 1 ? "s" : ""}</strong>: {list})</span>;
     } else {
       return
