@@ -52,3 +52,12 @@ body{-moz-user-select:none;-ms-user-select:none;-webkit-user-select:none;font-fa
 .messagesWrapper:nth-last-of-type(2) {
     border-radius: 0px 0px 5px 5px;
 }
+.emoji {
+    -o-object-fit: contain;
+    height: 1.45em;
+    margin-left: .05em;
+    margin-right: .1em;
+    object-fit: contain;
+    vertical-align: -.4em;
+    width: 1.45em;
+}
