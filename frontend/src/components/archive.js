@@ -228,7 +228,7 @@ class Message extends Component {
           };
         },
         react(node, output) {
-          return <img className="emoji" src={`https://media.discordapp.net/emojis/${capture[3]}.${capture[1] ? "gif" : "png"}?v=1`} alt={`:${capture[2]}:`} />;
+          return <img className="emoji" src={`https://media.discordapp.net/emojis/${node.capture[3]}.${node.capture[1] ? "gif" : "png"}?v=1`} alt={`:${node.capture[2]}:`} />;
         }
       },
     
