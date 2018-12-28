@@ -202,7 +202,7 @@ class MessageArchive(BaseModel):
         with open('config.yaml', 'r') as f:
             config = load(f)
 
-        return '{}/api/archive/{}.txt'.format(config['web']['DOMAIN'], self.archive_id)
+        return '{}/api/archive/{}.html'.format(config['web']['DOMAIN'], self.archive_id)
 
     def encode(self, fmt='txt'):
         from rowboat.models.user import User
