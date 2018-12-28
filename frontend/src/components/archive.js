@@ -218,7 +218,7 @@ class Message extends Component {
       customEmoji: {
         order: SimpleMarkdown.defaultRules.text.order,
         match(source) {
-          return /^<(a|)?:(\w+):(\d+)>/.exec(source);
+          return /^<(a|):(\w+):(\d+)>/.exec(source);
         },
         parse(capture) {
           return {
