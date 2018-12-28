@@ -157,17 +157,13 @@ class Message extends Component {
             const code = highlight.highlight(node.lang, node.content, true);
             return (
               <pre>
-                <code className={'hljs ' + code.language}>
-                  {code.value}
-                </code>
+                <code className={'hljs ' + code.language} dangerouslySetInnerHTML={{__html: code.value}}></code>
               </pre>
             );
           } else {
             return (
               <pre>
-                <code className="hljs">
-                  {output(node.content)}
-                </code>
+                <code className="hljs" dangerouslySetInnerHTML={{__html: output(node.content)}}></code>
               </pre>
             );
           }
@@ -207,7 +203,7 @@ class Message extends Component {
       customEmoji: {
         order: SimpleMarkdown.defaultRules.text.order,
         match(source) {
-          return /^<:(\w+):(\d+)>/.exec(source);
+          return /^<a?:(\w+):(\d+)>/.exec(source);
         },
         parse(capture) {
           return {
