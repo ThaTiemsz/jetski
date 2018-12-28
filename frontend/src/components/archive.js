@@ -239,15 +239,15 @@ class Message extends Component {
     
       spoiler: {
         order: SimpleMarkdown.defaultRules.text.order,
-        match(source) {
+        match: (source) => {
           return /^{{([\s\S]+?)}}/.exec(source);
         },
-        parse(capture) {
+        parse: (capture) => {
           return {
             content: capture[1]
           };
         },
-        react(node, output) {
+        react: (node, output) => {
           return <span className={`spoilerText-3p6IlD ${!this.state.revealedSpoilers.get(msg.id) ? "hidden-HHr2R9" : ""}`} onClick={() => this.toggleSpoiler(msg.id)}><span className="inlineContent-3ZjPuv">{node.content}</span></span>;
         }
       }
