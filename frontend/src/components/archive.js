@@ -34,8 +34,14 @@ class Divider extends Component {
 class Message extends Component {
   constructor() {
     super();
+
+    this.state = {
+      revealedSpoilers: new Map()
+    };
+
     this.depunycodeLink = this.depunycodeLink.bind(this);
     this.parseLink = this.parseLink.bind(this);
+    this.toggleSpoiler = this.toggleSpoiler.bind(this);
     this.parseMarkdown = this.parseMarkdown.bind(this);
     this.getAttachments = this.getAttachments.bind(this);
   }
@@ -65,7 +71,16 @@ class Message extends Component {
     };
   }
 
-  parseMarkdown(content) {    
+  toggleSpoiler(id) {
+    this.setState({
+      revealedSpoilers: new Map(this.state.revealedSpoilers).set(
+        id,
+        !(this.state.revealedSpoilers.get(id))
+      )
+    })
+  }
+
+  parseMarkdown(msg) {    
     const DEFAULT_RULES = {
       newline: SimpleMarkdown.defaultRules.newline,
       paragraph: SimpleMarkdown.defaultRules.paragraph,
@@ -233,14 +248,14 @@ class Message extends Component {
           };
         },
         react(node, output) {
-          return <span className="spoilerText-3p6IlD hidden-HHr2R9"><span className="inlineContent-3ZjPuv">{node.content}</span></span>;
+          return <span className={`spoilerText-3p6IlD ${!this.state.revealedSpoilers.get(msg.id) ? "hidden-HHr2R9" : ""}`} onClick={() => this.toggleSpoiler(msg.id)}><span className="inlineContent-3ZjPuv">{node.content}</span></span>;
         }
       }
     };
     
     const parse = SimpleMarkdown.parserFor(DEFAULT_RULES);
     const output = SimpleMarkdown.reactFor(SimpleMarkdown.ruleOutput(DEFAULT_RULES, 'react'));
-    return output(parse(content, {inline: true}));
+    return output(parse(msg.content, {inline: true}));
   }
 
   getAttachments(attachments) {
@@ -274,7 +289,7 @@ class Message extends Component {
                 <div className="button-3Jq0g9" onClick={() => this.onButton(msg)} ref={el => this.button = el}></div>
               </div>
             </div>
-            <div className="markup-2BOw-j isCompact-1hsne1"><h2 className="headerCompact-3wRt2W"><time className="latin12CompactTimeStamp-3v5WB3 timestampCompact-MHgFLv timestampCompactBase-26h38e" dateTime={timestamp}><i className="separatorLeft-3DZD2Q separator-1xUax1">[</i>{isoDate}<i className="separatorRight-3ctgKv separator-1xUax1">] </i></time><span><span className="username-_4ZSMR">{msg.username}<span className="discriminator">#{msg.discriminator}</span></span><i className="separatorRight-3ctgKv separator-1xUax1">:</i></span></h2> {this.parseMarkdown(msg.content)}<br />{this.getAttachments(msg.attachments)}</div>
+            <div className="markup-2BOw-j isCompact-1hsne1"><h2 className="headerCompact-3wRt2W"><time className="latin12CompactTimeStamp-3v5WB3 timestampCompact-MHgFLv timestampCompactBase-26h38e" dateTime={timestamp}><i className="separatorLeft-3DZD2Q separator-1xUax1">[</i>{isoDate}<i className="separatorRight-3ctgKv separator-1xUax1">] </i></time><span><span className="username-_4ZSMR">{msg.username}<span className="discriminator">#{msg.discriminator}</span></span><i className="separatorRight-3ctgKv separator-1xUax1">:</i></span></h2> {this.parseMarkdown(msg)}<br />{this.getAttachments(msg.attachments)}</div>
           </div>
           <div className="containerCompact-3bB5aN container-1e22Ot"></div>
         </div>
