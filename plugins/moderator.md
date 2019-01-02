@@ -215,7 +215,7 @@ The admin plugin provides a set of useful moderator commands. These commands are
 ## Configuration Example
 
 ```text
-  infractions:
+  admin:
     confirm_actions: false
     mute_role: 289494296703533058
     reason_edit_level: 50
