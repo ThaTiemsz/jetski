@@ -986,7 +986,7 @@ class AdminPlugin(Plugin):
         succeeded = []
         for member in members:
             try:
-                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
+                self.send_infraction_dm(event, member.id if hasattr(member, 'id') else member, 'kick', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
                 Infraction.kick(self, event, member, args.reason)
                 succeeded.append(member)
             except APIException:
@@ -1093,7 +1093,7 @@ class AdminPlugin(Plugin):
         succeeded = []
         for member in members:
             try:
-                self.send_infraction_dm(event, member.id, 'ban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
+                self.send_infraction_dm(event, member.id if hasattr(member, 'id') else member, 'ban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
                 Infraction.ban(self, event, member, args.reason, guild=event.guild)
                 succeeded.append(member)
             except APIException:
