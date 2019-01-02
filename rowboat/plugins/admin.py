@@ -943,24 +943,28 @@ class AdminPlugin(Plugin):
     @Plugin.command('mkick', parser=True, level=CommandLevels.MOD)
     @Plugin.parser.add_argument('users', type=long, nargs='+')
     @Plugin.parser.add_argument('-r', '--reason', default='', help='reason for modlog')
+    #@Plugin.parser.add_argument('-c', '--clean', type=int, default=0, help='days of messages to clean')
     def mkick(self, event, args):
         event.action = 'kick'
-        members = []
-        for user_id in args.users:
+        members = []; cannot = []
+        users = list(set(args.users))
+        for user_id in users:
             member = event.guild.get_member(user_id)
-            if not member:
-                # TODO: this sucks, batch these
-                raise CommandFail('failed to kick {}, user not found'.format(user_id))
+            if member and self.can_act_on(event, member.id, throw=False):
+                members.append(member)
+            else:
+                cannot.append(user_id)
 
-            if not self.can_act_on(event, member.id, throw=False):
-                raise CommandFail('failed to kick {}, invalid permissions'.format(user_id))
+        if not members:
+            raise CommandFail('invalid user{}'.format('s' if len(users)>1 else ''))
 
-            members.append(member)
-
-        msg = event.msg.reply('Ok, kick {} users for `{}`?'.format(len(members), args.reason or 'no reason'))
-        msg.chain(False).\
-            add_reaction(GREEN_TICK_EMOJI).\
-            add_reaction(RED_TICK_EMOJI)
+        nope = ''
+        if cannot:
+            nope = '\n*Ignoring {} user{} who cannot be kicked.*'.format(len(cannot), 's' if len(cannot)>1 else '')
+        msg = event.msg.reply(u'Ok, kick {} user{} for `{}`?{}'.format(
+            len(members), 's' if len(members)>1 else '', args.reason or 'no reason', nope
+        ))
+        msg.chain(False).add_reaction(GREEN_TICK_EMOJI).add_reaction(RED_TICK_EMOJI)
 
         try:
             mra_event = self.wait_for_event(
@@ -978,14 +982,34 @@ class AdminPlugin(Plugin):
         if mra_event.emoji.id != GREEN_TICK_EMOJI_ID:
             return
 
+        failed = []
+        succeeded = []
         for member in members:
             try:
                 self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
+                Infraction.kick(self, event, member, args.reason)
+                succeeded.append(member)
             except APIException:
-                pass
-            Infraction.kick(self, event, member, args.reason)
+                if not isinstance(member, (int, long)):
+                    User.from_disco_user(member.user)
+                    member = member.user.id
+                failed.append(member)
 
-        raise CommandSuccess('kicked {} users'.format(len(members)))
+        members = len(members)
+        total = len(succeeded)
+        if total == 0:
+            raise CommandFail('could not kick any member')
+
+        #self.perform_cleanup(succeeded, args.clean, event.guild.id)
+
+        reply = 'kicked {}/{} member{}'.format(total, members, 's' if members>1 else '')
+        if failed:
+            reply += '\nThe following ID{} could not be kicked: `{}`'.format(
+                's' if len(failed)>1 else '',
+                '`, `'.join([str(id) for id in failed])
+            )
+
+        raise CommandSuccess(reply)
 
     @Plugin.command('ban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     @Plugin.command('forceban', '<user:snowflake> [reason:str...]', level=CommandLevels.MOD)
@@ -1026,22 +1050,28 @@ class AdminPlugin(Plugin):
     @Plugin.command('mban', parser=True, level=CommandLevels.MOD)
     @Plugin.parser.add_argument('users', type=long, nargs='+')
     @Plugin.parser.add_argument('-r', '--reason', default='', help='reason for modlog')
+    @Plugin.parser.add_argument('-h', '--hide', action='store_true', help='hide names like forceban')
+    #@Plugin.parser.add_argument('-c', '--clean', type=int, default=0, help='days of messages to clean')
     def mban(self, event, args):
-        members = []
-        for user_id in args.users:
-            member = event.guild.get_member(user_id)
-            if not member:
-                raise CommandFail('failed to ban {}, user not found'.format(user_id))
+        members = []; cannot = []
+        users = list(set(args.users))
+        for user_id in users:
+            if self.can_act_on(event, user_id, throw=False):
+                member = None if args.hide else event.guild.get_member(user_id)
+                members.append(member if member else user_id)
+            else:
+                cannot.append(user_id)
 
-            if not self.can_act_on(event, member.id, throw=False):
-                raise CommandFail('failed to ban {}, invalid permissions'.format(user_id))
+        if not members:
+            raise CommandFail('invalid user{}'.format('s' if len(users)>1 else ''))
 
-            members.append(member)
-
-        msg = event.msg.reply('Ok, ban {} users for `{}`?'.format(len(members), args.reason or 'no reason'))
-        msg.chain(False).\
-            add_reaction(GREEN_TICK_EMOJI).\
-            add_reaction(RED_TICK_EMOJI)
+        nope = ''
+        if cannot:
+            nope = '\n*Ignoring {} user{} who cannot be banned.*'.format(len(cannot), 's' if len(cannot)>1 else '')
+        msg = event.msg.reply(u'Ok, ban {} user{} for `{}`?{}'.format(
+            len(members), 's' if len(members)>1 else '', args.reason or 'no reason', nope
+        ))
+        msg.chain(False).add_reaction(GREEN_TICK_EMOJI).add_reaction(RED_TICK_EMOJI)
 
         try:
             mra_event = self.wait_for_event(
@@ -1059,14 +1089,34 @@ class AdminPlugin(Plugin):
         if mra_event.emoji.id != GREEN_TICK_EMOJI_ID:
             return
 
+        failed = []
+        succeeded = []
         for member in members:
             try:
                 self.send_infraction_dm(event, member.id, 'ban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
+                Infraction.ban(self, event, member, args.reason, guild=event.guild)
+                succeeded.append(member)
             except APIException:
-                pass
-            Infraction.ban(self, event, member, args.reason, guild=event.guild)
+                if not isinstance(member, (int, long)):
+                    User.from_disco_user(member.user)
+                    member = member.user.id
+                failed.append(member)
 
-        raise CommandSuccess('banned {} users'.format(len(members)))
+        members = len(members)
+        total = len(succeeded)
+        if total == 0:
+            raise CommandFail('could not ban any user')
+
+        #self.perform_cleanup(succeeded, args.clean, event.guild.id)
+
+        reply = 'banned {}/{} user{}'.format(total, members, 's' if members>1 else '')
+        if failed:
+            reply += '\nThe following ID{} could not be banned: `{}`'.format(
+                's' if len(failed)>1 else '',
+                '`, `'.join([str(id) for id in failed])
+            )
+
+        raise CommandSuccess(reply)
 
     @Plugin.command('softban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     def softban(self, event, user, reason=None):
