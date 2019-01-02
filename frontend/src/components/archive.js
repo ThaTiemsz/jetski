@@ -222,7 +222,6 @@ class Message extends Component {
         },
         parse(capture) {
           return {
-            type: 'text',
             capture,
             content: `:${capture[2]}:`
           };
