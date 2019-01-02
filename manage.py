@@ -133,7 +133,7 @@ def add_whitelist(guild_id, flag):
 
     guild.whitelist.append(int(flag))
     guild.save()
-    guild.emit_update()
+    guild.emit('GUILD_UPDATE')
     print 'added flag'
 
 
@@ -157,7 +157,7 @@ def rmv_whitelist(guild_id, flag):
 
     guild.whitelist.remove(int(flag))
     guild.save()
-    guild.emit_update()
+    guild.emit('GUILD_UPDATE')
     print 'removed flag'
 
 
