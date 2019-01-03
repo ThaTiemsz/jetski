@@ -21,7 +21,7 @@ from rowboat.util import LocalProxy
 from rowboat.util.input import humanize_duration
 from rowboat.util.stats import timed
 from rowboat.plugins import BasePlugin as Plugin
-from rowboat.plugins import CommandResponse
+from rowboat.plugins import CommandResponse, CommandFail
 from rowboat.sql import init_db
 from rowboat.redis import rdb
 
@@ -744,6 +744,46 @@ class CorePlugin(Plugin):
     def guild_unwhitelist(self, event, guild):
         rdb.srem(GUILDS_WAITING_SETUP_KEY, str(guild))
         event.msg.reply('Ok, I\'ve made sure guild %s is no longer in the whitelist' % guild)
+
+    @Plugin.command('wh-add', '<guild:snowflake> <flag:str>', group='guilds', level=-1)
+    def add_whitelist(self, event, guild, flag):
+        flag = Guild.WhitelistFlags.get(flag)
+        if not flag:
+            return CommandFail('invalid flag')
+
+        try:
+            guild = Guild.get(guild_id=guild)
+        except Guild.DoesNotExist:
+            return CommandFail('no guild exists with that id')
+
+        if guild.is_whitelisted(flag):
+            return CommandFail('this guild already has this flag')
+
+        guild.whitelist.append(int(flag))
+        guild.save()
+        guild.emit('GUILD_UPDATE')
+
+        event.msg.reply('Ok, added flag `{}` to guild {}'.format(str(flag), guild))
+
+    @Plugin.command('wh-rmv', '<guild:snowflake> <flag:str>', group='guilds', level=-1)
+    def rmv_whitelist(self, event, guild, flag):
+        flag = Guild.WhitelistFlags.get(flag)
+        if not flag:
+            return CommandFail('invalid flag')
+
+        try:
+            guild = Guild.get(guild_id=guild)
+        except Guild.DoesNotExist:
+            return CommandFail('no guild exists with that id')
+
+        if not guild.is_whitelisted(flag):
+            return CommandFail('this guild doesn\'t have this flag')
+
+        guild.whitelist.remove(int(flag))
+        guild.save()
+        guild.emit('GUILD_UPDATE')
+
+        event.msg.reply('Ok, removed flag `{}` from guild {}'.format(str(flag), guild))
 
     @Plugin.command('disable', '<plugin:str>', group='plugins', level=-1)
     def plugin_disable(self, event, plugin):

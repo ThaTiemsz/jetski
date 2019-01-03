@@ -131,10 +131,14 @@ def add_whitelist(guild_id, flag):
         print 'No guild exists with that id'
         return
 
+    if guild.is_whitelisted(flag):
+        print 'This guild already has this flag'
+        return
+
     guild.whitelist.append(int(flag))
     guild.save()
     guild.emit('GUILD_UPDATE')
-    print 'added flag'
+    print 'Added flag'
 
 
 @cli.command('wh-rmv')
@@ -155,10 +159,14 @@ def rmv_whitelist(guild_id, flag):
         print 'No guild exists with that id'
         return
 
+    if not guild.is_whitelisted(flag):
+        print 'This guild doesn\'t have this flag'
+        return
+
     guild.whitelist.remove(int(flag))
     guild.save()
     guild.emit('GUILD_UPDATE')
-    print 'removed flag'
+    print 'Removed flag'
 
 
 if __name__ == '__main__':
