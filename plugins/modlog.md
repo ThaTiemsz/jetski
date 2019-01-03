@@ -17,8 +17,9 @@ The modlog plugin provides a mechanisim for logging various events and actions t
 | ignored\_channels | A list of channel ids which are ignored in the modlog. This is useful for ignoring private or high-activity channels | list | empty |
 | new\_member\_threshold | The number of seconds an account is considered new | int | 900 \(15 minutes\) |
 | channels | Mapping of channel names/ids to ModLog Configurations | dict | empty |
+| custom | Custom action formats | dict | empty |
 
-### ModLog Configuration
+### Modlog Configuration
 
 | Option | Description | Type | Default |
 | :--- | :--- | :--- | :--- |
@@ -29,10 +30,14 @@ The modlog plugin provides a mechanisim for logging various events and actions t
 
 ## Actions
 
+More information: https://github.com/ThaTiemsz/jetski/blob/master/data/actions_simple.yaml
+
 | Action | Description |
 | :--- | :--- |
 | CHANNEL\_CREATE | A channel is created |
 | CHANNEL\_DELETE | A channel is deleted |
+| CATEGORY\_CREATE | A category is created |
+| CATEGORY\_DELETE | A category is deleted |
 | GUILD\_MEMBER\_ADD | A member joins |
 | GUILD\_MEMBER\_REMOVE | A member leaves \(or gets kicked\) |
 | GUILD\_ROLE\_CREATE | A role is created |
@@ -75,5 +80,9 @@ The modlog plugin provides a mechanisim for logging various events and actions t
         include: []
     ignored_users: [202217402635780096]
     new_member_threshold: 86400
+    custom:
+      GUILD_MEMBER_ADD:
+        emoji: inbox_tray
+        format: '{e.user!s} (`{e.user.id}`) joined {new} (created {created})'
 ```
 

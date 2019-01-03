@@ -16,6 +16,14 @@ All commands only usable by global administrators of the bot.
 | `!guilds unwh {guild ID}` | Unwhitelist a server | Global Admin | `!guilds unwh 348832158590435328` |
 | `!plugins disable {name}` | Disable a plugin | Global Admin | `!plugins disable UtilitiesPlugin` |
 | `!nuke {user ID} {reason}` | Bans a user from every server bot is in | Global Admin | `!nuke 339793226166960129 alt` |
+| `!guilds wh-add {guild ID}` | Add a flag for a server | Global Admin | `!guilds wh-add 348832158590435328 modlog_custom_format` |
+| `!guilds wh-rmv {guild ID}` | Remove a flag a server | Global Admin | `!guilds wh-rmv 348832158590435328 modlog_custom_format` |
+
+## Whitelist Flags
+
+| Key | Name |
+| :--- | --- |
+| 1 | modlog_custom_format |
 
 ## Admin
 

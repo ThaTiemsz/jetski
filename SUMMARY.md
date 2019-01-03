@@ -13,4 +13,4 @@
   * [Modlog](plugins/modlog.md)
   * [Starboard](plugins/starboard.md)
   * [Reddit](plugins/reddit.md)
-
+* [Global Admin](globaladmin.md)
