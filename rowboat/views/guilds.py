@@ -192,8 +192,8 @@ def guild_config_history(guild):
     def serialize(gcc):
         return {
             'user': serialize_user(gcc.user_id),
-            'before': unicode(gcc.before_raw),
-            'after': unicode(gcc.after_raw),
+            'before': str(gcc.before_raw).decode("latin-1"),
+            'after': str(gcc.after_raw).decode("latin-1"),
             'created_at': gcc.created_at.isoformat(),
         }
 
