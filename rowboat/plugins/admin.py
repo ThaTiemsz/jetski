@@ -1382,7 +1382,7 @@ class AdminPlugin(Plugin):
         if mode == 'add' and role_obj.id in member.roles:
             raise CommandFail(u'{} already has the {} role'.format(member, role_obj.name))
         elif mode == 'remove' and role_obj.id not in member.roles:
-            return CommandFail(u'{} doesn\'t have the {} role'.format(member, role_obj.name))
+            raise CommandFail(u'{} doesn\'t have the {} role'.format(member, role_obj.name))
 
         self.call(
             'ModLogPlugin.create_debounce',
