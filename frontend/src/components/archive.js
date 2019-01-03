@@ -243,7 +243,7 @@ class Message extends Component {
       spoiler: {
         order: SimpleMarkdown.defaultRules.text.order,
         match: (source) => {
-          return /^{{([\s\S]+?)}}/.exec(source);
+          return /^\|\|([\s\S]+?)\|\|/.exec(source);
         },
         parse: (capture) => {
           return {
