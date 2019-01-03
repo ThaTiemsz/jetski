@@ -1406,9 +1406,12 @@ class AdminPlugin(Plugin):
             reason=reason or 'no reason',
         )
 
-        event.msg.reply(u':ok_hand: {} role {} to {}'.format('added' if mode == 'add' else 'removed',
+        event.msg.reply(u':ok_hand: {} role {} {} {}'.format(
+            'added' if mode == 'add' else 'removed',
             role_obj.name,
-            member))
+            'to' if mode == 'add' else 'from',
+            member
+        ))
 
     @Plugin.command('stats', '<user:user>', level=CommandLevels.MOD)
     def msgstats(self, event, user):
