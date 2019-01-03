@@ -19,6 +19,10 @@ The modlog plugin provides a mechanisim for logging various events and actions t
 | channels | Mapping of channel names/ids to ModLog Configurations | dict | empty |
 | custom | Custom action formats | dict | empty |
 
+{% hint style="info" %}
+The `custom` option can only be used if the guild has the `MODLOG_CUSTOM_FORMAT` flag.
+{% endhint %}
+
 ### Modlog Configuration
 
 | Option | Description | Type | Default |
@@ -30,7 +34,7 @@ The modlog plugin provides a mechanisim for logging various events and actions t
 
 ## Actions
 
-More information: https://github.com/ThaTiemsz/jetski/blob/master/data/actions_simple.yaml
+More information: [https://github.com/ThaTiemsz/jetski/blob/master/data/actions\_simple.yaml](https://github.com/ThaTiemsz/jetski/blob/master/data/actions_simple.yaml)
 
 | Action | Description |
 | :--- | :--- |

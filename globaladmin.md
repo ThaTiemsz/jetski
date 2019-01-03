@@ -12,7 +12,7 @@ All commands only usable by global administrators of the bot.
 | `!control sync-bans` | Sync bans from every guild | Global Admin | `!control sync-bans` |
 | `!control reconnect` | Reconnect to the gateway | Global Admin | `!control reconnect` |
 | `!guilds invite {guild ID}` | Generate a temporary invite to a server the bot is in | Global Admin | `!guilds invite 348832158590435328` |
-| `!guilds wh {guild ID}` | Whitelist a server (bot won't instantly leave) | Global Admin | `!guilds wh 348832158590435328` |
+| `!guilds wh {guild ID}` | Whitelist a server \(bot won't instantly leave\) | Global Admin | `!guilds wh 348832158590435328` |
 | `!guilds unwh {guild ID}` | Unwhitelist a server | Global Admin | `!guilds unwh 348832158590435328` |
 | `!plugins disable {name}` | Disable a plugin | Global Admin | `!plugins disable UtilitiesPlugin` |
 | `!nuke {user ID} {reason}` | Bans a user from every server bot is in | Global Admin | `!nuke 339793226166960129 alt` |
@@ -22,8 +22,8 @@ All commands only usable by global administrators of the bot.
 ## Whitelist Flags
 
 | Key | Name |
-| :--- | --- |
-| 1 | modlog_custom_format |
+| :--- | :--- |
+| 1 | modlog\_custom\_format |
 
 ## Admin
 
@@ -44,7 +44,7 @@ All commands only usable by global administrators of the bot.
 | :--- | :--- | :--- | :--- |
 | `!commands errors` | Show recently occurring errors from command usage | Global Admin | `!commands errors` |
 | `!commands info {message ID}` | Show more details on the command usage | Global Admin | `!commands info 516607133970595861` |
-| `!commands usage` | Show most used commands (globally) | Global Admin | `!commands usage` |
+| `!commands usage` | Show most used commands \(globally\) | Global Admin | `!commands usage` |
 | `!commands stats {command name}` | Show stats for a command | Global Admin | `!commands stats ban` |
 | `!throw` | Throw an exception | Global Admin | `!throw` |
 | `!events add {name}` | Track a gateway event | Global Admin | `!events add PRESENCE_UPDATE` |
@@ -68,3 +68,4 @@ All commands only usable by global administrators of the bot.
 | `!recover (global / here) {duration} [pool]` | Recover messages from all channels in a server or all servers | Global Admin | `!recover here 1h` |
 | `!words usage {word} [unit] [amount]` | Show a chart of the usage of words | Global Admin | `!words usage hello` OR `!words usage hi days 14` |
 | `!words top {user / channel / guild}` | Show a table of most used words | Global Admin | `!words top 152164749868662784` OR `!words top 260370329778520064` OR `!words top 348832158590435328` |
+
