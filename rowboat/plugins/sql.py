@@ -324,7 +324,7 @@ class SQLPlugin(Plugin):
         sql_duration = time.time() - start
 
         start = time.time()
-        chart = pygal.Line()
+        chart = pygal.Line(style=pygal.style.NeonStyle)
         chart.title = 'Usage of {} Over {} {}'.format(
             word, amount, unit,
         )
