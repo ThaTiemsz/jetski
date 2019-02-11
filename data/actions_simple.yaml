@@ -64,7 +64,7 @@ RMV_NICK:
 
 CHANGE_NICK:
   emoji: name_badge
-  format: '{e.user!s} (`{e.user.id}`) changed nick from `{before!s}` to `{after!s}`'
+  format: '{e.user!c} (`{e.user.id}`) changed nick from `{before!s}` to `{after!s}`'
 
 CHANGE_USERNAME:
   emoji: name_badge

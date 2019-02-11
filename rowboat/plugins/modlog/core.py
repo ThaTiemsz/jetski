@@ -22,7 +22,7 @@ from rowboat.types import SlottedModel, Field, ListField, DictField, ChannelFiel
 from rowboat.types.plugin import PluginConfig
 from rowboat.models.message import Message, MessageArchive
 from rowboat.models.guild import Guild
-from rowboat.util import ordered_load, MetaException
+from rowboat.util import ordered_load, MetaException, E
 
 from .pump import ModLogPump
 
@@ -84,9 +84,19 @@ class ModLogConfig(PluginConfig):
 
 
 class Formatter(string.Formatter):
+    """
+    Format actions
+    !s: sanitize mentions
+    !e: escape markdown
+    !c: clean content (escape markdown & sanitize mentions)
+    """
     def convert_field(self, value, conversion):
         if conversion in ('z', 's'):
             return S(unicode(value), escape_codeblocks=True)
+        if conversion == 'e':
+            return E(unicode(value))
+        if conversion == 'c':
+            return S(E(unicode(value)), escape_codeblocks=True)
         return unicode(value)
 
 
