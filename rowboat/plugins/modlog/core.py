@@ -22,7 +22,8 @@ from rowboat.types import SlottedModel, Field, ListField, DictField, ChannelFiel
 from rowboat.types.plugin import PluginConfig
 from rowboat.models.message import Message, MessageArchive
 from rowboat.models.guild import Guild
-from rowboat.util import ordered_load, MetaException, E
+from rowboat.util import ordered_load, MetaException
+from rowboat.util.escape import E
 
 from .pump import ModLogPump
 
