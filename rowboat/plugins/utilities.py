@@ -9,9 +9,9 @@ from PIL import Image
 from peewee import fn
 from gevent.pool import Pool
 from datetime import datetime, timedelta
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 
-from disco.types.user import GameType, Status
+from disco.types.user import GameType, Status, User as DiscoUser
 from disco.types.message import MessageEmbed
 from disco.types.channel import ChannelType
 from disco.util.snowflake import to_datetime
@@ -355,28 +355,34 @@ class UtilitiesPlugin(Plugin):
         embed.description = '\n'.join(content)
         event.msg.reply('', embed=embed)
 
+    def fetch_user(self, user, throw=True):
+        try:
+            r = self.bot.client.api.http(Routes.USERS_GET, dict(user=user)) # hacky method cause this old version of Disco doesn't have a method for this and we're too lazy to update
+            return DiscoUser.create(self.client.api.client, r.json())
+        except APIException as e:
+            if throw:
+                raise CommandFail('unknown user')
+            return
+
     @Plugin.command('info', '<user:user|snowflake>')
     def info(self, event, user):
+        if user is None:
+            user = event.author
+
+        user_id = 0
         if isinstance(user, (int, long)):
-            try:
-                r = self.bot.client.api.http(Routes.USERS_GET, dict(user=user)) # hacky method cause this old version of Disco doesn't have a method for this and we're too lazy to update
-                data = r.json()
-                User = namedtuple('User', [
-                    'avatar',
-                    'discriminator',
-                    'id',
-                    'username',
-                    'presence'
-                ])
-                user = User(
-                    avatar=data["avatar"],
-                    discriminator=data["discriminator"],
-                    id=int(data["id"]),
-                    username=data["username"],
-                    presence=None
-                )
-            except APIException as e:
-                raise CommandFail('invalid user')
+            user_id = user
+            user = self.state.users.get(user)
+
+        if user and not user_id:
+            user = self.state.users.get(user.id)
+
+        if not user:
+            if user_id:
+                user = self.fetch_user(user_id)
+                User.from_disco_user(user)
+            else:
+                raise CommandFail('unknown user')
         
         content = []
         content.append(u'**\u276F User Information**')
@@ -387,10 +393,10 @@ class UtilitiesPlugin(Plugin):
             emoji, status = get_status_emoji(user.presence)
             content.append('Status: {} <{}>'.format(status, emoji))
             if user.presence.game and user.presence.game.name:
-                if user.presence.game.type == GameType.DEFAULT:
-                    content.append(u'Game: {}'.format(user.presence.game.name))
-                else:
+                if user.presence.game.type == GameType.STREAMING:
                     content.append(u'Stream: [{}]({})'.format(user.presence.game.name, user.presence.game.url))
+                else:
+                    content.append(u'Game: {}'.format(user.presence.game.name))
 
         created_dt = to_datetime(user.id)
         content.append('Created: {} ago ({})'.format(
@@ -412,7 +418,7 @@ class UtilitiesPlugin(Plugin):
 
             if member.roles:
                 content.append(u'Roles: {}'.format(
-                    ', '.join((member.guild.roles.get(r).name for r in member.roles))
+                    ', '.join((member.guild.roles.get(r).mention for r in member.roles))
                 ))
 
         # Execute a bunch of queries async

@@ -306,6 +306,9 @@ class AdminPlugin(Plugin):
 
         kwargs = {}
 
+        if event.config.persist.nickname and backup.nick is not None:
+            kwargs['nick'] = backup.nick
+
         if event.config.persist.roles:
             roles = set(event.guild.roles.keys())
 
@@ -316,12 +319,12 @@ class AdminPlugin(Plugin):
             if roles:
                 kwargs['roles'] = list(roles)
 
-        if event.config.persist.nickname and backup.nick is not None:
-            kwargs['nick'] = backup.nick
+        if event.config.persist.voice:
+            if backup.mute:
+                kwargs['mute'] = backup.mute
 
-        if event.config.persist.voice and (backup.mute or backup.deaf):
-            kwargs['mute'] = backup.mute
-            kwargs['deaf'] = backup.deaf
+            if backup.deaf:
+                kwargs['deaf'] = backup.deaf
 
         if not kwargs:
             return
@@ -339,6 +342,7 @@ class AdminPlugin(Plugin):
             Actions.MEMBER_RESTORE,
             event.guild.id,
             member=member,
+            elements=', '.join(kwargs.keys())
         )
 
     @Plugin.listen('GuildMemberRemove', priority=Priority.BEFORE)

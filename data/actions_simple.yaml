@@ -104,7 +104,7 @@ SPAM_DEBUG:
 
 MEMBER_RESTORE:
   emoji: helmet_with_cross
-  format: "{member!s} was restored"
+  format: "{member!s} was restored ({elements})"
 
 MEMBER_MUTED:
   emoji: no_mouth
