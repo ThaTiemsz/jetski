@@ -16,19 +16,19 @@ CATEGORY_DELETE:
 
 GUILD_BAN_ADD:
   emoji: rotating_light
-  format: '{e.user!s} (`{e.user.id}`) was banned'
+  format: '{e.user!c} (`{e.user.id}`) was banned'
 
 GUILD_SOFTBAN_ADD:
   emoji: rotating_light
-  format: '{e.user!s} (`{e.user.id}`) was soft-banned by **{actor!s}**: `{reason!s}`'
+  format: '{e.user!c} (`{e.user.id}`) was soft-banned by **{actor!c}**: `{reason!s}`'
 
 GUILD_TEMPBAN_ADD:
   emoji: rotating_light
-  format: '{e.user!s} (`{e.user.id}`) was temp-banned until {expires} by **{actor!s}**: `{reason!s}`'
+  format: '{e.user!c} (`{e.user.id}`) was temp-banned until {expires} by **{actor!c}**: `{reason!s}`'
 
 GUILD_BAN_REMOVE:
   emoji: rotating_light
-  format: '{e.user!s} (`{e.user.id}`) was unbanned'
+  format: '{e.user!c} (`{e.user.id}`) was unbanned'
 
 GUILD_MEMBER_ADD:
   emoji: inbox_tray
@@ -36,15 +36,15 @@ GUILD_MEMBER_ADD:
 
 GUILD_MEMBER_REMOVE:
   emoji: outbox_tray
-  format: '{e.user!s} (`{e.user.id}`) left the server'
+  format: '{e.user!c} (`{e.user.id}`) left the server'
 
 GUILD_MEMBER_ROLES_ADD:
   emoji: key
-  format: "{e.user!s} (`{e.user.id}`) role added **{role.name}**"
+  format: "{e.user!c} (`{e.user.id}`) role added **{role.name}**"
 
 GUILD_MEMBER_ROLES_RMV:
   emoji: key
-  format: "{e.user!s} (`{e.user.id}`) role removed **{role.name}**"
+  format: "{e.user!c} (`{e.user.id}`) role removed **{role.name}**"
 
 GUILD_ROLE_CREATE:
   emoji: pen_ballpoint
@@ -68,15 +68,15 @@ CHANGE_NICK:
 
 CHANGE_USERNAME:
   emoji: name_badge
-  format: '{after!s} (`{e.user.id}`) changed username from `{before!s}` to `{after!s}`'
+  format: '{after!c} (`{e.user.id}`) changed username from `{before!s}` to `{after!s}`'
 
 MESSAGE_EDIT:
   emoji: pencil
-  format: "{e.author!s} (`{e.author.id}`) message edited in **{e.channel}**:\n**B:** {before!s}\n**A:** {after!s}"
+  format: "{e.author!c} (`{e.author.id}`) message edited in **{e.channel}**:\n**B:** {before!s}\n**A:** {after!s}"
 
 MESSAGE_DELETE:
   emoji: wastebasket
-  format: "{author!s} (`{author.id}`) message deleted in **{channel}**: (`{e.id}`)\n{msg!s} {attachments}"
+  format: "{author!c} (`{author.id}`) message deleted in **{channel}**: (`{e.id}`)\n{msg!s} {attachments}"
 
 MESSAGE_DELETE_BULK:
   emoji: wastebasket
@@ -84,76 +84,76 @@ MESSAGE_DELETE_BULK:
 
 VOICE_CHANNEL_JOIN:
   emoji: telephone
-  format: "{e.user!s} (`{e.user.id}`) joined **{e.channel}**"
+  format: "{e.user!c} (`{e.user.id}`) joined **{e.channel}**"
 
 VOICE_CHANNEL_LEAVE:
   emoji: telephone
-  format: "{e.user!s} (`{e.user.id}`) left **{channel}**"
+  format: "{e.user!c} (`{e.user.id}`) left **{channel}**"
 
 VOICE_CHANNEL_MOVE:
   emoji: telephone
-  format: "{e.user!s} (`{e.user.id}`) moved from **{before_channel}** to **{e.channel}**"
+  format: "{e.user!c} (`{e.user.id}`) moved from **{before_channel}** to **{e.channel}**"
 
 COMMAND_USED:
   emoji: wrench
-  format: "{e.author!s} (`{e.author.id}`) used command in **{e.channel}** `{e.content!s}`"
+  format: "{e.author!c} (`{e.author.id}`) used command in **{e.channel}** `{e.content!s}`"
 
 SPAM_DEBUG:
   emoji: helmet_with_cross
-  format: "{v.member!s} (`{v.member.id}`) violated {v.label} ({v.event.channel.mention}): {v.msg}"
+  format: "{v.member!c} (`{v.member.id}`) violated {v.label} ({v.event.channel.mention}): {v.msg}"
 
 MEMBER_RESTORE:
   emoji: helmet_with_cross
-  format: "{member!s} was restored ({elements})"
+  format: "{member!c} was restored ({elements})"
 
 MEMBER_MUTED:
   emoji: no_mouth
-  format: '{member!s} (`{member.id}`) was muted by **{actor!s}**: `{reason!s}`'
+  format: '{member!c} (`{member.id}`) was muted by **{actor!c}**: `{reason!s}`'
 
 MEMBER_TEMP_MUTED:
   emoji: no_mouth
-  format: '{member!s} (`{member.id}`) was temp-muted until {expires} by **{actor!s}**: `{reason!s}`'
+  format: '{member!c} (`{member.id}`) was temp-muted until {expires} by **{actor!c}**: `{reason!s}`'
 
 MEMBER_UNMUTED:
   emoji: open_mouth
-  format: '{member!s} (`{member.id}`) was unmuted by **{actor!s}**'
+  format: '{member!c} (`{member.id}`) was unmuted by **{actor!c}**'
 
 MEMBER_TEMPMUTE_EXPIRE:
   emoji: open_mouth
-  format: '{member!s} (`{member.id}`) was automatically unmuted, their tempmute (#{inf.id}) expired'
+  format: '{member!c} (`{member.id}`) was automatically unmuted, their tempmute (#{inf.id}) expired'
 
 CENSORED:
   emoji: no_entry_sign
-  format: "censored message by {e.author!s} (`{e.author.id}`) in {e.channel} (`{e.channel.id}`) {c.details}:\n```{c.content!s}```"
+  format: "censored message by {e.author!c} (`{e.author.id}`) in {e.channel} (`{e.channel.id}`) {c.details}:\n```{c.content!s}```"
 
 MEMBER_WARNED:
   emoji: warning
-  format: "{member!s} (`{member.id}`) was warned by **{actor!s}**: `{reason!s}`"
+  format: "{member!c} (`{member.id}`) was warned by **{actor!c}**: `{reason!s}`"
 
 MEMBER_ROLE_ADD:
   emoji: key
-  format: "{member!s} (`{member.id}`) role added **{role.name}** by **{actor!s}**: `{reason!s}`"
+  format: "{member!c} (`{member.id}`) role added **{role.name}** by **{actor!c}**: `{reason!s}`"
 
 MEMBER_ROLE_REMOVE:
   emoji: key
-  format: "{member!s} (`{member.id}`) role removed **{role.name}** by **{actor!s}**: `{reason!s}`"
+  format: "{member!c} (`{member.id}`) role removed **{role.name}** by **{actor!c}**: `{reason!s}`"
 
 MEMBER_BAN:
   emoji: rotating_light
-  format: '{user!s} (`{user_id}`) was banned by **{actor!s}**: `{reason!s}`'
+  format: '{user!c} (`{user_id}`) was banned by **{actor!c}**: `{reason!s}`'
 
 MEMBER_SOFTBAN:
   emoji: rotating_light
-  format: '{member!s} (`{member.id}`) was soft-banned by **{actor!s}**: `{reason!s}`'
+  format: '{member!c} (`{member.id}`) was soft-banned by **{actor!c}**: `{reason!s}`'
 
 MEMBER_TEMPBAN:
   emoji: rotating_light
-  format: '{member!s} (`{member.id}`) was temp-banned until {expires} by **{actor!s}**: `{reason!s}`'
+  format: '{member!c} (`{member.id}`) was temp-banned until {expires} by **{actor!c}**: `{reason!s}`'
 
 MEMBER_TEMPBAN_EXPIRE:
   emoji: rotating_light
-  format: '{user!s} (`{user_id}`) was automatically unbanned, their tempban (#{inf.id}) expired'
+  format: '{user!c} (`{user_id}`) was automatically unbanned, their tempban (#{inf.id}) expired'
 
 MEMBER_KICK:
   emoji: boot
-  format: '{member!s} (`{member.id}`) was kicked by **{actor!s}**: `{reason!s}`'
+  format: '{member!c} (`{member.id}`) was kicked by **{actor!c}**: `{reason!s}`'
