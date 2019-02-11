@@ -198,7 +198,7 @@ class Infraction(BaseModel):
         # Create a kick modlog event
         plugin.call(
             'ModLogPlugin.log_action_ext',
-            Actions.MEMBER_KICk,
+            Actions.MEMBER_KICK,
             event.guild.id,
             member=member,
             actor=unicode(event.author) if event.author.id != member.id else 'Automatic',
