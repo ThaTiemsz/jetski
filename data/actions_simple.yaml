@@ -32,7 +32,7 @@ GUILD_BAN_REMOVE:
 
 GUILD_MEMBER_ADD:
   emoji: inbox_tray
-  format: '{e.user!s} (`{e.user.id}`) joined {new} (created {created})'
+  format: '{e.user!c} (`{e.user.id}`) joined {new} (created {created})'
 
 GUILD_MEMBER_REMOVE:
   emoji: outbox_tray
@@ -56,11 +56,11 @@ GUILD_ROLE_DELETE:
 
 ADD_NICK:
   emoji: name_badge
-  format: '{e.user!s} (`{e.user.id}`) added nickname `{nickname!s}`'
+  format: '{e.user!c} (`{e.user.id}`) added nickname `{nickname!s}`'
 
 RMV_NICK:
   emoji: name_badge
-  format: '{e.user!s} (`{e.user.id}`) removed nickname `{nickname!s}`'
+  format: '{e.user!c} (`{e.user.id}`) removed nickname `{nickname!s}`'
 
 CHANGE_NICK:
   emoji: name_badge
