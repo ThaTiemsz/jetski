@@ -452,6 +452,25 @@ class AdminPlugin(Plugin):
             ('infractions.csv', buff.getvalue())
         ])
 
+    def find_infraction(self, event, infraction):
+        if isinstance(infraction, int) or infraction.isdigit():
+            try:
+                return Infraction.get(id=infraction)
+            except Infraction.DoesNotExist:
+                return
+
+        infraction = infraction.lower()
+        q = (Infraction.guild_id == event.guild.id)
+        if infraction in ('ml', 'mylatest'):
+            q &= (Infraction.actor_id == event.author.id)
+        elif infraction not in ('l', 'latest'):
+            raise CommandFail('invalid argument: must be an infraction ID, `l/latest`, or `ml/mylatest`')
+
+        try:
+            return Infraction.select(Infraction).where(q).order_by(Infraction.created_at.desc()).limit(1).get()
+        except Infraction.DoesNotExist:
+            return
+
     @Plugin.command('info', '<infraction:int>', group='infractions', level=CommandLevels.MOD)
     def infraction_info(self, event, infraction):
         try:
@@ -633,12 +652,9 @@ class AdminPlugin(Plugin):
 
         raise CommandSuccess('deleted infraction #{}.'.format(infraction))
 
-    @Plugin.command('duration', '<infraction:int> <duration:str>', group='infractions', level=CommandLevels.MOD)
+    @Plugin.command('duration', '<infraction:int|str> <duration:str>', group='infractions', level=CommandLevels.MOD)
     def infraction_duration(self, event, infraction, duration):
-        try:
-            inf = Infraction.get(id=infraction)
-        except Infraction.DoesNotExist:
-            raise CommandFail('invalid infraction (try `!infractions recent`)')
+        inf = self.find_infraction(event, infraction)
 
         if inf.actor_id != event.author.id and event.user_level < CommandLevels.ADMIN:
             raise CommandFail('only administrators can modify the duration of infractions created by other moderators')
@@ -675,12 +691,10 @@ class AdminPlugin(Plugin):
                 inf.expires_at.isoformat()
             ))
 
-    @Plugin.command('reason', '<infraction:int> <reason:str...>', level=CommandLevels.MOD)
+    @Plugin.command('reason', '<infraction:int|str> <reason:str...>', level=CommandLevels.MOD)
+    @Plugin.command('reason', '<infraction:int|str> <reason:str...>', group='infractions', level=CommandLevels.MOD)
     def reason(self, event, infraction, reason):
-        try:
-            inf = Infraction.get(id=infraction)
-        except Infraction.DoesNotExist:
-            inf = None
+        inf = self.find_infraction(event, infraction)
 
         if inf is None or inf.guild_id != event.guild.id:
             event.msg.reply('Unknown infraction ID')
