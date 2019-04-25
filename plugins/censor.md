@@ -29,6 +29,8 @@ This, combined with the Spam plugin can result in a very robust automatic abuse-
 | domains\_blacklist | A blacklist of domain names | list | empty |
 | blocked\_tokens | A list of tokens \(can appear in the middle of words\) that are blacklisted | list | empty |
 | blocked\_words | A list of words \(must be seperated by a boundary\) that are blacklisted | list | empty |
+| channel | Restrict to one specific channel | snowflake | empty |
+| bypass_channel | A channel which can bypass the censor rules | snowflake | empty |
 
 ## Configuration Example
 
