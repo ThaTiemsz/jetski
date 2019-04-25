@@ -42,6 +42,7 @@ class CensorSubConfig(SlottedModel):
     blocked_tokens = ListField(lower, default=[])
 
     channel = Field(snowflake, default=None)
+    bypass_channel = Field(snowflake, default=None)
 
     @cached_property
     def blocked_re(self):
@@ -162,6 +163,9 @@ class CensorPlugin(Plugin):
                 for config in configs:
                     if config.channel:
                         if event.channel_id != config.channel:
+                            continue
+                    if config.bypass_channel:
+                        if event.channel_id == config.bypass_channel:
                             continue
 
                     if config.filter_zalgo:
