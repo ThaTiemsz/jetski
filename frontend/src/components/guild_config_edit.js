@@ -2,23 +2,24 @@ import React, { Component } from 'react';
 import AceEditor, { diff as DiffEditor } from 'react-ace';
 import { globalState } from '../state';
 import { NavLink } from 'react-router-dom';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import 'brace/mode/yaml'
 import 'brace/theme/monokai'
 
 class ConfigHistory extends Component {
   render() {
-    let buttonsList = []
+    let buttonsList = [];
 
     if (this.props.history) {
+      const tz = moment.tz.guess();
       for (let change of this.props.history) {
         buttonsList.push(
           <NavLink key={change.created_timestamp} to={`/guilds/${this.props.guild.id}/config/${change.created_timestamp}`} className="list-group-item" activeClassName="active">
             <i className="fa fa-history fa-fw"></i> {change.user.username}#{change.user.discriminator}
-            <span className="pull-right text-muted small" title={change.created_at}><em>{moment(new Date(change.created_timestamp*1000).toLocaleString()).fromNow()}</em></span>
+            <span className="pull-right text-muted small" title={change.created_at}><em>{moment(new Date(change.created_timestamp*1000)).utc(tz).fromNow()}</em></span>
           </NavLink>
-        )
+        );
       }
     }
 
@@ -157,6 +158,7 @@ export default class GuildConfigEdit extends Component {
                   value={this.state.contents == null ? '' : this.state.contents}
                   onChange={(newValue) => this.onEditorChange(newValue)}
                   readOnly={this.state.guild && this.state.guild.role != 'viewer' ? false : true}
+                  wrapEnabled={true}
                 />
               )}
             </div>
