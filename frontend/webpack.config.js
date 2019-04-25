@@ -41,6 +41,16 @@ module.exports = {
             ['transform-react-jsx']
           ]
         }
+      },
+      {
+        type: 'javascript/auto',
+        test: /\.json$/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]'
+          }
+        }]
       }
     ]
   },
