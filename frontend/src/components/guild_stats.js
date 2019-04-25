@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {globalState} from '../state';
 import {withRouter} from 'react-router';
-import {PREMIUM_ENABLED} from 'config';
+import {PREMIUM_ENABLED} from '../config/docker';
 
 export default class GuildStats extends Component {
   render() {

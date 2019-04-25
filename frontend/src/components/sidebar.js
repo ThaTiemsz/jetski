@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import {globalState} from '../state';
-import {STATS_ENABLED} from 'config';
+import {STATS_ENABLED} from '../config/docker';
 
 class SidebarLink extends Component {
   render () {
