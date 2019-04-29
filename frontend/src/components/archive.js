@@ -505,7 +505,7 @@ export default class Archive extends Component {
               <div className="selectClosed-2un0PJ select-1Pkeg4 lookMinimal-2OMO3G sizeMedium-6vZ9JV filterBrowsingSelectValue-2QrN9m" onClick={() => this.onSelect()} ref={el => this.select = el}>
                 <div className="selectLabel-2ltwlE" style={{ flex: '1 1 auto'}}>HTML</div>
                 <svg className="arrow-2KJjTM transition-27fFQS directionDown-26e7eE" width="24" height="24" viewBox="0 0 24 24">
-                  <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 10L12 15 17 10"></path>
+                  <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M7 10L12 15 17 10"></path>
                 </svg>
               </div>
             </div>
