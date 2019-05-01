@@ -6,108 +6,29 @@ The admin plugin provides a set of useful moderator commands. These commands are
 
 | Name | Description | Default Level | Usage |
 | :--- | :--- | :--- | :--- |
-
-
 | `!warn {user} [reason]` | Adds a warning infraction to a user | Moderator | `!warn 232921983317180416 1st warning, spamming emoji` OR `!warn @rowboat#0001 2nd warning, going off-topic` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!mute {user} [reason]` | Mutes a user. This will only work if `mute_role` is set in the config | Moderator | `!mute 232921983317180416 spamming` OR `!tempmute @rowboat#0001 60m spamming` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!unmute {user}` | Unmutes a user | Moderator | `!unmute 232921983317180416` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!tempmute {user} {duration} [reason]` | Temporarily mutes a user. Will only work if `temp_mute_role` or `mute_role` is set in the config | Moderator | `!tempmute 232921983317180416 30m spamming` OR `!tempmute @rowboat#0001 30m spamming` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!kick {user} [reason]` | Kicks the user from the server | Moderator | `!kick 232921983317180416 spamming` OR `!kick @rowboat#0001 spamming` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!mkick {users} -r [reason]` | Kicks multiple users from the server | Moderator | `!mkick 232921983317180416 80351110224678912 108598213681922048 -r spamming` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!ban {user} [reason]` | Bans a user from the server | Moderator | `!ban 232921983317180416 spamming` OR `!ban @rowboat#0001 spamming` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!mban {users} -r [reason]` | Ban multiple users from the servers | Moderator | `!mban 232921983317180416 80351110224678912 108598213681922048 -r raid` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!unban {user} [reason]` | Unbans a user | Moderator | `!unban 232921983317180416` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!forceban {User ID} [reason]` | Force bans a user who is not currently in the server | Moderator | `!forceban 232921983317180416 spamming` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!softban {user} [reason]` | Softbans \(bans/unbans\) a user and deletes the user's messages sent within the last 7 days | Moderator | `!softban 232921983317180416 spamming` OR `!softban @rowboat#0001 spamming` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!tempban {user} {duration} [reason]` | Temporarily bans a user | Moderator | `!tempban 232921983317180416 5h spamming` OR `!tempban @rowboat#0001 5h spamming` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!infractions archive` | Creates a CSV file of all infractions on the server | Administrator | `!infractions archive` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!infractions search {query}` | Searches infractions database for given query | Moderator | `!infractions search 232921983317180416` OR `!infractions search rowboat#0001` OR `!infractions search spamming` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!infractions info {inf#}` | Presents information on the given infraction | Moderator | `!infractions info 1274` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!infractions (recent / latest)` | Presents information on the most recent infraction | Moderator | `!infractions recent` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!infractions duration {inf#} {duration}` | Updates the duration of the given infraction. Duration starts from time of initial action | Moderator | `!infractions duration 1274 5h` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!reason {inf#} {reason}` | Updates the reason of a given infraction | Moderator | `!infractions reason 1274 rude behaviour towards staff` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!backups restore {user}` | Restore a member's roles/nickname etc. | Moderator | `!backups restore 152164749868662784` |
-| :--- | :--- | :--- | :--- |
-
-
 | `!backups clear {User ID}` | Clear a member's backup | Moderator | `!backups clear 152164749868662784` |
-| :--- | :--- | :--- | :--- |
-
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align:left"><code>!slowmode {interval} [channel]</code>
-      </th>
-      <th style="text-align:left">Enable the built-in slowmode feature. Set to 0 to disable.</th>
-      <th style="text-align:left">Moderator</th>
-      <th style="text-align:left">
-        <p><code>!slowmode 5</code>
-        </p>
-        <p>OR</p>
-        <p><code>!slowmode 120 #general</code>
-        </p>
-      </th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>| `!pong` | Ping pong pang | Moderator | `!pong` |
-| :--- | :--- | :--- | :--- |
-
+| `!slowmode {interval} [channel]` | Enable the built-in slowmode feature. Set to 0 to disable. | Moderator | `!slowmode 5` OR `!slowmode 21600 #general` |
+| `!pong` | Ping pong pang | Moderator | `!pong` |
+| `!voice kick / voicekick / vkick {user}` | Kicks the user from the voice channel they are in | Moderator | `!voice kick 232921983317180416` OR `!vkick @rowboat#0001` |
 
 | Option | Description | Type | Default |
 | :--- | :--- | :--- | :--- |
