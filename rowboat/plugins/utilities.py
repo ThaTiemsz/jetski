@@ -365,7 +365,7 @@ class UtilitiesPlugin(Plugin):
             return
 
     @Plugin.command('info', '<user:user|snowflake>')
-    def info(self, event, user):
+    def info(self, event, user=None):
         if user is None:
             user = event.author
 

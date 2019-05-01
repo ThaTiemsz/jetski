@@ -9,6 +9,7 @@ from StringIO import StringIO
 from peewee import fn
 from holster.emitter import Priority
 from fuzzywuzzy import fuzz
+from simplejson import JSONDecodeError
 
 from datetime import datetime, timedelta
 
@@ -762,7 +763,7 @@ class AdminPlugin(Plugin):
         if deleted:
             event.msg.reply(':ok_hand: I\'ve cleared the member backup for that user')
         else:
-            raise CommandFail('I couldn\t find any member backups for that user')
+            raise CommandFail('I couldn\'t find any member backups for that user')
 
     def can_act_on(self, event, victim_id, throw=True):
         if event.author.id == victim_id:
@@ -1694,6 +1695,27 @@ class AdminPlugin(Plugin):
 
         event.msg.reply(tbl.compile())
 
+    @Plugin.command('kick', '<user:user|snowflake>', group='voice', level=CommandLevels.MOD)
+    @Plugin.command('voicekick', '<user:user|snowflake>', level=CommandLevels.MOD)
+    @Plugin.command('vkick', '<user:user|snowflake>', level=CommandLevels.MOD)
+    def voice_kick(self, event, user):
+        member = event.guild.get_member(user)
+        if member:
+            if not member.get_voice_state():
+                raise CommandFail('member is not in a voice channel')
+
+            try:
+                r = self.bot.client.api.http(
+                    Routes.GUILDS_MEMBERS_MODIFY,
+                    dict(guild=event.guild.id, member=member.id),
+                    json={'channel_id': None})
+
+                event.msg.reply(u':ok_hand: kicked {u} from voice channel'.format(u=member.user if member else user))
+            except JSONDecodeError:
+                pass
+        else:
+            raise CommandFail('invalid user')
+
     @Plugin.command('join', '<name:str>', aliases=['add', 'give'])
     def join_role(self, event, name):
         if not event.config.group_roles:
@@ -1765,8 +1787,8 @@ class AdminPlugin(Plugin):
 
     @Plugin.command('slowmode', '<interval:int> [channel:channel|snowflake]', level=CommandLevels.MOD)
     def slowmode(self, event, interval=0, channel=None):
-        if 0 <= interval > 120:
-            raise CommandFail('rate limit interval must be between 0-120')
+        if 0 <= interval > 21600:
+            raise CommandFail('rate limit interval must be between 0-21600')
         
         if isinstance(channel, DiscoChannel):
             channel = channel.id
