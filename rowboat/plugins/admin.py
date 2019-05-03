@@ -1696,8 +1696,7 @@ class AdminPlugin(Plugin):
         event.msg.reply(tbl.compile())
 
     @Plugin.command('kick', '<user:user|snowflake>', group='voice', level=CommandLevels.MOD)
-    @Plugin.command('voicekick', '<user:user|snowflake>', level=CommandLevels.MOD)
-    @Plugin.command('vkick', '<user:user|snowflake>', level=CommandLevels.MOD)
+    @Plugin.command('voicekick', '<user:user|snowflake>', aliases=['vkick'], level=CommandLevels.MOD)
     def voice_kick(self, event, user):
         member = event.guild.get_member(user)
         if member:
@@ -1710,7 +1709,7 @@ class AdminPlugin(Plugin):
                     dict(guild=event.guild.id, member=member.id),
                     json={'channel_id': None})
 
-                event.msg.reply(u':ok_hand: kicked {u} from voice channel'.format(u=member.user if member else user))
+                event.msg.reply(u':ok_hand: kicked {} from voice channel'.format(member.user))
             except JSONDecodeError:
                 pass
         else:

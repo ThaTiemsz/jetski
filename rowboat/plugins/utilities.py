@@ -211,7 +211,7 @@ class UtilitiesPlugin(Plugin):
             if EMOJI_RE.match(emoji):
                 _, eid = EMOJI_RE.findall(emoji)[0]
                 ext = 'gif' if emoji.startswith('<a:') else 'png'
-                url = 'https://discordapp.com/api/emojis/{}.{}'.format(eid, ext)
+                url = 'https://cdn.discordapp.com/emojis/{}.{}?v=1'.format(eid, ext)
             else:
                 ext = 'png'
                 url = self.get_emoji_url(emoji)
@@ -231,7 +231,7 @@ class UtilitiesPlugin(Plugin):
             for emoji in emojis[:5]:
                 if EMOJI_RE.match(emoji):
                     _, eid = EMOJI_RE.findall(emoji)[0]
-                    urls.append('https://discordapp.com/api/emojis/{}.png'.format(eid))
+                    urls.append('https://cdn.discordapp.com/emojis/{}.png?v=1'.format(eid))
                 else:
                     url = self.get_emoji_url(emoji)
                     urls.append(url) if url else None
@@ -364,7 +364,7 @@ class UtilitiesPlugin(Plugin):
                 raise CommandFail('unknown user')
             return
 
-    @Plugin.command('info', '<user:user|snowflake>')
+    @Plugin.command('info', '[user:user|snowflake]')
     def info(self, event, user=None):
         if user is None:
             user = event.author
