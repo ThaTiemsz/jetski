@@ -1223,7 +1223,7 @@ class AdminPlugin(Plugin):
         context={'mode': 'channel'},
         group='archive')
     def archive(self, event, size=50, mode=None, user=None, channel=None):
-        if 0 > size >= 15000:
+        if size < 1 or size > 15000:
             raise CommandFail('too many messages must be between 1-15000')
 
         q = Message.select(Message.id).join(User).order_by(Message.id.desc()).limit(size)
@@ -1286,7 +1286,7 @@ class AdminPlugin(Plugin):
         """
         Removes messages
         """
-        if 0 > size >= 10000:
+        if size < 1 or size > 10000:
             raise CommandFail('too many messages must be between 1-10000')
 
         if event.channel.id in self.cleans:
@@ -1786,7 +1786,7 @@ class AdminPlugin(Plugin):
 
     @Plugin.command('slowmode', '<interval:int> [channel:channel|snowflake]', level=CommandLevels.MOD)
     def slowmode(self, event, interval=0, channel=None):
-        if 0 <= interval > 21600:
+        if interval < 0 or interval > 21600:
             raise CommandFail('rate limit interval must be between 0-21600')
         
         if isinstance(channel, DiscoChannel):
