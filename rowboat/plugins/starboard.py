@@ -605,6 +605,9 @@ class StarboardPlugin(Plugin):
                 name=msg.author.username,
                 icon_url=msg.author.avatar_url)
 
+        embed.add_field(name=u'\u200b', value=(u'→ [Jump to original message]'
+            u'(https://discordapp.com/channels/{}/{}/{})'.format(msg.guild.id, msg.channel_id, msg.id)))
+
         embed.timestamp = msg.timestamp.isoformat()
         embed.color = config.get_color(len(star.stars))
 
