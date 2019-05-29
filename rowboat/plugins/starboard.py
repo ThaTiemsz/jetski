@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import peewee
 
 from peewee import fn, JOIN
