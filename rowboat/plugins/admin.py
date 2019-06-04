@@ -1703,15 +1703,8 @@ class AdminPlugin(Plugin):
             if not member.get_voice_state():
                 raise CommandFail('member is not in a voice channel')
 
-            try:
-                r = self.bot.client.api.http(
-                    Routes.GUILDS_MEMBERS_MODIFY,
-                    dict(guild=event.guild.id, member=member.id),
-                    json={'channel_id': None})
-
-                event.msg.reply(u':ok_hand: kicked {} from voice channel'.format(member.user))
-            except JSONDecodeError:
-                pass
+            member.disconnect()
+            event.msg.reply(u':ok_hand: kicked {} from voice channel'.format(member.user))
         else:
             raise CommandFail('invalid user')
 

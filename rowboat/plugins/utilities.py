@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 import requests
 import humanize
@@ -324,15 +325,25 @@ class UtilitiesPlugin(Plugin):
             humanize.naturaldelta(datetime.utcnow() - created_at),
             created_at.isoformat(),
         ))
-        content.append(u'Members: {}'.format(len(guild.members)))
+        content.append(u'Members: {:,}'.format(len(guild.members)))
         content.append(u'Features: {}'.format(', '.join(guild.features) or 'none'))
+        content.append(u'Voice region: {}'.format(guild.region))
+        content.append(u'Max presences: {:,}'.format(guild.max_presences))
+        content.append(u'Max members: {:,}'.format(guild.max_members))
 
         content.append(u'\n**\u276F Counts**')
-        text_count = sum(1 for c in guild.channels.values() if not c.is_voice)
-        voice_count = len(guild.channels) - text_count
+        count = {}
+        for c in guild.channels.values():
+            if not c.type:
+                continue
+            ctype = c.type.name.split('_')[1]
+            count[ctype] = count.get(ctype, 0) + 1
         content.append(u'Roles: {}'.format(len(guild.roles)))
-        content.append(u'Text: {}'.format(text_count))
-        content.append(u'Voice: {}'.format(voice_count))
+        content.append(u'Categories: {}'.format(count.get('category', 0)))
+        content.append(u'Text channels: {}'.format(count.get('text', 0)))
+        content.append(u'Voice channels: {}'.format(count.get('voice', 0)))
+        content.append(u'Server boosts: {}'.format(guild.premium_subscription_count))
+        content.append(u'Server boost level: Level {}'.format(guild.premium_tier))
 
         content.append(u'\n**\u276F Members**')
         status_counts = defaultdict(int)
@@ -355,15 +366,6 @@ class UtilitiesPlugin(Plugin):
         embed.description = '\n'.join(content)
         event.msg.reply('', embed=embed)
 
-    def fetch_user(self, user, throw=True):
-        try:
-            r = self.bot.client.api.http(Routes.USERS_GET, dict(user=user)) # hacky method cause this old version of Disco doesn't have a method for this and we're too lazy to update
-            return DiscoUser.create(self.client.api.client, r.json())
-        except APIException as e:
-            if throw:
-                raise CommandFail('unknown user')
-            return
-
     @Plugin.command('info', '[user:user|snowflake]')
     def info(self, event, user=None):
         if user is None:
@@ -379,7 +381,10 @@ class UtilitiesPlugin(Plugin):
 
         if not user:
             if user_id:
-                user = self.fetch_user(user_id)
+                try:
+                    user = self.client.api.users_get(user_id)
+                except APIException:
+                    raise CommandFail('unknown user')
                 User.from_disco_user(user)
             else:
                 raise CommandFail('unknown user')
@@ -392,11 +397,16 @@ class UtilitiesPlugin(Plugin):
         if user.presence:
             emoji, status = get_status_emoji(user.presence)
             content.append('Status: {} <{}>'.format(status, emoji))
-            if user.presence.game and user.presence.game.name:
-                if user.presence.game.type == GameType.STREAMING:
-                    content.append(u'Stream: [{}]({})'.format(user.presence.game.name, user.presence.game.url))
-                else:
-                    content.append(u'Game: {}'.format(user.presence.game.name))
+
+            game = user.presence.game
+            if game and game.name:
+                activity = ['Playing', 'Stream', 'Listening to', 'Watching'][int(game.type or 0)]
+                if not game.type:
+                    activity = None
+                if activity:
+                    content.append(u'{}: {}'.format(activity,
+                        u'[{}]({})'.format(game.name, game.url) if game.url else game.name
+                    ))
 
         created_dt = to_datetime(user.id)
         content.append('Created: {} ago ({})'.format(
@@ -415,6 +425,12 @@ class UtilitiesPlugin(Plugin):
                 humanize.naturaldelta(datetime.utcnow() - member.joined_at),
                 member.joined_at.isoformat(),
             ))
+
+            if member.premium_since is not None:
+                content.append('Boosting since: {} ago ({})'.format(
+                    humanize.naturaldelta(datetime.utcnow() - member.premium_since),
+                    member.premium_since.isoformat(),
+                ))
 
             if member.roles:
                 content.append(u'Roles: {}'.format(
@@ -474,14 +490,14 @@ class UtilitiesPlugin(Plugin):
             infractions = list(infractions.value)
             total = sum(i[1] for i in infractions)
             content.append(u'\n**\u276F Infractions**')
-            content.append('Total Infractions: {}'.format(total))
+            content.append('Total Infractions: {:,}'.format(total))
             content.append('Unique Servers: {}'.format(len(infractions)))
 
         if voice.value:
             statsd.timing('plugin.utilities.info.sql.voice', voice.value._query_time, tags=tags)
             voice = list(voice.value)
             content.append(u'\n**\u276F Voice**')
-            content.append(u'Sessions: {}'.format(voice[0][1]))
+            content.append(u'Sessions: {:,}'.format(voice[0][1]))
             content.append(u'Time: {}'.format(humanize.naturaldelta(
                 voice[0][2]
             )))
