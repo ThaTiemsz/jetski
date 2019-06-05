@@ -2,6 +2,7 @@ from disco.bot import Plugin
 from disco.types.base import Unset
 from disco.api.http import APIException
 from disco.bot.command import CommandEvent
+from disco.bot.plugin import register_plugin_base_class
 from disco.gateway.events import GatewayEvent
 
 from rowboat import raven_client
@@ -74,14 +75,13 @@ class BasePlugin(RavenPlugin, Plugin):
     A BasePlugin is simply a normal Disco plugin, but aliased so we have more
     control. BasePlugins do not have hooked/altered events, unlike a RowboatPlugin.
     """
-    _shallow = True
+    pass
 
 
 class RowboatPlugin(RavenPlugin, Plugin):
     """
     A plugin which wraps events to load guild configuration.
     """
-    _shallow = True
     global_plugin = False
 
     def get_safe_plugin(self, name):
@@ -113,6 +113,10 @@ class RowboatPlugin(RavenPlugin, Plugin):
             raise Exception('Cannot resolve method %s for plugin %s' % (method_name, plugin_name))
 
         return method(*args, **kwargs)
+
+
+register_plugin_base_class(BasePlugin)
+register_plugin_base_class(RowboatPlugin)
 
 
 class CommandResponse(Exception):
