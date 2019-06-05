@@ -6,7 +6,7 @@ click==6.7
 contextlib2==0.5.4
 cssselect==1.0.1
 dill==0.2.6
--e git+https://github.com/ThaTiemsz/disco.git@7de2b02f3898000090e374e6b1e24fe338077b32#egg=disco-py
+-e git+https://github.com/ThaTiemsz/disco.git@fe7439041b44566956a29a5577fd3d4d1b80085a#egg=disco-py
 # disco-py==0.0.11-rc.8
 Distance==0.1.3
 emoji==0.3.9
