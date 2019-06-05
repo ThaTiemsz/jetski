@@ -2,7 +2,7 @@
 from gevent import monkey; monkey.patch_all()
 
 from werkzeug.serving import run_with_reloader
-from gevent import wsgi
+from gevent import .pywsgi
 from rowboat import ENV
 from rowboat.web import rowboat
 from rowboat.sql import init_db
