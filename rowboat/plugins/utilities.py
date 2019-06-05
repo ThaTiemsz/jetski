@@ -352,7 +352,11 @@ class UtilitiesPlugin(Plugin):
         content.append(u'**Text channels:** {}'.format(count.get('text', 0)))
         content.append(u'**Voice channels:** {}'.format(count.get('voice', 0)))
         content.append(u'**Server boost level:** Level {}'.format(int(guild.premium_tier)))
-        content.append(u'**Server boosts:** {}'.format(guild.premium_subscription_count))
+        real_boost_count = len(filter(lambda y: guild.members.get(y).premium_since, guild.members))
+        content.append(u'**Server boosts:** {} {}'.format(
+            guild.premium_subscription_count,
+            '({})'.format(real_boost_count) if real_boost_count < guild.premium_subscription_count else ''
+        ))
 
         content.append(u'\n**\u276F Members**')
         status_counts = defaultdict(int)
