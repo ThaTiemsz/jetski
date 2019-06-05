@@ -328,8 +328,17 @@ class UtilitiesPlugin(Plugin):
         content.append(u'Members: {:,}'.format(len(guild.members)))
         content.append(u'Features: {}'.format(', '.join(guild.features) or 'none'))
         content.append(u'Voice region: {}'.format(guild.region))
-        content.append(u'Max presences: {:,}'.format(guild.max_presences))
-        content.append(u'Max members: {:,}'.format(guild.max_members))
+    
+        if not bool(guild.max_members):
+            self.state.guilds[guild.id].inplace_update(self.client.api.guilds_get(guild.id), ignored=[
+                'channels',
+                'members',
+                'voice_states',
+                'presences',
+            ])
+
+        content.append(u'Max presences: {:,}'.format(state.guilds[guild.id].max_presences))
+        content.append(u'Max members: {:,}'.format(state.guilds[guild.id].max_members))
 
         content.append(u'\n**\u276F Counts**')
         count = {}
@@ -426,7 +435,8 @@ class UtilitiesPlugin(Plugin):
                 member.joined_at.isoformat(),
             ))
 
-            if member.premium_since is not None:
+            # "is not None" does not work with Unset types for some rason
+            if bool(member.premium_since):
                 content.append('Boosting since: {} ago ({})'.format(
                     humanize.naturaldelta(datetime.utcnow() - member.premium_since),
                     member.premium_since.isoformat(),
