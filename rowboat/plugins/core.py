@@ -54,7 +54,7 @@ class CorePlugin(Plugin):
         self.startup = ctx.get('startup', datetime.utcnow())
         self.guilds = ctx.get('guilds', {})
 
-        self.emitter = Emitter(gevent.spawn)
+        self.emitter = Emitter()
 
         super(CorePlugin, self).load(ctx)
 
