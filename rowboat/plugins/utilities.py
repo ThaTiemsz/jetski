@@ -321,13 +321,13 @@ class UtilitiesPlugin(Plugin):
         content.append(u'**\u276F Server Information**')
 
         created_at = to_datetime(guild.id)
-        content.append(u'Created: {} ago ({})'.format(
+        content.append(u'**Created:** {} ago ({})'.format(
             humanize.naturaldelta(datetime.utcnow() - created_at),
             created_at.isoformat(),
         ))
-        content.append(u'Members: {:,}'.format(len(guild.members)))
-        content.append(u'Features: {}'.format(', '.join(guild.features) or 'none'))
-        content.append(u'Voice region: {}'.format(guild.region))
+        content.append(u'**Members:** {:,}'.format(len(guild.members)))
+        content.append(u'**Features:** {}'.format(', '.join(guild.features) or 'none'))
+        content.append(u'**Voice region:** {}'.format(guild.region))
     
         if not bool(guild.max_members):
             self.state.guilds[guild.id].inplace_update(self.client.api.guilds_get(guild.id), ignored=[
@@ -337,8 +337,8 @@ class UtilitiesPlugin(Plugin):
                 'presences',
             ])
 
-        content.append(u'Max presences: {:,}'.format(self.state.guilds[guild.id].max_presences))
-        content.append(u'Max members: {:,}'.format(self.state.guilds[guild.id].max_members))
+        content.append(u'**Max presences:** {:,}'.format(self.state.guilds[guild.id].max_presences))
+        content.append(u'**Max members:** {:,}'.format(self.state.guilds[guild.id].max_members))
 
         content.append(u'\n**\u276F Counts**')
         count = {}
@@ -347,12 +347,12 @@ class UtilitiesPlugin(Plugin):
                 continue
             ctype = c.type.name.split('_')[1]
             count[ctype] = count.get(ctype, 0) + 1
-        content.append(u'Roles: {}'.format(len(guild.roles)))
-        content.append(u'Categories: {}'.format(count.get('category', 0)))
-        content.append(u'Text channels: {}'.format(count.get('text', 0)))
-        content.append(u'Voice channels: {}'.format(count.get('voice', 0)))
-        content.append(u'Server boosts: {}'.format(guild.premium_subscription_count))
-        content.append(u'Server boost level: Level {}'.format(guild.premium_tier))
+        content.append(u'**Roles:** {}'.format(len(guild.roles)))
+        content.append(u'**Categories:** {}'.format(count.get('category', 0)))
+        content.append(u'**Text channels:** {}'.format(count.get('text', 0)))
+        content.append(u'**Voice channels:** {}'.format(count.get('voice', 0)))
+        content.append(u'**Server boost level:** Level {}'.format(int(guild.premium_tier)))
+        content.append(u'**Server boosts:** {}'.format(guild.premium_subscription_count))
 
         content.append(u'\n**\u276F Members**')
         status_counts = defaultdict(int)
@@ -400,12 +400,12 @@ class UtilitiesPlugin(Plugin):
         
         content = []
         content.append(u'**\u276F User Information**')
-        content.append(u'ID: {}'.format(user.id))
-        content.append(u'Profile: <@{}>'.format(user.id))
+        content.append(u'**ID:** {}'.format(user.id))
+        content.append(u'**Profile:** <@{}>'.format(user.id))
 
         if user.presence:
             emoji, status = get_status_emoji(user.presence)
-            content.append('Status: {} <{}>'.format(status, emoji))
+            content.append('**Status:** {} <{}>'.format(status, emoji))
 
             game = user.presence.game
             if game and game.name:
@@ -413,12 +413,12 @@ class UtilitiesPlugin(Plugin):
                 if not game.type:
                     activity = None
                 if activity:
-                    content.append(u'{}: {}'.format(activity,
+                    content.append(u'**{}:** {}'.format(activity,
                         u'[{}]({})'.format(game.name, game.url) if game.url else game.name
                     ))
 
         created_dt = to_datetime(user.id)
-        content.append('Created: {} ago ({})'.format(
+        content.append('**Created:** {} ago ({})'.format(
             humanize.naturaldelta(datetime.utcnow() - created_dt),
             created_dt.isoformat()
         ))
@@ -428,23 +428,24 @@ class UtilitiesPlugin(Plugin):
             content.append(u'\n**\u276F Member Information**')
 
             if member.nick:
-                content.append(u'Nickname: {}'.format(member.nick))
+                content.append(u'**Nickname:** {}'.format(member.nick))
 
-            content.append('Joined: {} ago ({})'.format(
+            content.append('**Joined:** {} ago ({})'.format(
                 humanize.naturaldelta(datetime.utcnow() - member.joined_at),
                 member.joined_at.isoformat(),
             ))
 
-            # "is not None" does not work with Unset types for some rason
-            if bool(member.premium_since):
-                content.append('Boosting since: {} ago ({})'.format(
-                    humanize.naturaldelta(datetime.utcnow() - member.premium_since),
-                    member.premium_since.isoformat(),
-                ))
 
             if member.roles:
-                content.append(u'Roles: {}'.format(
+                content.append(u'**Roles:** {}'.format(
                     ', '.join((member.guild.roles.get(r).mention for r in member.roles))
+                ))
+
+            # "is not None" does not work with Unset types for some rason
+            if bool(member.premium_since):
+                content.append('**Boosting since:** {} ago ({})'.format(
+                    humanize.naturaldelta(datetime.utcnow() - member.premium_since),
+                    member.premium_since.isoformat(),
                 ))
 
         # Execute a bunch of queries async
@@ -486,12 +487,12 @@ class UtilitiesPlugin(Plugin):
             oldest_msg = oldest_msg.value.get()
 
             content.append(u'\n **\u276F Activity**')
-            content.append('Last Message: {} ago ({})'.format(
-                humanize_duration(datetime.utcnow() - newest_msg.timestamp),
+            content.append('**Last Message:** {} ago ({})'.format(
+                humanize.naturaldelta(datetime.utcnow() - newest_msg.timestamp),
                 newest_msg.timestamp.isoformat(),
             ))
-            content.append('First Message: {} ago ({})'.format(
-                humanize_duration(datetime.utcnow() - oldest_msg.timestamp),
+            content.append('**First Message:** {} ago ({})'.format(
+                humanize.naturaldelta(datetime.utcnow() - oldest_msg.timestamp),
                 oldest_msg.timestamp.isoformat(),
             ))
 
@@ -500,15 +501,15 @@ class UtilitiesPlugin(Plugin):
             infractions = list(infractions.value)
             total = sum(i[1] for i in infractions)
             content.append(u'\n**\u276F Infractions**')
-            content.append('Total Infractions: {:,}'.format(total))
-            content.append('Unique Servers: {}'.format(len(infractions)))
+            content.append('**Total Infractions:** {:,}'.format(total))
+            content.append('**Unique Servers:** {}'.format(len(infractions)))
 
         if voice.value:
             statsd.timing('plugin.utilities.info.sql.voice', voice.value._query_time, tags=tags)
             voice = list(voice.value)
             content.append(u'\n**\u276F Voice**')
-            content.append(u'Sessions: {:,}'.format(voice[0][1]))
-            content.append(u'Time: {}'.format(humanize.naturaldelta(
+            content.append(u'**Sessions:** {:,}'.format(voice[0][1]))
+            content.append(u'**Time:** {}'.format(humanize.naturaldelta(
                 voice[0][2]
             )))
 
