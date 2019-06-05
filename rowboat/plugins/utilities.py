@@ -337,8 +337,8 @@ class UtilitiesPlugin(Plugin):
                 'presences',
             ])
 
-        content.append(u'Max presences: {:,}'.format(state.guilds[guild.id].max_presences))
-        content.append(u'Max members: {:,}'.format(state.guilds[guild.id].max_members))
+        content.append(u'Max presences: {:,}'.format(self.state.guilds[guild.id].max_presences))
+        content.append(u'Max members: {:,}'.format(self.state.guilds[guild.id].max_members))
 
         content.append(u'\n**\u276F Counts**')
         count = {}
