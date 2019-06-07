@@ -347,15 +347,15 @@ class CorePlugin(Plugin):
     def on_resumed(self, event):
         Notification.dispatch(
             Notification.Types.RESUME,
-            trace=event.trace,
+            trace=[],
             env=ENV,
         )
 
         with self.send_control_message() as embed:
             embed.title = 'Resumed'
             embed.color = 0xffb347
-            embed.add_field(name='Gateway Server', value=event.trace[0], inline=False)
-            embed.add_field(name='Session Server', value=event.trace[1], inline=False)
+            embed.add_field(name='Gateway Version', value=event.version, inline=False)
+            embed.add_field(name='Session ID', value=event.session_id, inline=False)
             embed.add_field(name='Replayed Events', value=str(self.client.gw.replayed_events))
 
     @Plugin.listen('Ready', priority=Priority.BEFORE)
@@ -364,7 +364,7 @@ class CorePlugin(Plugin):
         self.log.info('Started session %s', event.session_id)
         Notification.dispatch(
             Notification.Types.CONNECT,
-            trace=event.trace,
+            trace=[],
             env=ENV,
         )
 
@@ -376,8 +376,8 @@ class CorePlugin(Plugin):
                 embed.title = 'Connected'
                 embed.color = 0x77dd77
 
-            embed.add_field(name='Gateway Server', value=event.trace[0], inline=False)
-            embed.add_field(name='Session Server', value=event.trace[1], inline=False)
+            embed.add_field(name='Gateway Version', value=event.version, inline=False)
+            embed.add_field(name='Session ID', value=event.session_id, inline=False)
 
     @Plugin.listen('GuildCreate', priority=Priority.BEFORE, conditional=lambda e: not e.created)
     def on_guild_create(self, event):
