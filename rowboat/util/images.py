@@ -52,7 +52,7 @@ def get_dominant_colors_user(user, url=None):
         return color
 
 
-def get_dominant_colors_guild(guild):
+def get_dominant_colors_guild(guild, url=None):
     import requests
     from rowboat.redis import rdb
     from PIL import Image
@@ -62,7 +62,7 @@ def get_dominant_colors_guild(guild):
     if rdb.exists(key):
         return int(rdb.get(key))
     else:
-        r = requests.get(guild.icon_url)
+        r = requests.get(url or guild.icon_url)
         try:
             r.raise_for_status()
         except:

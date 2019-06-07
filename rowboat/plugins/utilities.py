@@ -375,7 +375,7 @@ class UtilitiesPlugin(Plugin):
         embed = MessageEmbed()
         if guild.icon:
             embed.set_thumbnail(url=guild.icon_url)
-            embed.color = get_dominant_colors_guild(guild)
+            embed.color = get_dominant_colors_guild(guild, guild.get_icon_url('png'))
         embed.description = '\n'.join(content)
         event.msg.reply('', embed=embed)
 
@@ -519,17 +519,20 @@ class UtilitiesPlugin(Plugin):
 
         embed = MessageEmbed()
 
-        avatar = u'https://cdn.discordapp.com/avatars/{}/{}.png'.format(
-            user.id,
-            user.avatar,
-        )
+        avatar = user.avatar
+        if avatar:
+            avatar = user.avatar_url
+        else:
+            avatar = u'https://cdn.discordapp.com/embed/avatars/{}.png'.format(
+                int(user.discriminator) % 5
+            )
 
         embed.set_author(name=u'{}#{}'.format(
             user.username,
             user.discriminator,
         ), icon_url=avatar)
 
-        embed.set_thumbnail(url=avatar)
+        embed.set_thumbnail(url=user.avatar_url if user.avatar else avatar)
 
         embed.description = '\n'.join(content)
         embed.color = get_dominant_colors_user(user, avatar)
