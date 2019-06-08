@@ -41,7 +41,7 @@ from yaml import load
 PY_CODE_BLOCK = u'```py\n{}\n```'
 
 BOT_INFO = '''
-Jetski is a moderation and utilitarian bot.
+Jetski is a moderation and utilitarian bot. [Join the server for updates and support.](https://discord.gg/CQX3Gju)
 '''
 
 GUILDS_WAITING_SETUP_KEY = 'gws'
