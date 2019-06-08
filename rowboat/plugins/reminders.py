@@ -209,7 +209,11 @@ class RemindersPlugin(Plugin):
         total_count = Reminder.count_for_user(user.id)
 
         embed = MessageEmbed()
-        embed.title = '{} reminder{} ({} total)'.format(count if mode == 'server' else total_count, '' if count == 1 else 's', total_count)
+        embed.title = '{} reminder{} ({} total)'.format(
+            count if mode == 'server' else total_count,
+            's' if (count != 1 and mode == 'server') or (total_count != 1 and mode == 'global') else '',
+            total_count
+        )
 
         embed.set_author(name=u'{}#{}'.format(
             user.username,
