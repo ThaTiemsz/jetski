@@ -101,8 +101,8 @@ class RemindersPlugin(Plugin):
 
         reminder.delete_instance()
 
-    @Plugin.command('delete global', '[reminder:str]', group='reminder', aliases=['remove', 'clean', 'clear'], context={'mode': 'global'}, global_=True)
-    @Plugin.command('delete global', '[reminder:str]', group='r', aliases=['remove', 'clean', 'clear'], context={'mode': 'global'}, global_=True)
+    @Plugin.command('delete global', '[reminder:str]', group='reminder', aliases=['remove global global', 'clean global', 'clear global'], context={'mode': 'global'}, global_=True)
+    @Plugin.command('delete global', '[reminder:str]', group='r', aliases=['remove global', 'clean', 'clear global'], context={'mode': 'global'}, global_=True)
     @Plugin.command('delete', '[reminder:str]', group='reminder', aliases=['remove', 'clean', 'clear'], context={'mode': 'server'}, global_=True)
     @Plugin.command('delete', '[reminder:str]', group='r', aliases=['remove', 'clean', 'clear'], context={'mode': 'server'}, global_=True)
     def cmd_remind_clear(self, event, reminder='all', mode='server'):
@@ -209,7 +209,7 @@ class RemindersPlugin(Plugin):
         total_count = Reminder.count_for_user(user.id)
 
         embed = MessageEmbed()
-        embed.title = '{} reminder{} ({} total)'.format(count, '' if count == 1 else 's', total_count)
+        embed.title = '{} reminder{} ({} total)'.format(count if mode == 'server' else total_count, '' if count == 1 else 's', total_count)
 
         embed.set_author(name=u'{}#{}'.format(
             user.username,
@@ -218,7 +218,7 @@ class RemindersPlugin(Plugin):
         embed.color = get_dominant_colors_user(user, user.get_avatar_url('png'))
         embed.set_footer(text='You can cancel reminders with !r clear [ID]')
 
-        if count == 0:
+        if (count == 0 and mode == 'server') or total_count == 0
             embed.description = 'You have no upcoming reminders{}.'.format(' in this server. Use `!r list global` to list all your upcoming reminders' if total_count > 0 else '')
         else:
             query = Reminder.select(Reminder).where(
