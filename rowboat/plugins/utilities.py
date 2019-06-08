@@ -349,8 +349,8 @@ class UtilitiesPlugin(Plugin):
         content.append(u'**Text channels:** {}'.format(count.get('text', 0)))
         content.append(u'**Voice channels:** {}'.format(count.get('voice', 0)))
 
-        static_emojis = len(filter(lambda e: guild.emojis.get(e).animated, guild.emojis))
-        animated_emojis = len(filter(lambda e: not guild.emojis.get(e).animated, guild.emojis))
+        static_emojis = len(filter(lambda e: not guild.emojis.get(e).animated, guild.emojis))
+        animated_emojis = len(filter(lambda e: guild.emojis.get(e).animated, guild.emojis))
         content.append(u'**Emojis:** {}/{total} static, {}/{total} animated'.format(static_emojis, animated_emojis, total=self.get_max_emoji_slots(guild)))
 
         content.append(u'**Voice channels:** {}'.format(count.get('voice', 0)))
