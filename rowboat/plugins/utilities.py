@@ -11,6 +11,8 @@ from peewee import fn
 from gevent.pool import Pool
 from datetime import datetime, timedelta
 from collections import defaultdict
+from holster.enum import Enum
+from math import max
 
 from disco.types.user import GameType, Status, User as DiscoUser
 from disco.types.message import MessageEmbed
@@ -311,6 +313,17 @@ class UtilitiesPlugin(Plugin):
             u'\n'.join(map(lambda i: u'{} ({})'.format(unicode(i), i.user_id), users[:25]))
         ))
 
+    def get_max_emoji_slots(self, guild):
+        emoji_max_slots = 50
+        emoji_max_slots_more = 200
+        PremiumGuildLimits = Enum(
+            NONE=50,
+            TIER_1=100,
+            TIER_2=150,
+            TIER_3=250,
+        )
+        return max(emoji_max_slots_more if 'MORE_EMOJI' in guild.features else emoji_max_slots, PremiumGuildLimits[guild.premium_tier.name].value)
+
     @Plugin.command('server', '[guild_id:snowflake]', global_=True)
     def server(self, event, guild_id=None):
         guild = self.state.guilds.get(guild_id) if guild_id else event.guild
@@ -350,6 +363,12 @@ class UtilitiesPlugin(Plugin):
         content.append(u'**Roles:** {}'.format(len(guild.roles)))
         content.append(u'**Categories:** {}'.format(count.get('category', 0)))
         content.append(u'**Text channels:** {}'.format(count.get('text', 0)))
+        content.append(u'**Voice channels:** {}'.format(count.get('voice', 0)))
+
+        static_emojis = len(filter(lambda e: guild.emojis.get(e).animated, guild.emojis))
+        animated_emojis = len(filter(lambda e: not guild.emojis.get(e).animated, guild.emojis))
+        content.append(u'**Emojis:** {}/{total} static, {}/{total} animated'.format(static_emojis, animated_emojis, total=get_max_emoji_slots(guild)))
+
         content.append(u'**Voice channels:** {}'.format(count.get('voice', 0)))
         content.append(u'**Server boost level:** Level {}'.format(int(guild.premium_tier)))
         real_boost_count = len(filter(lambda y: guild.members.get(y).premium_since, guild.members))
