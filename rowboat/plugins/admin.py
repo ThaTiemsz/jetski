@@ -1800,7 +1800,7 @@ class AdminPlugin(Plugin):
     @Plugin.command('pong', level=CommandLevels.MOD)
     def ping(self, event):
         before = time.time()
-        message = msg.reply("Ping...")
+        message = event.msg.reply("Ping...")
 
         ping = (time.time() - before) * 1000
         message.edit("Pong! `{}ms`".format(int(ping)))
