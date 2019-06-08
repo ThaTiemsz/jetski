@@ -218,7 +218,7 @@ class RemindersPlugin(Plugin):
         embed.color = get_dominant_colors_user(user, user.get_avatar_url('png'))
         embed.set_footer(text='You can cancel reminders with !r clear [ID]')
 
-        if (count == 0 and mode == 'server') or total_count == 0
+        if (count == 0 and mode == 'server') or total_count == 0:
             embed.description = 'You have no upcoming reminders{}.'.format(' in this server. Use `!r list global` to list all your upcoming reminders' if total_count > 0 else '')
         else:
             query = Reminder.select(Reminder).where(
