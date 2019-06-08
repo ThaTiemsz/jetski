@@ -4,6 +4,7 @@ import requests
 import humanize
 import operator
 import gevent
+import math
 
 from six import BytesIO
 from PIL import Image
@@ -12,7 +13,6 @@ from gevent.pool import Pool
 from datetime import datetime
 from collections import defaultdict
 from holster.enum import Enum
-from math import max
 
 from disco.types.user import GameType, Status, User as DiscoUser
 from disco.types.message import MessageEmbed
