@@ -401,16 +401,16 @@ class Reminder(BaseModel):
         ))
 
     @classmethod
-    def count_for_user(cls, user_id):
+    def count_for_user(cls, user_id, guild_id=None):
         return cls.with_message_join().where(
-            (Message.author_id == user_id)
+            (Message.author_id == user_id) & (Message.guild_id == guild_id if guild_id is not None else True)
         ).count()
 
     @classmethod
-    def delete_all_for_user(cls, user_id):
+    def delete_all_for_user(cls, user_id, guild_id=None):
         return cls.delete().where(
             (cls.message_id << cls.with_message_join((Message.id, )).where(
-                Message.author_id == user_id
+                (Message.author_id == user_id) & (Message.guild_id == guild_id if guild_id is not None else True)
             ))
         ).execute()
 
