@@ -376,7 +376,7 @@ class CorePlugin(Plugin):
                 embed.title = 'Connected'
                 embed.color = 0x77dd77
 
-            embed.add_field(name='Gateway Version', value=event.version, inline=False)
+            embed.add_field(name='Gateway Version', value='v{}'.format(event.version), inline=False)
             embed.add_field(name='Session ID', value=event.session_id, inline=False)
 
     @Plugin.listen('GuildCreate', priority=Priority.BEFORE, conditional=lambda e: not e.created)
