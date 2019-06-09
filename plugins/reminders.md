@@ -35,9 +35,10 @@ The reminders plugin provides reminder commands.
         </p>
       </td>
       <td style="text-align:left">Clears all of the user&apos;s reminders set in a server, or globally</td>
-      <td style="text-align:left">Default</td>
-      <td style="text-align:left"><code>!r clear</code>
-      </td>
+      <td
+      style="text-align:left">Default</td>
+        <td style="text-align:left"><code>!r clear</code>
+        </td>
     </tr>
     <tr>
       <td style="text-align:left"><code>!r clear {ID}</code>
