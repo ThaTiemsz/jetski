@@ -91,7 +91,7 @@ All commands only usable by global administrators of the bot.
       </td>
       <td style="text-align:left">Reload a plugin</td>
       <td style="text-align:left">Global Admin</td>
-      <td style="text-align:left"><code>!plugins reload utilities</code>
+      <td style="text-align:left"><code>!plugins reload TagsPlugin</code>
       </td>
     </tr>
     <tr>
