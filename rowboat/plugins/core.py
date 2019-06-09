@@ -354,7 +354,7 @@ class CorePlugin(Plugin):
         with self.send_control_message() as embed:
             embed.title = 'Resumed'
             embed.color = 0xffb347
-            embed.add_field(name='Gateway Version', value=event.version, inline=False)
+            embed.add_field(name='Gateway Version', value='v{}'.format(event.version), inline=False)
             embed.add_field(name='Session ID', value=event.session_id, inline=False)
             embed.add_field(name='Replayed Events', value=str(self.client.gw.replayed_events))
 
@@ -796,7 +796,7 @@ class CorePlugin(Plugin):
             embed.color = 0x7289da
             embed.set_author(name='Loaded Plugins ({})'.format(len(self.bot.plugins)), icon_url=self.state.me.avatar_url)
             embed.description = '```md\n{}```'.format('\n'.join('- {}'.format(key) for key in self.bot.plugins))
-            embed.set_footer(text='Use registered name for load, file name for unload/reload.')
+            embed.set_footer(text='Use file name for load, registered name for unload/reload.')
             return event.msg.reply('', embed=embed)
 
         pl = self.bot.plugins.get(plugin)
@@ -811,7 +811,7 @@ class CorePlugin(Plugin):
             return event.msg.reply(':ok_hand: Loaded {} plugin.'.format(plugin))
 
         if not pl:
-            return event.msg.reply('<:{}> Could not find this plugin.')
+            return event.msg.reply('<:{}> Could not find this plugin.'.format(plugin))
 
         if mode == 'unload':
             self.bot.rmv_plugin(pl.__class__)
