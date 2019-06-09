@@ -1,6 +1,6 @@
 # Utility
 
-The utility plugin provides a number of useful and fun commands
+The utility plugin provides a number of useful and fun commands.
 
 ## Commands
 
@@ -96,7 +96,7 @@ The utility plugin provides a number of useful and fun commands
         <p><code>!r clear all</code>
         </p>
       </td>
-      <td style="text-align:left">Clears all of the user's reminders</td>
+      <td style="text-align:left">Clears all of the user&apos;s reminders</td>
       <td style="text-align:left">Default</td>
       <td style="text-align:left"><code>!r clear</code>
       </td>

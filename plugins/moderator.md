@@ -27,7 +27,7 @@ The admin plugin provides a set of useful moderator commands. These commands are
 | `!backups restore {user}` | Restore a member's roles/nickname etc. | Moderator | `!backups restore 152164749868662784` |
 | `!backups clear {User ID}` | Clear a member's backup | Moderator | `!backups clear 152164749868662784` |
 | `!slowmode {interval} [channel]` | Enable the built-in slowmode feature. Set to 0 to disable. | Moderator | `!slowmode 5` OR `!slowmode 21600 #general` |
-| `!pong` | Ping pong pang | Moderator | `!pong` |
+| `!pong` | Shows bot latency | Moderator | `!pong` |
 | `!voice kick / voicekick / vkick {user}` | Kicks the user from the voice channel they are in | Moderator | `!voice kick 232921983317180416` OR `!vkick @rowboat#0001` |
 
 | Option | Description | Type | Default |
