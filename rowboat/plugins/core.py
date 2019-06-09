@@ -785,10 +785,40 @@ class CorePlugin(Plugin):
 
         event.msg.reply('Ok, removed flag `{}` from guild {}'.format(str(flag), guild.guild_id))
 
-    @Plugin.command('disable', '<plugin:str>', group='plugins', level=-1)
-    def plugin_disable(self, event, plugin):
-        plugin = self.bot.plugins.get(plugin)
-        if not plugin:
-            return event.msg.reply('Hmmm, it appears that plugin doesn\'t exist!?')
-        self.bot.rmv_plugin(plugin.__class__)
-        event.msg.reply('Ok, that plugin has been disabled and unloaded')
+    @Plugin.command('plugins', aliases=['pl', 'plugin'], context={'mode': 'list'}, level=-1)
+    @Plugin.command('list', group='plugins', aliases=['ls'], context={'mode': 'list'}, level=-1)
+    @Plugin.command('load', '<plugin:str>', group='plugins', aliases=['enable'], context={'mode': 'load'}, level=-1)
+    @Plugin.command('unload', '<plugin:str>', group='plugins', aliases=['disable'], context={'mode': 'unload'}, level=-1)
+    @Plugin.command('reload', '<plugin:str>', group='plugins', aliases=['restart'], context={'mode': 'reload'}, level=-1)
+    def plugin_manager(self, event, plugin=None, mode='list'):
+        if mode == 'list':
+            embed = MessageEmbed()
+            embed.color = 0x7289da
+            embed.set_author(name='Loaded Plugins ({})'.format(len(self.bot.plugins)), icon_url=self.state.me.avatar_url)
+            embed.description = '```md\n{}```'.format('\n'.join('- {}'.format(key) for key in self.bot.plugins))
+            embed.set_footer(text='Use registered name for load, file name for unload/reload.')
+            return event.msg.reply('', embed=embed)
+
+        pl = self.bot.plugins.get(plugin)
+
+        if mode == 'load':
+            if pl:
+                return event.msg.reply('<:{}> {} plugin is already loaded.'.format(RED_TICK_EMOJI, pl.name))
+            try:
+                self.bot.add_plugin_module('rowboat.plugins.{}'.format(plugin))
+            except:
+                return event.msg.reply('<:{}> Failed to load {} plugin.'.format(RED_TICK_EMOJI, plugin))
+            return event.msg.reply(':ok_hand: Loaded {} plugin.'.format(plugin))
+
+        if not pl:
+            return event.msg.reply('<:{}> Could not find this plugin.')
+
+        if mode == 'unload':
+            self.bot.rmv_plugin(pl.__class__)
+            self.log.info('Unloaded {} plugin'.format(pl.name))
+            return event.msg.reply(':ok_hand: Unloaded {} plugin.'.format(pl.name))
+
+        if mode == 'reload':
+            self.bot.reload_plugin(pl.__class__)
+            self.log.info('Reloaded {} plugin'.format(pl.name))
+            return event.msg.reply(':ok_hand: Reloaded {} plugin.'.format(pl.name))
