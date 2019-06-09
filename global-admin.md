@@ -4,22 +4,143 @@ All commands only usable by global administrators of the bot.
 
 ## Core
 
-| Name | Description | Default Level | Usage |
-| :--- | :--- | :--- | :--- |
-| `!uptime` | Gets the bot's up time | Global Admin | `!uptime` |
-| `!source {command}` | Gets a link to the command in the source code on GitHub | Global Admin | `!source ban` |
-| `!eval {code}` | Evaluates code | Global Admin | `!eval msg.content` |
-| `!control sync-bans` | Sync bans from every guild | Global Admin | `!control sync-bans` |
-| `!control reconnect` | Reconnect to the gateway | Global Admin | `!control reconnect` |
-| `!guilds invite {guild ID}` | Generate a temporary invite to a server the bot is in | Global Admin | `!guilds invite 348832158590435328` |
-| `!guilds wh {guild ID}` | Whitelist a server \(bot won't instantly leave\) | Global Admin | `!guilds wh 348832158590435328` |
-| `!guilds unwh {guild ID}` | Unwhitelist a server | Global Admin | `!guilds unwh 348832158590435328` |
-| `!plugins disable {name}` | Disable a plugin | Global Admin | `!plugins disable UtilitiesPlugin` |
-| `!nuke {user ID} {reason}` | Bans a user from every server bot is in | Global Admin | `!nuke 339793226166960129 alt` |
-| `!guilds wh-add {guild ID}` | Add a flag for a server | Global Admin | `!guilds wh-add 348832158590435328 modlog_custom_format` |
-| `!guilds wh-rmv {guild ID}` | Remove a flag a server | Global Admin | `!guilds wh-rmv 348832158590435328 modlog_custom_format` |
-
-## Whitelist Flags
+<table>
+  <thead>
+    <tr>
+      <th style="text-align:left">Name</th>
+      <th style="text-align:left">Description</th>
+      <th style="text-align:left">Default Level</th>
+      <th style="text-align:left">Usage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align:left"><code>!uptime</code>
+      </td>
+      <td style="text-align:left">Gets the bot&apos;s up time</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!uptime</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!source {command}</code>
+      </td>
+      <td style="text-align:left">Gets a link to the command in the source code on GitHub</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!source ban</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!eval {code}</code>
+      </td>
+      <td style="text-align:left">Evaluates code</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!eval msg.content</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!control sync-bans</code>
+      </td>
+      <td style="text-align:left">Sync bans from every guild</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!control sync-bans</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!control reconnect</code>
+      </td>
+      <td style="text-align:left">Reconnect to the gateway</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!control reconnect</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!guilds invite {guild ID}</code>
+      </td>
+      <td style="text-align:left">Generate a temporary invite to a server the bot is in</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!guilds invite 348832158590435328</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!guilds wh {guild ID}</code>
+      </td>
+      <td style="text-align:left">Whitelist a server (bot won&apos;t instantly leave)</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!guilds wh 348832158590435328</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!guilds unwh {guild ID}</code>
+      </td>
+      <td style="text-align:left">Unwhitelist a server</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!guilds unwh 348832158590435328</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!plugins disable / unload {name}</code>
+      </td>
+      <td style="text-align:left">Disable a plugin</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!plugins disable UtilitiesPlugin</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!plugins reload {name}</code>
+      </td>
+      <td style="text-align:left">Reload a plugin</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!plugins reload utilities</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!plugins enable / load {name}</code>
+      </td>
+      <td style="text-align:left">Load a plugin</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!plugins load admin</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left">
+        <p><code>!plugins</code>
+        </p>
+        <p>OR</p>
+        <p><code>!plugins list</code>
+        </p>
+      </td>
+      <td style="text-align:left">List all loaded plugins</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!plugins list</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!nuke {user ID} {reason}</code>
+      </td>
+      <td style="text-align:left">Bans a user from every server bot is in</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!nuke 339793226166960129 alt</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!guilds wh-add {guild ID}</code>
+      </td>
+      <td style="text-align:left">Add a flag for a server</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!guilds wh-add 348832158590435328 modlog_custom_format</code>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:left"><code>!guilds wh-rmv {guild ID}</code>
+      </td>
+      <td style="text-align:left">Remove a flag a server</td>
+      <td style="text-align:left">Global Admin</td>
+      <td style="text-align:left"><code>!guilds wh-rmv 348832158590435328 modlog_custom_format</code>
+      </td>
+    </tr>
+  </tbody>
+</table>## Whitelist Flags
 
 | Key | Name |
 | :--- | :--- |
