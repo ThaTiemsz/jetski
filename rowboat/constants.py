@@ -1,6 +1,7 @@
 import re
 import yaml
 from disco.types.user import GameType, Status
+from disco.types.guild import PremiumTier
 
 # Emojis
 GREEN_TICK_EMOJI_ID = 318468935047446529
@@ -16,6 +17,18 @@ STATUS_EMOJI = {
     GameType.STREAMING: ':status_streaming:318468935450099712',
 }
 SNOOZE_EMOJI = u'\U0001f4a4'
+CHANNEL_CATEGORY_EMOJI = ':ChannelCategory:587359827504791563'
+TEXT_CHANNEL_EMOJI = ':TextChannel:587359827416580096'
+VOICE_CHANNEL_EMOJI = ':VoiceChannel:587359827051675672'
+ROLE_EMOJI = ':Role:587359847146848277'
+EMOJI_EMOJI = ':Emoji:587359846651920425'
+PREMIUM_GUILD_TIER_EMOJI = {
+    PremiumTier.NONE: ':PremiumGuildTier0:587359938708504606',
+    PremiumTier.TIER_1: ':PremiumGuildTier1:587359941854232576',
+    PremiumTier.TIER_2: ':PremiumGuildTier2:587359948577701905',
+    PremiumTier.TIER_3: ':PremiumGuildTier3:587359955565281315',
+}
+PREMIUM_GUILD_ICON_EMOJI = ':PremiumGuildIcon:587359857171103744'
 
 
 # Regexes

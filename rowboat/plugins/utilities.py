@@ -32,7 +32,8 @@ from rowboat.models.message import Message
 from rowboat.util.images import get_dominant_colors_user, get_dominant_colors_guild
 from rowboat.constants import (
     STATUS_EMOJI, SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI, RED_TICK_EMOJI_ID, 
-    EMOJI_RE, USER_MENTION_RE, CDN_URL
+    EMOJI_RE, USER_MENTION_RE, CDN_URL,
+    CHANNEL_CATEGORY_EMOJI, TEXT_CHANNEL_EMOJI, VOICE_CHANNEL_EMOJI, ROLE_EMOJI, EMOJI_EMOJI, PREMIUM_GUILD_TIER_EMOJI, PREMIUM_GUILD_ICON_EMOJI,
 )
 
 
@@ -314,17 +315,21 @@ class UtilitiesPlugin(Plugin):
         if not guild:
             raise CommandFail('invalid server')
 
-        content = []
-        content.append(u'**\u276F Server Information**')
+        self.client.api.channels_typing(event.channel.id)
+
+        embed = MessageEmbed()
+
+        # Server Information
+        content_server = []
 
         created_at = to_datetime(guild.id)
-        content.append(u'**Created:** {} ago ({})'.format(
+        content_server.append(u'**Created:** {} ago ({})'.format(
             humanize.naturaldelta(datetime.utcnow() - created_at),
             created_at.isoformat(),
         ))
-        content.append(u'**Members:** {:,}'.format(len(guild.members)))
-        content.append(u'**Features:** {}'.format(', '.join(guild.features) or 'none'))
-        content.append(u'**Voice region:** {}'.format(guild.region))
+        content_server.append(u'**Members:** {:,}'.format(len(guild.members)))
+        content_server.append(u'**Features:** {}'.format(', '.join(guild.features) or 'none'))
+        content_server.append(u'**Voice region:** {}'.format(guild.region))
     
         if not bool(guild.max_members):
             self.state.guilds[guild.id].inplace_update(self.client.api.guilds_get(guild.id), ignored=[
@@ -334,34 +339,52 @@ class UtilitiesPlugin(Plugin):
                 'presences',
             ])
 
-        content.append(u'**Max presences:** {:,}'.format(self.state.guilds[guild.id].max_presences))
-        content.append(u'**Max members:** {:,}'.format(self.state.guilds[guild.id].max_members))
+        content_server.append(u'**Max presences:** {:,}'.format(self.state.guilds[guild.id].max_presences))
+        content_server.append(u'**Max members:** {:,}'.format(self.state.guilds[guild.id].max_members))
 
-        content.append(u'\n**\u276F Counts**')
+        embed.add_field(name=u'\u276F Server Information', value='\n'.join(content_server), inline=False)
+
+        # Counts
+        content_counts = []
         count = {}
         for c in guild.channels.values():
             if not c.type:
                 continue
             ctype = c.type.name.split('_')[1]
             count[ctype] = count.get(ctype, 0) + 1
-        content.append(u'**Roles:** {}'.format(len(guild.roles)))
-        content.append(u'**Categories:** {}'.format(count.get('category', 0)))
-        content.append(u'**Text channels:** {}'.format(count.get('text', 0)))
-        content.append(u'**Voice channels:** {}'.format(count.get('voice', 0)))
+        content_counts.append(u'<{}> {}'.format(CHANNEL_CATEGORY_EMOJI, count.get('category', 0)))
+        content_counts.append(u'<{}> {}'.format(TEXT_CHANNEL_EMOJI, count.get('text', 0)))
+        content_counts.append(u'<{}> {}'.format(VOICE_CHANNEL_EMOJI, count.get('voice', 0)))
+        embed.add_field(name=u'\u276F Counts', value='\n'.join(content_counts), inline=True)
 
+        content_counts2 = []
+        content_counts2.append(u'<{}> {}'.format(ROLE_EMOJI, len(guild.roles)))
         static_emojis = len(filter(lambda e: not guild.emojis.get(e).animated, guild.emojis))
         animated_emojis = len(filter(lambda e: guild.emojis.get(e).animated, guild.emojis))
-        content.append(u'**Emojis:** {}/{total} static, {}/{total} animated'.format(static_emojis, animated_emojis, total=self.get_max_emoji_slots(guild)))
+        content_counts2.append(u'<{}> {}/{total} static'.format(
+            EMOJI_EMOJI,
+            static_emojis,
+            total=self.get_max_emoji_slots(guild))
+        )
+        content_counts2.append(u'<{}> {}/{total} animated'.format(
+            EMOJI_EMOJI,
+            animated_emojis, 
+            total=self.get_max_emoji_slots(guild))
+        )
+        embed.add_field(name=u'\u200B', value='\n'.join(content_counts2), inline=True)
 
-        content.append(u'**Voice channels:** {}'.format(count.get('voice', 0)))
-        content.append(u'**Server boost level:** Level {}'.format(int(guild.premium_tier)))
+        content_counts3 = []
+        content_counts3.append(u'<{}> Level {}'.format(PREMIUM_GUILD_TIER_EMOJI[guild.premium_tier], int(guild.premium_tier)))
         real_boost_count = len(filter(lambda y: guild.members.get(y).premium_since, guild.members))
-        content.append(u'**Server boosts:** {} {}'.format(
+        content_counts3.append(u'<{}> {} {}'.format(
+            PREMIUM_GUILD_ICON_EMOJI,
             guild.premium_subscription_count,
             '({})'.format(real_boost_count) if real_boost_count < guild.premium_subscription_count else ''
         ))
+        embed.add_field(name=u'\u200B', value='\n'.join(content_counts3), inline=True)
 
-        content.append(u'\n**\u276F Members**')
+        # Members
+        content_members = []
         status_counts = defaultdict(int)
         for member in guild.members.values():
             if not member.user.presence:
@@ -370,16 +393,16 @@ class UtilitiesPlugin(Plugin):
                 status = member.user.presence.status
             status_counts[status] += 1
 
-        for status, count in sorted(status_counts.items(), key=lambda i: str(i[0]), reverse=True):
-            content.append(u'<{}> - {}'.format(
+        for status, count in sorted(status_counts.items(), key=lambda i: Status[i[0]]):
+            content_members.append(u'<{}> - {}'.format(
                 STATUS_EMOJI[status], count
             ))
 
-        embed = MessageEmbed()
+        embed.add_field(name=u'\n**\u276F Members**', value='\n'.join(content_members), inline=False)
+
         if guild.icon:
             embed.set_thumbnail(url=guild.icon_url)
             embed.color = get_dominant_colors_guild(guild, guild.get_icon_url('png'))
-        embed.description = '\n'.join(content)
         event.msg.reply('', embed=embed)
 
     @Plugin.command('info', '[user:user|snowflake]')
@@ -404,7 +427,9 @@ class UtilitiesPlugin(Plugin):
                 User.from_disco_user(user)
             else:
                 raise CommandFail('unknown user')
-        
+
+        self.client.api.channels_typing(event.channel.id)
+
         content = []
         content.append(u'**\u276F User Information**')
         content.append(u'**ID:** {}'.format(user.id))
