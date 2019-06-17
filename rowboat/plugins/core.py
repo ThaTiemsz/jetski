@@ -355,7 +355,6 @@ class CorePlugin(Plugin):
             embed.title = 'Resumed'
             embed.color = 0xffb347
             embed.add_field(name='Gateway Version', value='v{}'.format(event.version), inline=False)
-            embed.add_field(name='Session ID', value=event.session_id, inline=False)
             embed.add_field(name='Replayed Events', value=str(self.client.gw.replayed_events))
 
     @Plugin.listen('Ready', priority=Priority.BEFORE)
