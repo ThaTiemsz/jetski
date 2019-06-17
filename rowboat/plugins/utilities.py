@@ -563,5 +563,5 @@ class UtilitiesPlugin(Plugin):
         embed.set_thumbnail(url=user.avatar_url if user.avatar else avatar)
 
         embed.description = '\n'.join(content)
-        embed.color = get_dominant_colors_user(user, avatar)
+        embed.color = get_dominant_colors_user(user, user.get_avatar_url('png') if user.avatar else avatar)
         event.msg.reply('', embed=embed)
