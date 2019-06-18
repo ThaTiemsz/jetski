@@ -347,14 +347,12 @@ class CorePlugin(Plugin):
     def on_resumed(self, event):
         Notification.dispatch(
             Notification.Types.RESUME,
-            trace=[],
             env=ENV,
         )
 
         with self.send_control_message() as embed:
             embed.title = 'Resumed'
             embed.color = 0xffb347
-            embed.add_field(name='Gateway Version', value='v{}'.format(event.version), inline=False)
             embed.add_field(name='Replayed Events', value=str(self.client.gw.replayed_events))
 
     @Plugin.listen('Ready', priority=Priority.BEFORE)
@@ -363,7 +361,6 @@ class CorePlugin(Plugin):
         self.log.info('Started session %s', event.session_id)
         Notification.dispatch(
             Notification.Types.CONNECT,
-            trace=[],
             env=ENV,
         )
 
