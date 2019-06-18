@@ -42,7 +42,7 @@ class ChannelConfig(SlottedModel):
     compact = Field(bool, default=True)
     include = ListField(Actions)
     exclude = ListField(Actions)
-    rich = ListField(Actions)
+    # rich = ListField(Actions)
 
     timestamps = Field(bool, default=False)
     timezone = Field(str, default='US/Eastern')

@@ -373,16 +373,6 @@ class UtilitiesPlugin(Plugin):
         )
         embed.add_field(name=u'\u200B', value='\n'.join(content_counts2), inline=True)
 
-        content_counts3 = []
-        content_counts3.append(u'<{}> Level {}'.format(PREMIUM_GUILD_TIER_EMOJI[guild.premium_tier], int(guild.premium_tier)))
-        real_boost_count = len(filter(lambda y: guild.members.get(y).premium_since, guild.members))
-        content_counts3.append(u'<{}> {} {}'.format(
-            PREMIUM_GUILD_ICON_EMOJI,
-            guild.premium_subscription_count,
-            '({})'.format(real_boost_count) if real_boost_count < guild.premium_subscription_count else ''
-        ))
-        embed.add_field(name=u'\u200B', value='\n'.join(content_counts3), inline=True)
-
         # Members
         content_members = []
         status_counts = defaultdict(int)
@@ -398,7 +388,18 @@ class UtilitiesPlugin(Plugin):
                 STATUS_EMOJI[status], count
             ))
 
-        embed.add_field(name=u'\n**\u276F Members**', value='\n'.join(content_members), inline=False)
+        embed.add_field(name=u'\u276F Members', value='\n'.join(content_members), inline=False)
+
+        # Boosts
+        content_boosts = []
+        content_boosts.append(u'<{}> Level {}'.format(PREMIUM_GUILD_TIER_EMOJI[guild.premium_tier], int(guild.premium_tier)))
+        real_boost_count = len(filter(lambda y: guild.members.get(y).premium_since, guild.members))
+        content_boosts.append(u'<{}> {} {}'.format(
+            PREMIUM_GUILD_ICON_EMOJI,
+            guild.premium_subscription_count,
+            '({})'.format(real_boost_count) if real_boost_count < guild.premium_subscription_count else ''
+        ))
+        embed.add_field(name=u'\u276F Server Boost', value='\n'.join(content_boosts), inline=True)
 
         if guild.icon:
             embed.set_thumbnail(url=guild.icon_url)
