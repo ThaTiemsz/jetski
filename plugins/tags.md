@@ -52,12 +52,12 @@ Parameters within functions all follow the same syntax, see examples in the tabl
 | random | int (a)\|int (b) | random number between `a` and `b`; order does not matter | `{random:0\|5}` |
 | choose | str\|str[\|str…] | random parameter | `{choose:pizza\|cheetos\|play\|sleep}` |
 | repeat | int\|str | repeat `int` times `str` | `{repeat:42\|meow }` |
-| set | str|str | store data, first `str` is the key, second is the data (which can contain the `\|` character) | `{set:number\|{random:0|5}}` |
+| set | str\|str | store data, first `str` is the key, second is the data (which can contain the `\|` character) | `{set:number\|{random:0|5}}` |
 | get | str[\|int] | fetch stored data, empty if data doesn't exist; `int` to wait for inner depths to resolve | `{get:number}` OR `{get:number\|2}` (delay execution by 2 iterations / levels of depth) |
 | isnumber | str | `str` if it's a positive integer, empty otherwise | `{isnumber:{input}}` |
 | mention | str | `str` if it's a user or role mention, empty otherwise | `{mention:{input}}` |
 | match | str (a)\|str (b)[\|str (mode)] | `a` if `a` and `b` are identical (case insensitive), empty otherwise; supports an optional mode (`begin`, `end`, `contain`) to check if `a` begins by / ends by / contains `b` | `{match:{input}\|meow}` OR `{match:{input}\|348350443031625738\|contain}` |
-| input | [int\|int] | substring of the actual `input` variable (if any) | `{input:2}` (second word) OR `{input:2|}` (first 2 words) OR `{input:2\|4}` (second to fourth word) OR `{input:2\|-3}` (second to the end minus the latest 3 words) OR `{input:\|2}` (latest 2 words) OR `{input:\|-2}` (whole input minus the latest 2 words) |
+| input | [int\|int] | substring of the actual `input` variable (if any) | `{input:2}` (second word) OR `{input:2\|}` (first 2 words) OR `{input:2\|4}` (second to fourth word) OR `{input:2\|-3}` (second to the end minus the latest 3 words) OR `{input:\|2}` (latest 2 words) OR `{input:\|-2}` (whole input minus the latest 2 words) |
 | if | str (cond)\|str (valid)[\|str (invalid)] | `valid` if `cond` exists, `invalid` otherwise (both can be empty); `cond` can also be a simple comparison (`=`, `<` or `>`) between two numbers, in which no spacing is allowed | `{if:{input}\|{input}\|fellow blob}` OR `{if:{random:0\|3}\|\|:photoblob:}` (25% chance of printing ":photoblob:", else nothing) |
 | math | int (a)\|str (operator)\|int (b) | perform simple math operations, default output is `0`; supported operators: `+`, `-`, `*`, `/`, `%` - no spacing is allowed | `{math:3*5}` OR `{math:{input:1}{input:2}{input:3}}` |
 | and | str (a)\|str (b) | `a` if both `a` and `b` exist, empty otherwise | `{and:{input:1}\|{input:2}}` |
@@ -72,7 +72,7 @@ Parameters within functions all follow the same syntax, see examples in the tabl
 
 ## Configuration Example
 
-```yaml
+```text
   tags:
     max_tag_length: 1337
     min_level_remove_others: 50
