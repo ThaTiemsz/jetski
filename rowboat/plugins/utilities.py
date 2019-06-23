@@ -352,21 +352,21 @@ class UtilitiesPlugin(Plugin):
                 continue
             ctype = c.type.name.split('_')[1]
             count[ctype] = count.get(ctype, 0) + 1
-        content_counts.append(u'<{}> {}'.format(CHANNEL_CATEGORY_EMOJI, count.get('category', 0)))
-        content_counts.append(u'<{}> {}'.format(TEXT_CHANNEL_EMOJI, count.get('text', 0)))
-        content_counts.append(u'<{}> {}'.format(VOICE_CHANNEL_EMOJI, count.get('voice', 0)))
+        content_counts.append(u'<{}> {} channel categories'.format(CHANNEL_CATEGORY_EMOJI, count.get('category', 0)))
+        content_counts.append(u'<{}> {} text channels'.format(TEXT_CHANNEL_EMOJI, count.get('text', 0)))
+        content_counts.append(u'<{}> {} voice channels'.format(VOICE_CHANNEL_EMOJI, count.get('voice', 0)))
         embed.add_field(name=u'\u276F Counts', value='\n'.join(content_counts), inline=True)
 
         content_counts2 = []
         content_counts2.append(u'<{}> {}'.format(ROLE_EMOJI, len(guild.roles)))
         static_emojis = len(filter(lambda e: not guild.emojis.get(e).animated, guild.emojis))
         animated_emojis = len(filter(lambda e: guild.emojis.get(e).animated, guild.emojis))
-        content_counts2.append(u'<{}> {}/{total} static'.format(
+        content_counts2.append(u'<{}> {}/{total} static emojis'.format(
             EMOJI_EMOJI,
             static_emojis,
             total=self.get_max_emoji_slots(guild))
         )
-        content_counts2.append(u'<{}> {}/{total} animated'.format(
+        content_counts2.append(u'<{}> {}/{total} animated emojis'.format(
             EMOJI_EMOJI,
             animated_emojis, 
             total=self.get_max_emoji_slots(guild))
@@ -388,7 +388,7 @@ class UtilitiesPlugin(Plugin):
                 STATUS_EMOJI[status], count
             ))
 
-        embed.add_field(name=u'\u276F Members', value='\n'.join(content_members), inline=False)
+        embed.add_field(name=u'\u276F Members', value='\n'.join(content_members), inline=True)
 
         # Boosts
         content_boosts = []
