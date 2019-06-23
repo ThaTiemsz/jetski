@@ -7,6 +7,7 @@ import inspect
 import humanize
 import functools
 import contextlib
+import re
 
 from datetime import datetime, timedelta
 from holster.emitter import Priority, Emitter
