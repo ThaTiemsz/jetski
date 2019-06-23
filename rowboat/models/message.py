@@ -86,7 +86,11 @@ class Message(BaseModel):
         cls.update(**to_update).where(cls.id == obj.id).execute()
 
     @classmethod
-    def from_disco_message(cls, obj):
+    def from_disco_message(cls, obj, is_tag=False):
+        msg = obj.with_proper_mentions
+        if is_tag:
+            msg = msg.replace('tags show ', '', 1)
+
         _, created = cls.get_or_create(
             id=obj.id,
             defaults=dict(

@@ -32,6 +32,7 @@ class SQLPlugin(Plugin):
     def load(self, ctx):
         self.models = ctx.get('models', {})
         self.backfills = {}
+        self.tag_messages = []
         super(SQLPlugin, self).load(ctx)
 
     def unload(self, ctx):
@@ -63,7 +64,10 @@ class SQLPlugin(Plugin):
 
     @Plugin.listen('MessageCreate')
     def on_message_create(self, event):
-        Message.from_disco_message(event.message)
+        is_tag = event.message.id in self.tag_messages
+        if is_tag:
+            self.tag_messages.remove(event.message.id)
+        Message.from_disco_message(event.message, is_tag)
 
     @Plugin.listen('MessageUpdate')
     def on_message_update(self, event):

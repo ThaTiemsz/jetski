@@ -436,7 +436,7 @@ class CorePlugin(Plugin):
         return user_level
 
     @Plugin.listen('MessageCreate')
-    def on_message_create(self, event):
+    def on_message_create(self, event, is_tag=False):
         """
         This monstrosity of a function handles the parsing and dispatching of
         commands.
@@ -458,6 +458,7 @@ class CorePlugin(Plugin):
 
         guild = self.guilds.get(event.guild.id) if guild_id else None
         config = guild and guild.get_config()
+        cc = config.commands if config else None
 
         # If the guild has configuration, use that (otherwise use defaults)
         if config and config.commands:
@@ -479,9 +480,35 @@ class CorePlugin(Plugin):
             # DM's just use the commands (no prefix/mention)
             commands = list(self.bot.get_commands_for_message(False, {}, '', event.message))
 
-        # If we didn't find any matching commands, return
-        if not len(commands):
-            return
+        # if no command, attempt to run as a tag
+        if not commands:
+            if is_tag:
+                return
+
+            if not event.guild or not self.bot.plugins.get('TagsPlugin'):
+                return
+
+            if not config or not config.plugins or not config.plugins.tags:
+                return
+
+            prefixes = []
+            if cc.prefix:
+                prefixes.append(cc.prefix)
+            if cc.mention:
+                prefixes.append('{} '.format(self.state.me.mention))
+            if not prefixes:
+                return
+
+            tag_re = re.compile('^({})(.+)'.format(re.escape('|'.join(prefixes))))
+            m = tag_re.match(event.message.content)
+            if not m:
+                return
+
+            sqlplugin = self.bot.plugins.get('SQLPlugin')
+            if sqlplugin:
+                sqlplugin.tag_messages.append(event.message.id)
+            event.message.content = u'{}tags show {}'.format(m.group(1), m.group(2))
+            return self.on_message_create(event, True)
 
         event.user_level = self.get_level(event.guild, event.author) if event.guild else 0
 
@@ -517,6 +544,8 @@ class CorePlugin(Plugin):
                     command_event.user_level = event.user_level
                     command.plugin.execute(command_event)
                 except CommandResponse as e:
+                    if is_tag:
+                        return
                     event.reply(e.response)
                 except:
                     tracked = Command.track(event, command, exception=True)
@@ -542,6 +571,9 @@ class CorePlugin(Plugin):
                 modlog_config = getattr(config.plugins, 'modlog', None)
                 if not modlog_config:
                     return
+
+                if is_tag: # Yes, I know, this is ugly but I don't have better
+                    event.content = event.content.replace('tags show ', '', 1)
 
                 self._attach_local_event_data(event, 'modlog', event.guild.id)
 
