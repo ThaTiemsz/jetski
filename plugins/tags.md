@@ -49,7 +49,7 @@ Parameters within functions all follow the same syntax, see examples in the tabl
 
 | Function | Parameters | Result | Example |
 | :--- | :--- | :--- | :--- |
-| random | int (a)\|int (b) | random number between `a` and `b`; order does not matter | `{random:0\|5}` |
+| random | int (a)\|int (b) | random number between `a` and `b`; order does not matter | `{random:0\\|5}` |
 | choose | str\|str[\|str…] | random parameter | `{choose:pizza\|cheetos\|play\|sleep}` |
 | repeat | int\|str | repeat `int` times `str` | `{repeat:42\|meow }` |
 | set | str\|str | store data, first `str` is the key, second is the data (which can contain the `\|` character) | `{set:number\|{random:0\|5}}` |
