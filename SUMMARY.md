@@ -13,6 +13,7 @@
   * [Spam](plugins/spam.md)
   * [Modlog](plugins/modlog.md)
   * [Starboard](plugins/starboard.md)
+  * [Tags](plugins/tags.md)
   * [Reddit](plugins/reddit.md)
 * [Global Admin](global-admin.md)
 
