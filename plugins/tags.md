@@ -52,7 +52,7 @@ Parameters within functions all follow the same syntax, see examples in the tabl
 | random | int (a)\|int (b) | random number between `a` and `b`; order does not matter | `{random:0\|5}` |
 | choose | str\|str[\|str…] | random parameter | `{choose:pizza\|cheetos\|play\|sleep}` |
 | repeat | int\|str | repeat `int` times `str` | `{repeat:42\|meow }` |
-| set | str\|str | store data, first `str` is the key, second is the data (which can contain the `\|` character) | `{set:number\|{random:0|5}}` |
+| set | str\|str | store data, first `str` is the key, second is the data (which can contain the `\|` character) | `{set:number\|{random:0\|5}}` |
 | get | str[\|int] | fetch stored data, empty if data doesn't exist; `int` to wait for inner depths to resolve | `{get:number}` OR `{get:number\|2}` (delay execution by 2 iterations / levels of depth) |
 | isnumber | str | `str` if it's a positive integer, empty otherwise | `{isnumber:{input}}` |
 | mention | str | `str` if it's a user or role mention, empty otherwise | `{mention:{input}}` |
