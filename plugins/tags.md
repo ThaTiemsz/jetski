@@ -49,11 +49,11 @@ Parameters within functions all follow the same syntax, see examples in the tabl
 
 | Function | Parameters | Result | Example |
 | :--- | :--- | :--- | :--- |
-| random | int (a)\|int (b) | random number between `a` and `b`; order does not matter | `{random:0|5}` |
-| choose | str\|str[\|str…] | random parameter | `{choose:pizza|cheetos|play|sleep}` |
-| repeat | int\|str | repeat `int` times `str` | `{repeat:42|meow }` |
-| set | str|str | store data, first `str` is the key, second is the data (which can contain the `\|` character) | `{set:number|{random:0|5}}` |
-| get | str[\|int] | fetch stored data, empty if data doesn't exist; `int` to wait for inner depths to resolve | `{get:number}` OR `{get:number|2}` (delay execution by 2 iterations / levels of depth) |
+| random | int (a)\|int (b) | random number between `a` and `b`; order does not matter | `{random:0\|5}` |
+| choose | str\|str[\|str…] | random parameter | `{choose:pizza\|cheetos\|play\|sleep}` |
+| repeat | int\|str | repeat `int` times `str` | `{repeat:42\|meow }` |
+| set | str|str | store data, first `str` is the key, second is the data (which can contain the `\|` character) | `{set:number\|{random:0|5}}` |
+| get | str[\|int] | fetch stored data, empty if data doesn't exist; `int` to wait for inner depths to resolve | `{get:number}` OR `{get:number\|2}` (delay execution by 2 iterations / levels of depth) |
 | isnumber | str | `str` if it's a positive integer, empty otherwise | `{isnumber:{input}}` |
 | mention | str | `str` if it's a user or role mention, empty otherwise | `{mention:{input}}` |
 | match | str (a)\|str (b)[\|str (mode)] | `a` if `a` and `b` are identical (case insensitive), empty otherwise; supports an optional mode (`begin`, `end`, `contain`) to check if `a` begins by / ends by / contains `b` | `{match:{input}\|meow}` OR `{match:{input}\|348350443031625738\|contain}` |
