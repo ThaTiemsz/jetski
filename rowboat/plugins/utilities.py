@@ -358,7 +358,7 @@ class UtilitiesPlugin(Plugin):
         embed.add_field(name=u'\u276F Counts', value='\n'.join(content_counts), inline=True)
 
         content_counts2 = []
-        content_counts2.append(u'<{}> {}'.format(ROLE_EMOJI, len(guild.roles)))
+        content_counts2.append(u'<{}> {} roles'.format(ROLE_EMOJI, len(guild.roles)))
         static_emojis = len(filter(lambda e: not guild.emojis.get(e).animated, guild.emojis))
         animated_emojis = len(filter(lambda e: guild.emojis.get(e).animated, guild.emojis))
         content_counts2.append(u'<{}> {}/{total} static emojis'.format(
@@ -394,7 +394,7 @@ class UtilitiesPlugin(Plugin):
         content_boosts = []
         content_boosts.append(u'<{}> Level {}'.format(PREMIUM_GUILD_TIER_EMOJI[guild.premium_tier], int(guild.premium_tier)))
         real_boost_count = len(filter(lambda y: guild.members.get(y).premium_since, guild.members))
-        content_boosts.append(u'<{}> {} {}'.format(
+        content_boosts.append(u'<{}> {} boosts {}'.format(
             PREMIUM_GUILD_ICON_EMOJI,
             guild.premium_subscription_count,
             '({})'.format(real_boost_count) if real_boost_count < guild.premium_subscription_count else ''
@@ -471,7 +471,7 @@ class UtilitiesPlugin(Plugin):
 
             if member.roles:
                 content.append(u'**Roles:** {}'.format(
-                    ', '.join((member.guild.roles.get(r).mention for r in member.roles))
+                    ', '.join((member.guild.roles.get(r).mention for r in sorted(member.roles, key=lambda r: r.position, reverse=True)))
                 ))
 
             # "is not None" does not work with Unset types for some rason
