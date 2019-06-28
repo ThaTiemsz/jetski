@@ -471,7 +471,7 @@ class UtilitiesPlugin(Plugin):
 
             if member.roles:
                 content.append(u'**Roles:** {}'.format(
-                    ', '.join((member.guild.roles.get(r).mention for r in sorted(member.roles, key=lambda r: r.position, reverse=True)))
+                    ', '.join((member.guild.roles.get(r).mention for r in sorted(member.roles, key=lambda r: member.guild.roles.get(r).position, reverse=True)))
                 ))
 
             # "is not None" does not work with Unset types for some rason
