@@ -1305,6 +1305,9 @@ class AdminPlugin(Plugin):
 
         messages = [i[0] for i in query.tuples()]
 
+        if len(messages) == 1:
+            return self.client.api.channels_messages_delete(event.channel.id, messages[0])
+
         if len(messages) > 100:
             msg = event.msg.reply('Woah there, that will delete a total of {} messages, please confirm.'.format(
                 len(messages)
