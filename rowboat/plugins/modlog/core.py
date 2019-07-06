@@ -487,7 +487,7 @@ class ModLogPlugin(Plugin):
         before = unicode(pre_user)
 
         if Actions.CHANGE_USERNAME in subscribed_guilds:
-            if event.user.username is not UNSET and event.user.username != pre_user.username:
+            if pre_user.username is not UNSET and event.user.username is not UNSET and event.user.username != pre_user.username:
                 for guild, config in subscribed_guilds[Actions.CHANGE_USERNAME]:
                     self.log_action_raw(
                         Actions.CHANGE_USERNAME,
