@@ -37,7 +37,7 @@ from rowboat.constants import (
     ROWBOAT_CONTROL_CHANNEL, ROWBOAT_SPAM_CONTROL_CHANNEL
 )
 
-from yaml import load
+from yaml import safe_load
 
 PY_CODE_BLOCK = u'```py\n{}\n```'
 
@@ -68,7 +68,7 @@ class CorePlugin(Plugin):
         self.global_config = None
 
         with open('config.yaml', 'r') as f:
-            self.global_config = load(f)
+            self.global_config = safe_load(f)
 
         self._wait_for_actions_greenlet = self.spawn(self.wait_for_actions)
 

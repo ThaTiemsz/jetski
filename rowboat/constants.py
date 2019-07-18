@@ -56,5 +56,5 @@ with open('data/badwords.txt', 'r') as f:
 
 # Merge in any overrides in the config
 with open('config.yaml', 'r') as f:
-    loaded = yaml.load(f.read())
+    loaded = yaml.safe_load(f.read())
     locals().update(loaded.get('constants', {}))

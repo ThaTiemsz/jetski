@@ -74,7 +74,7 @@ class Guild(BaseModel):
     def update_config(self, actor_id, raw):
         from rowboat.types.guild import GuildConfig
 
-        parsed = yaml.load(raw)
+        parsed = yaml.safe_load(raw)
         GuildConfig(parsed).validate()
 
         GuildConfigChange.create(

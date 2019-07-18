@@ -8,7 +8,7 @@ from peewee import (
     PrimaryKeyField, BigIntegerField, ForeignKeyField, TextField, DateTimeField,
     BooleanField, UUIDField
 )
-from yaml import load
+from yaml import safe_load
 from datetime import datetime, timedelta
 from playhouse.postgres_ext import BinaryJSONField, ArrayField
 from disco.types.base import UNSET
@@ -204,7 +204,7 @@ class MessageArchive(BaseModel):
     @property
     def url(self):
         with open('config.yaml', 'r') as f:
-            config = load(f)
+            config = safe_load(f)
 
         return '{}/api/archive/{}.html'.format(config['web']['DOMAIN'], self.archive_id)
 
