@@ -309,6 +309,7 @@ class TagsPlugin(Plugin):
             content = self.random_re.sub(self.tag_random, content)
             content = self.choose_re.sub(self.tag_choose, content)
             content = self.repeat_re.sub(self.tag_repeat, content)
+            content = self.math_re.sub(self.tag_math, content)
             content = self.match_re.sub(self.tag_match, content)
             content = self.and_re.sub(self.tag_and, content)
             content = self.or_re.sub(self.tag_or, content)
