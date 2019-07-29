@@ -104,6 +104,16 @@ class UtilitiesPlugin(Plugin):
         r.raise_for_status()
         event.msg.reply('', attachments=[('cat.jpg', r.content)])
 
+    @Plugin.command('dog', global_=True)
+    def dog(self, event):
+        try:
+            r = requests.get('https://api.thedogapi.com/v1/images/search?format=src')
+            r.raise_for_status()
+            ext = r.headers['content-type'].split('/')[-1].split(';')[0]
+            event.msg.reply('', attachments=[('dog.{}'.format(ext), r.content)])
+        except:
+            return event.msg.reply('404 dog not found :(')
+
     @Plugin.command('urban', '<term:str...>', global_=True)
     def urban(self, event, term):
         r = requests.get('http://api.urbandictionary.com/v0/define', params={
