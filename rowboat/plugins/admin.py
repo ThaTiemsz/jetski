@@ -411,7 +411,13 @@ class AdminPlugin(Plugin):
         try:
             GuildBan.get(user_id=user, guild_id=event.guild.id)
             event.guild.delete_ban(user)
-        except GuildBan.DoesNotExist:
+            GuildBan.delete().where(
+                (GuildBan.user_id == event.user.id) &
+                (GuildBan.guild_id == event.guild_id)
+            )
+        except (GuildBan.DoesNotExist, APIException) as e:
+            if hasattr(e, 'code') and e.code != 10026: # Unknown Ban
+                raise APIException(e.response)
             raise CommandFail('user with id `{}` is not banned'.format(user))
 
         Infraction.create(
