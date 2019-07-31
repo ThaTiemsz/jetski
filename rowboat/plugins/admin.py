@@ -1043,7 +1043,9 @@ class AdminPlugin(Plugin):
             if member:
                 user = member
                 event.action = 'ban'
-            self.can_act_on(event, user_id)
+                self.can_act_on(event, user_id)
+            else:
+                user = user_id
 
         try:
             self.send_infraction_dm(
@@ -1163,7 +1165,7 @@ class AdminPlugin(Plugin):
                     u=member.user,
                 ))
         else:
-            raise CommandFail('invald user')
+            raise CommandFail('invalid user')
 
     @Plugin.command('tempban', '<user:user|snowflake> <duration:str> [reason:str...]', level=CommandLevels.MOD)
     def tempban(self, event, duration, user, reason=None):
