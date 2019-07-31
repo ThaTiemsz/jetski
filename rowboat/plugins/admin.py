@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 from disco.bot import CommandLevels
 from disco.types.user import User as DiscoUser
 from disco.types.channel import Channel as DiscoChannel
+from disco.types.guild import GuildMember
 from disco.types.message import MessageTable, MessageEmbed, MessageEmbedField, MessageEmbedThumbnail
 from disco.types.permissions import Permissions
 from disco.util.functional import chunks
@@ -1033,37 +1034,40 @@ class AdminPlugin(Plugin):
     @Plugin.command('ban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     @Plugin.command('forceban', '<user:snowflake> [reason:str...]', level=CommandLevels.MOD)
     def ban(self, event, user, reason=None):
-        member = None
+        event.action = 'ban'
 
         if isinstance(user, (int, long)):
+            user_id = user
             self.can_act_on(event, user)
-            try:
-                self.send_infraction_dm(event, user, 'ban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
-            except APIException:
-                pass
-            try:
-                Infraction.ban(self, event, user, reason, guild=event.guild)
-            except APIException:
-                raise CommandFail('invalid user')
         else:
-            event.action = 'ban'
-            member = event.guild.get_member(user)
-            if member:
-                self.can_act_on(event, member.id)
-                try:
-                    self.send_infraction_dm(event, member.id, 'ban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
-                except APIException:
-                    pass
-                Infraction.ban(self, event, member, reason, guild=event.guild)
-            else:
-                raise CommandFail('invalid user')
+            user_id = user.id
+
+            self.can_act_on(event, user_id)
+            user = event.guild.get_member(user) or user  # Don't resolve member when force banning / not in guild
+
+        try:
+            self.send_infraction_dm(
+                event,
+                user_id,
+                'ban',
+                event.msg.guild.name,
+                unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
+                reason,
+            )
+        except APIException:
+            pass
+
+        try:
+            Infraction.ban(self, event, user, reason, guild=event.guild)
+        except APIException:
+            raise CommandFail('invalid user')
 
         if event.config.confirm_actions:
             event.msg.reply(maybe_string(
                 reason,
                 u':ok_hand: banned {u} (`{o}`)',
                 u':ok_hand: banned {u}',
-                u=member.user if member else user,
+                u=user.user if isinstance(user, GuildMember) else user,
             ))
 
     @Plugin.command('mban', parser=True, level=CommandLevels.MOD)
