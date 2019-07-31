@@ -1034,16 +1034,16 @@ class AdminPlugin(Plugin):
     @Plugin.command('ban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     @Plugin.command('forceban', '<user:snowflake> [reason:str...]', level=CommandLevels.MOD)
     def ban(self, event, user, reason=None):
-        event.action = 'ban'
-
         if isinstance(user, (int, long)):
             user_id = user
             self.can_act_on(event, user)
         else:
             user_id = user.id
-
+            member = event.guild.get_member(user)
+            if member:
+                user = member
+                event.action = 'ban'
             self.can_act_on(event, user_id)
-            user = event.guild.get_member(user) or user  # Don't resolve member when force banning / not in guild
 
         try:
             self.send_infraction_dm(
