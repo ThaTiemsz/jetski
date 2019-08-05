@@ -97,7 +97,7 @@ class Message(BaseModel):
                 channel_id=obj.channel_id,
                 guild_id=(obj.guild and obj.guild.id),
                 author=User.from_disco_user(obj.author),
-                content=obj.with_proper_mentions,
+                content=msg,
                 timestamp=obj.timestamp,
                 edited_timestamp=obj.edited_timestamp,
                 num_edits=(0 if not obj.edited_timestamp else 1),
