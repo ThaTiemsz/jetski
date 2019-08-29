@@ -45,7 +45,8 @@ class ChannelConfig(SlottedModel):
         return (
             (255 << 16) +
             (int((194 * ratio) + (253 * (1 - ratio))) << 8) +
-            int((12 * ratio) + (247 * (1 - ratio))))
+            int((12 * ratio) + (247 * (1 - ratio)))
+        )
 
 
 class StarboardConfig(PluginConfig):
@@ -109,7 +110,7 @@ class StarboardPlugin(Plugin):
                     (Message.guild_id == event.guild.id)
                 ).tuples())[0][0]
 
-                recieved_stars_posts, recieved_stars_total = list(StarboardEntry.select(
+                received_stars_posts, received_stars_total = list(StarboardEntry.select(
                     fn.COUNT('*'),
                     fn.SUM(fn.array_length(StarboardEntry.stars, 1)),
                 ).join(Message).where(
@@ -125,9 +126,9 @@ class StarboardPlugin(Plugin):
             embed.title = user.username
             embed.set_thumbnail(url=user.avatar_url)
             embed.add_field(name='Total Stars Given', value=str(given_stars), inline=True)
-            embed.add_field(name='Total Posts w/ Stars', value=str(recieved_stars_posts), inline=True)
-            embed.add_field(name='Total Stars Recieved', value=str(recieved_stars_total), inline=True)
-            # embed.add_field(name='Star Rank', value='#{}'.format(recieved_stars_rank), inline=True)
+            embed.add_field(name='Total Posts w/ Stars', value=str(received_stars_posts), inline=True)
+            embed.add_field(name='Total Stars Received', value=str(received_stars_total), inline=True)
+            # embed.add_field(name='Star Rank', value='#{}'.format(received_stars_rank), inline=True)
             return event.msg.reply('', embed=embed)
 
         total_starred_posts, total_stars = list(StarboardEntry.select(
@@ -156,7 +157,7 @@ class StarboardPlugin(Plugin):
         embed.title = 'Star Stats'
         embed.add_field(name='Total Stars Given', value=total_stars, inline=True)
         embed.add_field(name='Total Starred Posts', value=total_starred_posts, inline=True)
-        embed.add_field(name='Top Star Recievers', value='\n'.join(
+        embed.add_field(name='Top Star Receivers', value='\n'.join(
             '{}. <@{}> ({})'.format(idx + 1, row[1], row[0]) for idx, row in enumerate(top_users)
         ))
         event.msg.reply('', embed=embed)
