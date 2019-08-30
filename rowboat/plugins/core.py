@@ -8,14 +8,16 @@ import humanize
 import functools
 import contextlib
 import re
+import time
 
 from datetime import datetime, timedelta
 from holster.emitter import Priority, Emitter
 from disco.bot import Bot
 from disco.types.message import MessageEmbed
-from disco.api.http import APIException
+from disco.api.http import Routes, APIException
 from disco.bot.command import CommandEvent
 from disco.util.sanitize import S
+from disco.types.user import DiscoUser
 
 from rowboat import ENV
 from rowboat.util import LocalProxy
@@ -54,6 +56,8 @@ class CorePlugin(Plugin):
 
         self.startup = ctx.get('startup', datetime.utcnow())
         self.guilds = ctx.get('guilds', {})
+        self.guild_sync = []
+        self.guild_sync_debounces = {}
 
         self.emitter = Emitter()
 
@@ -295,7 +299,13 @@ class CorePlugin(Plugin):
 
     @Plugin.listen('GuildMembersChunk')
     def on_guild_members_chunk(self, event):
-        self.log.info('Got members chunk for guild %s', event.guild_id)
+        self.log.info('Got members chunk ({}) for guild {}'.format(len(event.members), event.guild_id))
+        for user in event.members:
+            if user.user.username is UNSET:
+                self.log.info('User chunk {} for guild {} has empty values, attempting to patch'.format(user.user.id, event.guild_id))
+                data = self.bot.client.api.http(Routes.USERS_GET, dict(user=user.user.id))
+                disco_user = DiscoUser.create(self.bot.client.api.client, data.json())
+                self.bot.client.state.users[user.id].inplace_update(disco_user)
 
     @Plugin.listen('GuildBanAdd')
     def on_guild_ban_add(self, event):
@@ -376,6 +386,24 @@ class CorePlugin(Plugin):
             embed.add_field(name='Gateway Version', value='v{}'.format(event.version), inline=False)
             embed.add_field(name='Session ID', value=event.session_id, inline=False)
 
+    @Plugin.schedule(90, init=False)
+    def update_guild_syncs(self):
+        if len(self.guild_sync) == 0:
+            return
+
+        guilds = [i for i in self.guild_sync] # hacky deepcopy basically
+        for guild_id in guilds:
+            if guild_id in self.guild_sync_debounces:
+                if self.guild_sync_debounces.get(guild_id) > time.time():
+                    self.guild_sync_debounces.pop(guild_id)
+                    guilds.remove(guild_id)
+            else:
+                self.guild_sync_debounces[guild_id] = time.time() + 300
+                self.guild_sync.remove(guild_id)
+
+        self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
+        self.bot.client.gw.request_guild_members(guild_id_or_ids=guilds)
+
     @Plugin.listen('GuildCreate', priority=Priority.BEFORE, conditional=lambda e: not e.created)
     def on_guild_create(self, event):
         try:
@@ -402,8 +430,10 @@ class CorePlugin(Plugin):
             return
 
         # Ensure we're updated
-        self.log.info('Syncing guild %s', event.guild.id)
-        guild.sync(event.guild)
+        # self.log.info('Syncing guild %s', event.guild.id)
+        # guild.sync(event.guild)
+        self.log.info('Adding guild {} to sync list'.format(event.id))
+        self.guild_sync.append(event.id)
 
         self.guilds[event.id] = guild
 
