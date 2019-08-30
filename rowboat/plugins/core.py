@@ -13,11 +13,12 @@ import time
 from datetime import datetime, timedelta
 from holster.emitter import Priority, Emitter
 from disco.bot import Bot
+from disco.types.base import UNSET
+from disco.types.user import User as DiscoUser
 from disco.types.message import MessageEmbed
 from disco.api.http import Routes, APIException
 from disco.bot.command import CommandEvent
 from disco.util.sanitize import S
-from disco.types.user import User as DiscoUser
 
 from rowboat import ENV
 from rowboat.util import LocalProxy
