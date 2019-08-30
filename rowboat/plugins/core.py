@@ -17,7 +17,7 @@ from disco.types.message import MessageEmbed
 from disco.api.http import Routes, APIException
 from disco.bot.command import CommandEvent
 from disco.util.sanitize import S
-from disco.types.user import DiscoUser
+from disco.types.user import User as DiscoUser
 
 from rowboat import ENV
 from rowboat.util import LocalProxy
@@ -304,7 +304,7 @@ class CorePlugin(Plugin):
             if user.user.username is UNSET:
                 self.log.info('User chunk {} for guild {} has empty values, attempting to patch'.format(user.user.id, event.guild_id))
                 data = self.bot.client.api.http(Routes.USERS_GET, dict(user=user.user.id))
-                disco_user = DiscoUser.create(self.bot.client.api.client, data.json())
+                disco_user = User.create(self.bot.client.api.client, data.json())
                 self.bot.client.state.users[user.id].inplace_update(disco_user)
 
     @Plugin.listen('GuildBanAdd')
