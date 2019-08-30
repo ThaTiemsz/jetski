@@ -303,7 +303,7 @@ class CorePlugin(Plugin):
         self.log.info('Got members chunk ({}) for guild {}'.format(len(event.members), event.guild_id))
         for user in event.members:
             if user.user.username is UNSET:
-                self.log.info('User chunk {} for guild {} has empty values, attempting to patch'.format(user.user.id, event.guild_id))
+                # self.log.info('User chunk {} for guild {} has empty values, attempting to patch'.format(user.user.id, event.guild_id))
                 data = self.bot.client.api.http(Routes.USERS_GET, dict(user=user.user.id))
                 disco_user = DiscoUser.create(self.bot.client.api.client, data.json())
                 self.bot.client.state.users[user.id].inplace_update(disco_user)
@@ -387,7 +387,7 @@ class CorePlugin(Plugin):
             embed.add_field(name='Gateway Version', value='v{}'.format(event.version), inline=False)
             embed.add_field(name='Session ID', value=event.session_id, inline=False)
 
-    @Plugin.schedule(45, init=False)
+    @Plugin.schedule(90, init=False)
     def update_guild_syncs(self):
         if len(self.guild_sync) == 0:
             return
