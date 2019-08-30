@@ -387,7 +387,7 @@ class CorePlugin(Plugin):
             embed.add_field(name='Gateway Version', value='v{}'.format(event.version), inline=False)
             embed.add_field(name='Session ID', value=event.session_id, inline=False)
 
-    @Plugin.schedule(90, init=False)
+    @Plugin.schedule(45, init=False)
     def update_guild_syncs(self):
         if len(self.guild_sync) == 0:
             return
