@@ -412,7 +412,7 @@ class AdminPlugin(Plugin):
             GuildBan.get(user_id=user, guild_id=event.guild.id)
             event.guild.delete_ban(user)
             GuildBan.delete().where(
-                (GuildBan.user_id == event.user.id) &
+                (GuildBan.user_id == event.author.id) &
                 (GuildBan.guild_id == event.guild_id)
             )
         except (GuildBan.DoesNotExist, APIException) as e:
