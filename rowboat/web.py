@@ -2,7 +2,7 @@ import os; os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 import logging
 
-from flask import Flask, g, session
+from flask import Flask, g, sessions as session
 from holster.flask_ext import Holster
 
 from rowboat import ENV
