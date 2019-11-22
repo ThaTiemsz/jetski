@@ -159,6 +159,7 @@ export default class GuildConfigEdit extends Component {
                   onChange={(newValue) => this.onEditorChange(newValue)}
                   readOnly={this.state.guild && this.state.guild.role != 'viewer' ? false : true}
                   wrapEnabled={true}
+                  tabSize={2}
                 />
               )}
             </div>
