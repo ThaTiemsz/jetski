@@ -1723,7 +1723,7 @@ class AdminPlugin(Plugin):
         else:
             raise CommandFail('invalid user')
 
-    @Plugin.command('join', '<name:str>', aliases=['add', 'give'])
+    @Plugin.command('join', '<name:str...>', aliases=['add', 'give'])
     def join_role(self, event, name):
         if not event.config.group_roles:
             return
@@ -1762,13 +1762,18 @@ class AdminPlugin(Plugin):
             return
         raise CommandSuccess(u'you have joined the {} group'.format(name))
 
-    @Plugin.command('leave', '<name:snowflake|str>', aliases=['remove', 'take'])
+    @Plugin.command('leave', '<name:snowflake|str...>', aliases=['remove', 'take'])
     def leave_role(self, event, name):
         if not event.config.group_roles:
             return
 
-        role_id = event.config.group_roles.get(name.lower())
-        if not role_id or role_id not in event.guild.roles:
+        if name and isinstance(name, list) and isinstance(name[0], (int, long)):
+          name = name[0]
+        elif name:
+          name = u' '.join(map(unicode, name)).lower()
+
+        role_id = event.config.group_roles.get(name)
+        if not role_id or name not in event.guild.roles:
             raise CommandFail('invalid or unknown group')
 
         member = event.guild.get_member(event.author)
