@@ -1773,7 +1773,7 @@ class AdminPlugin(Plugin):
           name = u' '.join(map(unicode, name)).lower()
 
         role_id = event.config.group_roles.get(name)
-        if not role_id or name not in event.guild.roles:
+        if not role_id and name not in event.guild.roles:
             raise CommandFail('invalid or unknown group')
 
         member = event.guild.get_member(event.author)
