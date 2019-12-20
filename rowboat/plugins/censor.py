@@ -3,6 +3,7 @@ import json
 import urlparse
 
 from holster.enum import Enum
+from unidecode import unidecode
 from disco.types.base import cached_property
 from disco.types.channel import ChannelType
 from disco.util.sanitize import S
@@ -40,6 +41,7 @@ class CensorSubConfig(SlottedModel):
 
     blocked_words = ListField(lower, default=[])
     blocked_tokens = ListField(lower, default=[])
+    unidecode_tokens = Field(bool, default=False)
 
     channel = Field(snowflake, default=None)
     bypass_channel = Field(snowflake, default=None)
@@ -261,7 +263,10 @@ class CensorPlugin(Plugin):
                 })
 
     def filter_blocked_words(self, event, config):
-        blocked_words = config.blocked_re.findall(event.content)
+        content = event.content
+        if config.unidecode_tokens:
+            content = unidecode(content)
+        blocked_words = config.blocked_re.findall(content)
 
         if blocked_words:
             raise Censorship(CensorReason.WORD, event, ctx={
