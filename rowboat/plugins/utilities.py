@@ -456,8 +456,9 @@ class UtilitiesPlugin(Plugin):
                 if not game.type:
                     activity = None
                 if activity:
+                    game_name = game.state if game.type == GameType.CUSTOM_STATUS else game.name
                     content.append(u'**{}:** {}'.format(activity,
-                        u'[{}]({})'.format(game.name, game.url) if game.url else game.name
+                        u'[{}]({})'.format(game_name, game.url) if game.url else game_name
                     ))
 
         created_dt = to_datetime(user.id)
