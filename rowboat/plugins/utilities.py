@@ -452,7 +452,7 @@ class UtilitiesPlugin(Plugin):
 
             game = user.presence.game
             if game and game.name:
-                activity = ['Playing', 'Stream', 'Listening to', 'Watching'][int(game.type or 0)]
+                activity = ['Playing', 'Stream', 'Listening to', 'Watching', 'Custom Status'][int(game.type or 0)]
                 if not game.type:
                     activity = None
                 if activity:
