@@ -86,23 +86,13 @@ class UtilitiesPlugin(Plugin):
 
     @Plugin.command('cat', global_=True)
     def cat(self, event):
-        # Sometimes random.cat gives us gifs (smh)
-        for _ in range(3):
-            try:
-                r = requests.get('https://aws.random.cat/meow')
-                r.raise_for_status()
-            except:
-                continue
-
-            url = r.json()['file']
-            if not url.endswith('.gif'):
-                break
-        else:
+        try:
+            r = requests.get('https://api.thecatapi.com/v1/images/search?format=src')
+            r.raise_for_status()
+            ext = r.headers['content-type'].split('/')[-1].split(';')[0]
+            event.msg.reply('', attachments=[('cat.{}'.format(ext), r.content)])
+        except:
             return event.msg.reply('404 cat not found :(')
-
-        r = requests.get(url)
-        r.raise_for_status()
-        event.msg.reply('', attachments=[('cat.jpg', r.content)])
 
     @Plugin.command('dog', global_=True)
     def dog(self, event):
