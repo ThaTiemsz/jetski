@@ -367,7 +367,7 @@ class CorePlugin(Plugin):
             embed.color = 0xffb347
             embed.add_field(name='Replayed Events', value=str(self.client.gw.replayed_events))
 
-    @Plugin.listen('Ready', priority=Priority.BEFORE)
+    @Plugin.listen('Ready', priority=Priority.SEQUENTIAL)
     def on_ready(self, event):
         reconnects = self.client.gw.reconnects
         self.log.info('Started session %s', event.session_id)
@@ -405,7 +405,7 @@ class CorePlugin(Plugin):
         self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
         self.bot.client.gw.request_guild_members(guild_id_or_ids=guilds)
 
-    @Plugin.listen('GuildCreate', priority=Priority.BEFORE, conditional=lambda e: not e.created)
+    @Plugin.listen('GuildCreate', priority=Priority.SEQUENTIAL, conditional=lambda e: not e.created)
     def on_guild_create(self, event):
         try:
             guild = Guild.with_id(event.id)
