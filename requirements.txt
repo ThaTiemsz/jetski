@@ -62,9 +62,8 @@ Unidecode==1.1.1
 Werkzeug==0.16.0
 # wheel==0.24.0
 xxhash==1.0.1
-fuzzywuzzy==0.15.0
+rapidfuzz==0.2.0
 pytest==3.0.7
-python-Levenshtein==0.12.0
 -e git+https://github.com/b1naryth1ef/peewee.git@3f1f843ac2d94c212053f46d95ae7040e2f5d753#egg=peewee
 gevent_inotifyx==0.1.1
 datadog==0.16.0

@@ -8,7 +8,7 @@ import operator
 from StringIO import StringIO
 from peewee import fn
 from holster.emitter import Priority
-from fuzzywuzzy import fuzz
+from rapidfuzz import fuzz
 from simplejson import JSONDecodeError
 
 from datetime import datetime, timedelta
