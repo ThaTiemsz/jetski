@@ -389,8 +389,8 @@ class CorePlugin(Plugin):
 
     @Plugin.schedule(60, init=False)
     def sample_dispatch_events(self):
-        if self.client.gw.ws.sampled_events > 0:
-            self.client.gw.ws.reset_sampled_events()
+        if self.client.gw.sampled_events > 0:
+            self.client.gw.reset_sampled_events()
         else:
             self.log.warning('Sampled events is 0, forcing a fresh reconnect')
             self.client.gw.ws.close()
