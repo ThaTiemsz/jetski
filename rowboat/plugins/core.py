@@ -407,7 +407,7 @@ class CorePlugin(Plugin):
                     self.guild_sync_debounces.pop(guild_id)
                     guilds.remove(guild_id)
             else:
-                self.guild_sync_debounces[guild_id] = time.time() + 10
+                self.guild_sync_debounces[guild_id] = time.time() + 60
                 self.guild_sync.remove(guild_id)
 
         self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
