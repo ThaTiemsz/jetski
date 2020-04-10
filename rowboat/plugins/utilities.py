@@ -31,7 +31,7 @@ from rowboat.models.user import User, Infraction
 from rowboat.models.message import Message
 from rowboat.util.images import get_dominant_colors_user, get_dominant_colors_guild
 from rowboat.constants import (
-    STATUS_EMOJI, SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI, RED_TICK_EMOJI_ID, 
+    STATUS_EMOJI, SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI, RED_TICK_EMOJI_ID,
     EMOJI_RE, USER_MENTION_RE, CDN_URL,
     CHANNEL_CATEGORY_EMOJI, TEXT_CHANNEL_EMOJI, VOICE_CHANNEL_EMOJI, ROLE_EMOJI, EMOJI_EMOJI, PREMIUM_GUILD_TIER_EMOJI, PREMIUM_GUILD_ICON_EMOJI,
 )
@@ -189,7 +189,7 @@ class UtilitiesPlugin(Plugin):
     def get_emoji_url(self, emoji):
         name = '-'.join(char.encode("unicode_escape").decode("utf-8")[2:].lstrip("0") for char in emoji)
         return 'https://cdn.oceanlord.me/emoji/{}.png'.format(name) if name.find('--') == -1 else None
-    
+
     @Plugin.command('jumbo', '<emojis:str...>', global_=True)
     def jumbo(self, event, emojis):
         emojis = emojis.split(' ')
@@ -327,10 +327,10 @@ class UtilitiesPlugin(Plugin):
             humanize.naturaldelta(datetime.utcnow() - created_at),
             created_at.isoformat(),
         ))
-        content_server.append(u'**Members:** {:,}'.format(len(guild.members)))
+        content_server.append(u'**Members:** {:,}'.format(guild.member_count))
         content_server.append(u'**Features:** {}'.format(', '.join(guild.features) or 'none'))
         content_server.append(u'**Voice region:** {}'.format(guild.region))
-    
+
         if not bool(guild.max_members):
             self.state.guilds[guild.id].inplace_update(self.client.api.guilds_get(guild.id), ignored=[
                 'channels',
@@ -368,7 +368,7 @@ class UtilitiesPlugin(Plugin):
         )
         content_counts2.append(u'<{}> {}/{total} animated emojis'.format(
             EMOJI_EMOJI,
-            animated_emojis, 
+            animated_emojis,
             total=self.get_max_emoji_slots(guild))
         )
         embed.add_field(name=u'\u200B', value='\n'.join(content_counts2), inline=True)
