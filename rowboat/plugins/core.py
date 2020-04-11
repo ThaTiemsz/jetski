@@ -387,13 +387,13 @@ class CorePlugin(Plugin):
             embed.add_field(name='Gateway Version', value='v{}'.format(event.version), inline=False)
             embed.add_field(name='Session ID', value=event.session_id, inline=False)
 
-    @Plugin.schedule(60, init=False)
-    def sample_dispatch_events(self):
-        if self.client.gw.sampled_events > 0:
-            self.client.gw.reset_sampled_events()
-        else:
-            self.log.warning('Sampled events is 0, forcing a fresh reconnect')
-            self.client.gw.ws.close()
+    # @Plugin.schedule(60, init=False)
+    # def sample_dispatch_events(self):
+    #     if self.client.gw.sampled_events > 0:
+    #         self.client.gw.reset_sampled_events()
+    #     else:
+    #         self.log.warning('Sampled events is 0, forcing a fresh reconnect')
+    #         self.client.gw.ws.close()
 
     @Plugin.schedule(45, init=False, repeat=False)
     def update_guild_syncs(self):
