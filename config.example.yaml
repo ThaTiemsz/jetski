@@ -3,6 +3,10 @@ token: ''
 manhole_enable: true
 manhole_bind: 127.0.0.1:7171
 
+max_reconnects: 0
+guild_subscriptions: false
+intents: 14319
+
 DSN: ''
 
 web:
