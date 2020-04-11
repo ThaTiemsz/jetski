@@ -446,15 +446,15 @@ class CorePlugin(Plugin):
 
         self.guilds[event.id] = guild
 
-        if config.nickname:
-            def set_nickname():
-                m = event.members.select_one(id=self.state.me.id)
-                if m and m.nick != config.nickname:
-                    try:
-                        m.set_nickname(config.nickname)
-                    except APIException as e:
-                        self.log.warning('Failed to set nickname for guild %s (%s)', event.guild, e.content)
-            self.spawn_later(5, set_nickname)
+        # if config.nickname:
+        #     def set_nickname():
+        #         m = event.members.select_one(id=self.state.me.id)
+        #         if m and m.nick != config.nickname:
+        #             try:
+        #                 m.set_nickname(config.nickname)
+        #             except APIException as e:
+        #                 self.log.warning('Failed to set nickname for guild %s (%s)', event.guild, e.content)
+        #     self.spawn_later(5, set_nickname)
 
     def get_level(self, guild, user):
         config = (guild.id in self.guilds and self.guilds.get(guild.id).get_config())
