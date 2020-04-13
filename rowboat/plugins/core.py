@@ -441,7 +441,12 @@ class CorePlugin(Plugin):
 
         # Ensure we're updated
         self.log.info('Syncing guild %s', event.guild.id)
-        guild.sync(event.guild)
+        try:
+            guild.sync(event.guild)
+        except:
+            self.log.info('Failed to sync guild {} ({})'.format(event.id, event.guild.name))
+            return
+
 
         self.guilds[event.id] = guild
 
