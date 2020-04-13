@@ -395,23 +395,23 @@ class CorePlugin(Plugin):
     #         self.log.warning('Sampled events is 0, forcing a fresh reconnect')
     #         self.client.gw.ws.close()
 
-    @Plugin.schedule(45, init=False, repeat=False)
-    def update_guild_syncs(self):
-        if len(self.guild_sync) == 0:
-            return
+    # @Plugin.schedule(45, init=False, repeat=False)
+    # def update_guild_syncs(self):
+    #     if len(self.guild_sync) == 0:
+    #         return
 
-        guilds = [i for i in self.guild_sync] # hacky deepcopy basically
-        for guild_id in guilds:
-            if guild_id in self.guild_sync_debounces:
-                if self.guild_sync_debounces.get(guild_id) > time.time():
-                    self.guild_sync_debounces.pop(guild_id)
-                    guilds.remove(guild_id)
-            else:
-                self.guild_sync_debounces[guild_id] = time.time() + 10
-                self.guild_sync.remove(guild_id)
+    #     guilds = [i for i in self.guild_sync] # hacky deepcopy basically
+    #     for guild_id in guilds:
+    #         if guild_id in self.guild_sync_debounces:
+    #             if self.guild_sync_debounces.get(guild_id) > time.time():
+    #                 self.guild_sync_debounces.pop(guild_id)
+    #                 guilds.remove(guild_id)
+    #         else:
+    #             self.guild_sync_debounces[guild_id] = time.time() + 10
+    #             self.guild_sync.remove(guild_id)
 
-        self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
-        self.bot.client.gw.request_guild_members(guild_id_or_ids=guilds, presences=True)
+    #     self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
+    #     self.bot.client.gw.request_guild_members(guild_id_or_ids=guilds)
 
     @Plugin.listen('GuildCreate', priority=Priority.SEQUENTIAL, conditional=lambda e: not e.created)
     def on_guild_create(self, event):
@@ -439,10 +439,10 @@ class CorePlugin(Plugin):
             return
 
         # Ensure we're updated
-        # self.log.info('Syncing guild %s', event.guild.id)
-        # guild.sync(event.guild)
-        self.log.info('Adding guild {} to sync list'.format(event.id))
-        self.guild_sync.append(event.id)
+        self.log.info('Syncing guild %s', event.guild.id)
+        guild.sync(event.guild)
+        # self.log.info('Adding guild {} to sync list'.format(event.id))
+        # self.guild_sync.append(event.id)
 
         self.guilds[event.id] = guild
 
