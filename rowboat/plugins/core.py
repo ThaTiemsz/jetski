@@ -440,7 +440,7 @@ class CorePlugin(Plugin):
 
         # Ensure we're updated
         self.log.info('Syncing guild %s', event.guild.id)
-        guild.sync(event.guild)
+        guild.sync()
         # self.log.info('Adding guild {} to sync list'.format(event.id))
         # self.guild_sync.append(event.id)
 

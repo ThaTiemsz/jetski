@@ -399,10 +399,18 @@ class ModLogPlugin(Plugin):
         if not pre_member:
             return
 
+        # Log username changes, only if presence events are disabled
+        if not self.state.is_presence_update_enabled():
+            self.on_presence_update(event)
+
         # Global debounce, used for large member updates
         debounce = self.debounces.find(event, user_id=event.user.id)
         if debounce:
             return
+
+        # Log username changes, only if presence events are disabled
+        if not self.state.is_presence_update_enabled():
+            self.on_presence_update(event)
 
         # Log nickname changes
         if (pre_member.nick or event.nick) and pre_member.nick != event.nick:
