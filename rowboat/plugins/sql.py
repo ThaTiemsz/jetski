@@ -15,6 +15,7 @@ from disco.types.user import User as DiscoUser
 from disco.types.guild import Guild as DiscoGuild
 from disco.types.channel import Channel as DiscoChannel, MessageIterator
 from disco.util.snowflake import to_datetime, from_datetime
+from disco.state import is_presence_update_enabled
 
 from rowboat.plugins import BasePlugin as Plugin
 from rowboat.sql import database
@@ -43,6 +44,13 @@ class SQLPlugin(Plugin):
     def on_voice_state_update(self, event):
         pre_state = self.state.voice_states.get(event.session_id)
         GuildVoiceSession.create_or_update(pre_state, event.state)
+
+    @Plugin.listen('GuildMemberUpdate')
+    def on_guild_member_update(self, event):
+        if is_presence_update_enabled():
+            return
+
+        self.on_presence_update(event)
 
     @Plugin.listen('PresenceUpdate')
     def on_presence_update(self, event):
