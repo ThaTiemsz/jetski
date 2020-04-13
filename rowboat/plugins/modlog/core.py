@@ -16,7 +16,6 @@ from disco.types.base import UNSET, cached_property
 from disco.types.channel import ChannelType
 from disco.util.snowflake import to_unix, to_datetime
 from disco.util.sanitize import S
-from disco.state import is_presence_update_enabled
 
 from rowboat.plugins import RowboatPlugin as Plugin
 from rowboat.types import SlottedModel, Field, ListField, DictField, ChannelField, snowflake
@@ -456,7 +455,7 @@ class ModLogPlugin(Plugin):
                 self.log_action(Actions.GUILD_MEMBER_ROLES_RMV, event, role=role)
 
         # Log username changes, only if presence events are disabled
-        if not is_presence_update_enabled():
+        if not self.state.is_presence_update_enabled():
             self.on_presence_update(event)
 
     @Plugin.listen('PresenceUpdate', priority=Priority.BEFORE, metadata={'global_': True})
