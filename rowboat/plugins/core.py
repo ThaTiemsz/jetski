@@ -404,15 +404,15 @@ class CorePlugin(Plugin):
         for guild_id in guilds:
             if guild_id in self.guild_sync_debounces:
                 if self.guild_sync_debounces.get(guild_id) > time.time():
-                    self.bot.client.gw.request_guild_members(guild_id_or_ids=guild_id)
                     self.guild_sync_debounces.pop(guild_id)
                     guilds.remove(guild_id)
             else:
                 self.guild_sync_debounces[guild_id] = time.time() + 10
                 self.guild_sync.remove(guild_id)
 
-        # self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
-        # self.bot.client.gw.request_guild_members(guild_id_or_ids=guilds)
+        self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
+        for guild_id in guilds:
+            self.bot.client.gw.request_guild_members(guild_id_or_ids=guild_id)
 
     @Plugin.listen('GuildCreate', priority=Priority.SEQUENTIAL, conditional=lambda e: not e.created)
     def on_guild_create(self, event):
@@ -440,12 +440,14 @@ class CorePlugin(Plugin):
             return
 
         # Ensure we're updated
-        # self.log.info('Syncing guild %s', event.guild.id)
-        # guild.sync()
-        self.log.info('Adding guild {} to sync list'.format(event.id))
-        self.guild_sync.append(event.id)
+        self.log.info('Syncing guild %s', event.guild.id)
+        guild.sync()
 
         self.guilds[event.id] = guild
+
+        # Request guild members chunk
+        self.log.info('Adding guild {} to chunks list'.format(event.id))
+        self.guild_sync.append(event.id)
 
         # if config.nickname:
         #     def set_nickname():
