@@ -407,11 +407,11 @@ class CorePlugin(Plugin):
                     self.guild_sync_debounces.pop(guild_id)
                     guilds.remove(guild_id)
             else:
-                self.guild_sync_debounces[guild_id] = time.time() + 60
+                self.guild_sync_debounces[guild_id] = time.time() + 10
                 self.guild_sync.remove(guild_id)
 
         self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
-        self.bot.client.gw.request_guild_members(guild_id_or_ids=guilds)
+        self.bot.client.gw.request_guild_members(guild_id_or_ids=guilds, presences=True)
 
     @Plugin.listen('GuildCreate', priority=Priority.SEQUENTIAL, conditional=lambda e: not e.created)
     def on_guild_create(self, event):
