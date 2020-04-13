@@ -408,10 +408,6 @@ class ModLogPlugin(Plugin):
         if debounce:
             return
 
-        # Log username changes, only if presence events are disabled
-        if not self.state.is_presence_update_enabled():
-            self.on_presence_update(event)
-
         # Log nickname changes
         if (pre_member.nick or event.nick) and pre_member.nick != event.nick:
             if not pre_member.nick:
@@ -461,10 +457,6 @@ class ModLogPlugin(Plugin):
                     role_id=role.id,
                 )
                 self.log_action(Actions.GUILD_MEMBER_ROLES_RMV, event, role=role)
-
-        # Log username changes, only if presence events are disabled
-        if not self.state.is_presence_update_enabled():
-            self.on_presence_update(event)
 
     @Plugin.listen('PresenceUpdate', priority=Priority.BEFORE, metadata={'global_': True})
     def on_presence_update(self, event):
