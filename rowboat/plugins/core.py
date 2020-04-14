@@ -376,6 +376,9 @@ class CorePlugin(Plugin):
             env=ENV,
         )
 
+        if reconnects:
+            self.update_guild_syncs()
+
         with self.send_control_message() as embed:
             if reconnects:
                 embed.title = 'Reconnected'
@@ -451,7 +454,7 @@ class CorePlugin(Plugin):
         self.guilds[event.id] = guild
 
         # Request guild members chunk
-        self.log.info('Adding guild {} to chunks list'.format(event.id))
+        self.log.info('Adding guild {} to chunks'.format(event.id))
         self.guild_sync.append(event.id)
 
         # if config.nickname:
