@@ -134,7 +134,7 @@ def infraction_message(event, user, action, server, moderator, reason, expires='
 
     if reason == None:
         reason = '*Not specified*'
-    
+
     if expires != 'Never':
         # Hacky time humanizer
         now = datetime.utcnow()
@@ -156,7 +156,7 @@ def infraction_message(event, user, action, server, moderator, reason, expires='
                 else:
                     expires += '{} {}, '.format(units[x], unit_strs[x])
         expires = expires[:-2]
-    
+
     embed = MessageEmbed()
     embed.title = '{}'.format(server)
     embed.set_footer(text='This is an automated message. Contact the moderators for more information.')
@@ -177,10 +177,10 @@ def infraction_message(event, user, action, server, moderator, reason, expires='
     else:
         if event.config.dms_include_mod:
             embed.add_field(name='Moderator', value=moderator, inline=True)
-    
+
     embed.add_field(name='Reason', value=reason, inline=True)
     embed.add_field(name='Expires in', value=expires, inline=True)
-    
+
     return infractions, embed
 
 @Plugin.with_config(AdminConfig)
@@ -194,11 +194,11 @@ class AdminPlugin(Plugin):
 
         self.unlocked_roles = {}
         self.role_debounces = {}
-    
+
     def send_infraction_dm(self, event, user, action, server, moderator, reason, expires='Never'):
         if not event.config.infraction_dms:
             return
-        
+
         infractions, embed = infraction_message(event, user, action, server, moderator, reason, expires)
 
         try:
@@ -209,7 +209,7 @@ class AdminPlugin(Plugin):
                 preposition = 'from'
             else:
                 preposition = 'in'
-            
+
             return dm.send_message('You\'ve been {} {} **{}**.'.format(infractions[action]['context'], preposition, server), embed=embed)
         except:
             raise
@@ -601,7 +601,7 @@ class AdminPlugin(Plugin):
         ).where(
             (Infraction.guild_id == event.guild.id)
         ).order_by(Infraction.created_at.desc()).limit(1).get()
-        
+
         type_ = {i.index: i for i in Infraction.Types.attrs}[infraction.type_]
         embed = MessageEmbed()
 
@@ -654,7 +654,7 @@ class AdminPlugin(Plugin):
 
         if mra_event.emoji.id != GREEN_TICK_EMOJI_ID:
             return
-        
+
         inf.delete_instance()
         self.queue_infractions()
 
@@ -783,13 +783,13 @@ class AdminPlugin(Plugin):
             if not throw:
                 return False
             raise CommandFail('invalid permissions')
-        
+
         perms = event.guild.get_permissions(self.state.me)
         if not perms.ban_members and not perms.administrator:
             if not throw:
                 return False
             raise CommandFail('missing permissions')
-        
+
         if hasattr(event, 'action') and event.action in ('kick', 'ban'):
             member_me = event.guild.get_member(self.state.me)
             member = event.guild.get_member(victim_id)
@@ -1801,10 +1801,10 @@ class AdminPlugin(Plugin):
     def slowmode(self, event, interval=0, channel=None):
         if interval < 0 or interval > 21600:
             raise CommandFail('rate limit interval must be between 0-21600')
-        
+
         if isinstance(channel, DiscoChannel):
             channel = channel.id
-        
+
         channel_id = channel or event.channel.id
         self.bot.client.api.channels_modify(
             channel_id,
@@ -1823,5 +1823,5 @@ class AdminPlugin(Plugin):
         message = event.msg.reply("Ping...")
 
         ping = (time.time() - before) * 1000
-        message.edit("Pong! `{}ms`".format(int(ping)))
+        message.edit("Pong! BOT: `{}ms` API: `{}ms`".format(int(ping), self.client.gw.latency))
 
