@@ -33,7 +33,7 @@ from rowboat.models.message import Message
 from rowboat.util.images import get_dominant_colors_user, get_dominant_colors_guild
 from rowboat.redis import rdb
 from rowboat.constants import (
-    STATUS_EMOJI, SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI, RED_TICK_EMOJI_ID,
+    STATUS_EMOJI, SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI, RED_TICK_EMOJI_ID, BADGE_EMOJI
     EMOJI_RE, USER_MENTION_RE, CDN_URL,
     CHANNEL_CATEGORY_EMOJI, TEXT_CHANNEL_EMOJI, VOICE_CHANNEL_EMOJI, ROLE_EMOJI, EMOJI_EMOJI, PREMIUM_GUILD_TIER_EMOJI, PREMIUM_GUILD_ICON_EMOJI,
 )
@@ -474,6 +474,15 @@ class UtilitiesPlugin(Plugin):
                         u'[{}]({})'.format(game_name, game.url) if game.url else game_name
                     ))
 
+        if user.public_flags and user.public_flags != 0:
+            flags = []
+            for flag, boolean in user.public_flags.to_dict().items():
+                if boolean is True:
+                    flags.append('<{}>'.format(BADGE_EMOJI[flag]))
+
+            if len(flags) > 0:
+                content.append('Badges: {}'.format(flags))
+
         created_dt = to_datetime(user.id)
         content.append('**Created:** {} ago ({})'.format(
             humanize.naturaldelta(datetime.utcnow() - created_dt),
@@ -498,7 +507,7 @@ class UtilitiesPlugin(Plugin):
                     ' '.join((member.guild.roles.get(r).mention for r in sorted(member.roles, key=lambda r: member.guild.roles.get(r).position, reverse=True)))
                 ))
 
-            # "is not None" does not work with Unset types for some rason
+            # "is not None" does not work with Unset types for some reason
             if bool(member.premium_since):
                 content.append('**Boosting since:** {} ago ({})'.format(
                     humanize.naturaldelta(datetime.utcnow() - member.premium_since),
