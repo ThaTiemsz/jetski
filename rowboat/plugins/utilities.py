@@ -481,7 +481,7 @@ class UtilitiesPlugin(Plugin):
                     flags.append('<{}>'.format(BADGE_EMOJI[getattr(UserFlags, flag)]))
 
             if len(flags) > 0:
-                content.append('Badges: {}'.format(flags))
+                content.append('Badges: {}'.format(' '.join(flags)))
 
         created_dt = to_datetime(user.id)
         content.append('**Created:** {} ago ({})'.format(
