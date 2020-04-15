@@ -14,7 +14,7 @@ from datetime import datetime
 from collections import defaultdict
 from holster.enum import Enum
 
-from disco.types.user import GameType, Status, User as DiscoUser
+from disco.types.user import GameType, Status, User as DiscoUser, UserFlags
 from disco.types.message import MessageEmbed
 from disco.types.channel import ChannelType
 from disco.types.permissions import Permissions
@@ -478,7 +478,7 @@ class UtilitiesPlugin(Plugin):
             flags = []
             for flag, boolean in user.public_flags.to_dict().items():
                 if boolean is True:
-                    flags.append('<{}>'.format(BADGE_EMOJI[flag]))
+                    flags.append('<{}>'.format(BADGE_EMOJI[UserFlags[flag]]))
 
             if len(flags) > 0:
                 content.append('Badges: {}'.format(flags))
