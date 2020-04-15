@@ -17,6 +17,7 @@ from holster.enum import Enum
 from disco.types.user import GameType, Status, User as DiscoUser
 from disco.types.message import MessageEmbed
 from disco.types.channel import ChannelType
+from disco.types.permissions import Permissions
 from disco.util.snowflake import to_datetime
 from disco.util.sanitize import S
 from disco.api.http import Routes, APIException
@@ -30,6 +31,7 @@ from rowboat.models.guild import GuildVoiceSession
 from rowboat.models.user import User, Infraction
 from rowboat.models.message import Message
 from rowboat.util.images import get_dominant_colors_user, get_dominant_colors_guild
+from rowboat.redis import rdb
 from rowboat.constants import (
     STATUS_EMOJI, SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI, RED_TICK_EMOJI_ID,
     EMOJI_RE, USER_MENTION_RE, CDN_URL,
@@ -328,19 +330,22 @@ class UtilitiesPlugin(Plugin):
             created_at.isoformat(),
         ))
         content_server.append(u'**Members:** {:,}'.format(guild.member_count))
-        content_server.append(u'**Features:** {}'.format(', '.join(guild.features) or 'none'))
+        if len(guild.features) > 0:
+            content_server.append(u'**Features:** {}'.format(', '.join(guild.features) or 'none'))
         content_server.append(u'**Voice region:** {}'.format(guild.region))
 
-        if not bool(guild.max_members):
+        if not rdb.exists('gmm:{}'.format(guild.id)):
             self.state.guilds[guild.id].inplace_update(self.client.api.guilds_get(guild.id), ignored=[
                 'channels',
                 'members',
                 'voice_states',
                 'presences',
             ])
+            rdb.set('gmp:{}'.format(guild.id), self.state.guilds[guild.id].max_presences)
+            rdb.set('gmm:{}'.format(guild.id), self.state.guilds[guild.id].max_members)
 
-        content_server.append(u'**Max presences:** {:,}'.format(self.state.guilds[guild.id].max_presences))
-        content_server.append(u'**Max members:** {:,}'.format(self.state.guilds[guild.id].max_members))
+        content_server.append(u'**Max presences:** {:,}'.format(int(rdb.get('gmp:{}'.format(guild.id)))))
+        content_server.append(u'**Max members:** {:,}'.format(int(rdb.get('gmm:{}'.format(guild.id)))))
 
         embed.add_field(name=u'\u276F Server Information', value='\n'.join(content_server), inline=False)
 
@@ -374,21 +379,39 @@ class UtilitiesPlugin(Plugin):
         embed.add_field(name=u'\u200B', value='\n'.join(content_counts2), inline=True)
 
         # Members
-        content_members = []
-        status_counts = defaultdict(int)
-        for member in guild.members.values():
-            if not member.user.presence:
-                status = Status.OFFLINE
-            else:
-                status = member.user.presence.status
-            status_counts[status] += 1
+        invite = None
+        if 'PUBLIC' in guild.features:
+            invite = guild.get_preview()
+        elif guild.vanity_url_code:
+            invite = self.client.api.invites_get(guild.vanity_url_code, with_counts=True)
+        elif guild.members[self.state.me.id].permissions.can(Permissions.ADMINISTRATOR) or guild.members[self.state.me.id].permissions.can(Permissions.MANAGE_GUILD):
+            if hasattr(guild.get_invites()[0], 'code'):
+                invite = self.client.api.invites_get(guild.get_invites()[0].code, with_counts=True)
 
-        for status, count in sorted(status_counts.items(), key=lambda i: Status[i[0]]):
-            content_members.append(u'<{}> - {}'.format(
-                STATUS_EMOJI[status], count
-            ))
+        status_online = None
+        if invite:
+            if not rdb.exists('apc:{}'.format(guild.id)):
+                rdb.set('apc:{}'.format(guild.id), invite.approximate_presence_count, 900)
+            status_online = int(rdb.get('apc:{}'.format(guild.id)))
 
-        embed.add_field(name=u'\u276F Members', value='\n'.join(content_members), inline=True)
+            content_members = []
+            content_members.append('<{}> {}'.format(STATUS_EMOJI[Status.ONLINE], status_online))
+            content_members.append('<{}> {}'.format(STATUS_EMOJI[Status.OFFLINE], (guild.member_count - status_online)))
+
+            # status_counts = defaultdict(int)
+            # for member in guild.members.values():
+            #     if not member.user.presence:
+            #         status = Status.OFFLINE
+            #     else:
+            #         status = member.user.presence.status
+            #     status_counts[status] += 1
+
+            # for status, count in sorted(status_counts.items(), key=lambda i: Status[i[0]]):
+            #     content_members.append(u'<{}> - {}'.format(
+            #         STATUS_EMOJI[status], count
+            #     ))
+
+            embed.add_field(name=u'\u276F Members', value='\n'.join(content_members), inline=True)
 
         # Boosts
         content_boosts = []
@@ -397,7 +420,7 @@ class UtilitiesPlugin(Plugin):
         content_boosts.append(u'<{}> {} boosts {}'.format(
             PREMIUM_GUILD_ICON_EMOJI,
             guild.premium_subscription_count,
-            '({})'.format(real_boost_count) if real_boost_count < guild.premium_subscription_count else ''
+            '({} members)'.format(real_boost_count) if real_boost_count < guild.premium_subscription_count else ''
         ))
         embed.add_field(name=u'\u276F Server Boost', value='\n'.join(content_boosts), inline=True)
 
@@ -472,7 +495,7 @@ class UtilitiesPlugin(Plugin):
 
             if member.roles:
                 content.append(u'**Roles:** {}'.format(
-                    ', '.join((member.guild.roles.get(r).mention for r in sorted(member.roles, key=lambda r: member.guild.roles.get(r).position, reverse=True)))
+                    ' '.join((member.guild.roles.get(r).mention for r in sorted(member.roles, key=lambda r: member.guild.roles.get(r).position, reverse=True)))
                 ))
 
             # "is not None" does not work with Unset types for some rason
