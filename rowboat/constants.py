@@ -33,13 +33,13 @@ BADGE_EMOJI = {
     UserFlags.STAFF: ':staff:699078007192551444',
     UserFlags.PARTNER: ':partner:699078007184425040',
     UserFlags.HS_EVENTS: ':hypesquad_events:699078007326900265',
-    UserFlags.BUG_HUNTER_LEVEL_1: ':bughunter1:699078007087824916',
     UserFlags.HS_BRAVERY: ':hypesquad_bravery:699078006764732458',
     UserFlags.HS_BRILLIANCE: ':hypesquad_brilliance:699078006936961126',
     UserFlags.HS_BALANCE: ':hypesquad_balance:699078006915727442',
-    UserFlags.EARLY_SUPPORTER: ':early_supporter:699078007133962280',
+    UserFlags.BUG_HUNTER_LEVEL_1: ':bughunter1:699078007087824916',
     UserFlags.BUG_HUNTER_LEVEL_2: ':bughunter2:699078007179968613',
     UserFlags.VERIFIED_DEVELOPER: ':verified_developer:699078007150739486',
+    UserFlags.EARLY_SUPPORTER: ':early_supporter:699078007133962280',
 }
 
 
