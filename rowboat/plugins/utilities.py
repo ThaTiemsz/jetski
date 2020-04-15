@@ -476,9 +476,9 @@ class UtilitiesPlugin(Plugin):
 
         if user.public_flags and user.public_flags != 0:
             flags = []
-            for flag, boolean in user.public_flags.to_dict().items():
-                if boolean is True:
-                    flags.append('<{}>'.format(BADGE_EMOJI[getattr(UserFlags, flag)]))
+            for flag, emoji in BADGE_EMOJI.items():
+                if user.public_flags.check(flag):
+                    flags.append('<{}>'.format(emoji))
 
             if len(flags) > 0:
                 content.append('**Badges**: {}'.format(' '.join(flags)))
