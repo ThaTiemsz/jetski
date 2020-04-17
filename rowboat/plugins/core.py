@@ -376,8 +376,8 @@ class CorePlugin(Plugin):
             env=ENV,
         )
 
-        if reconnects:
-            self.update_guild_syncs()
+        # if reconnects:
+        #     self.update_guild_syncs()
 
         with self.send_control_message() as embed:
             if reconnects:
