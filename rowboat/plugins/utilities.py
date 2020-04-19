@@ -385,8 +385,9 @@ class UtilitiesPlugin(Plugin):
         elif guild.vanity_url_code:
             invite = self.client.api.invites_get(guild.vanity_url_code, with_counts=True)
         elif guild.members[self.state.me.id].permissions.can(Permissions.ADMINISTRATOR) or guild.members[self.state.me.id].permissions.can(Permissions.MANAGE_GUILD):
-            if hasattr(guild.get_invites()[0], 'code'):
-                invite = self.client.api.invites_get(guild.get_invites()[0].code, with_counts=True)
+            guild_invites = guild.get_invites()
+            if len(guild_invites) > 0 and hasattr(guild_invites[0], 'code'):
+                invite = self.client.api.invites_get(guild_invites[0].code, with_counts=True)
 
         status_online = None
         if invite:
