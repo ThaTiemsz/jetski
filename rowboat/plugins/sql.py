@@ -68,6 +68,7 @@ class SQLPlugin(Plugin):
             return
 
         User.update(**updates).where((User.user_id == event.user.id)).execute()
+        self.state.users[event.user.id].inplace_update(event.user)
 
     @Plugin.listen('MessageCreate')
     def on_message_create(self, event):

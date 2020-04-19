@@ -435,7 +435,7 @@ class ModLogPlugin(Plugin):
             removed = pre_roles - post_roles
 
             # Log all instances of a role getting added
-            for role in filter(bool, map(event.guild.roles.get, added)):
+            for role in list(filter(bool, map(event.guild.roles.get, added))):
                 debounce = self.debounces.find(
                     event,
                     user_id=event.user.id,
@@ -446,7 +446,7 @@ class ModLogPlugin(Plugin):
 
                 self.log_action(Actions.GUILD_MEMBER_ROLES_ADD, event, role=role)
 
-            for role in filter(bool, map(event.guild.roles.get, removed)):
+            for role in list(filter(bool, map(event.guild.roles.get, removed))):
                 debounce = self.debounces.find(
                     event,
                     user_id=event.user.id,
@@ -457,13 +457,15 @@ class ModLogPlugin(Plugin):
     @Plugin.listen('UserUpdate', priority=Priority.BEFORE)
     def on_user_update(self, event):
         # Log username changes, only if presence events are disabled
-        if not self.state.is_presence_update_enabled():
-            self.on_presence_update(event)
+        if self.state.is_presence_update_enabled():
+            return
+
+        self.on_presence_update(event)
 
     @Plugin.listen('PresenceUpdate', priority=Priority.BEFORE, metadata={'global_': True})
     def on_presence_update(self, event):
         plugin = self.bot.plugins.get('CorePlugin')
-        if not plugin or not event.user:
+        if not plugin or not event.user.username:
             return
 
         subscribed_guilds = defaultdict(list)
