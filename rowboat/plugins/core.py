@@ -398,7 +398,7 @@ class CorePlugin(Plugin):
     #         self.log.warning('Sampled events is 0, forcing a fresh reconnect')
     #         self.client.gw.ws.close()
 
-    @Plugin.schedule(45, init=False, repeat=False)
+    # @Plugin.schedule(45, init=False, repeat=False)
     def update_guild_syncs(self):
         if len(self.guild_sync) == 0:
             return
