@@ -454,8 +454,8 @@ class ModLogPlugin(Plugin):
                 )
                 self.log_action(Actions.GUILD_MEMBER_ROLES_RMV, event, role=role)
 
-    @Plugin.listen('UserUpdate', priority=Priority.BEFORE)
-    def on_user_update(self, event):
+    @Plugin.listen('GuildMemberUpdate', priority=Priority.BEFORE)
+    def on_username_change(self, event):
         # Log username changes, only if presence events are disabled
         if self.state.is_presence_update_enabled():
             return
