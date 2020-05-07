@@ -600,3 +600,32 @@ class UtilitiesPlugin(Plugin):
         embed.description = '\n'.join(content)
         embed.color = get_dominant_colors_user(user, user.get_avatar_url('png') if user.avatar else avatar)
         event.msg.reply('', embed=embed)
+
+    @Plugin.command('avatar', '[user:user|snowflake]', global_=True)
+    def avatar(self, event, user=None):
+        if user is None:
+            user = event.author
+
+        user_id = 0
+        if isinstance(user, (int, long)):
+            user_id = user
+            user = self.state.users.get(user)
+
+        if user and not user_id:
+            user = self.state.users.get(user.id)
+
+        if not user:
+            if user_id:
+                try:
+                    user = self.client.api.users_get(user_id)
+                except APIException:
+                    raise CommandFail('unknown user')
+                User.from_disco_user(user)
+            else:
+                raise CommandFail('unknown user')
+
+        ext = 'gif' if user.avatar.startswith('a_') else 'png'
+        url = user.get_avatar_url()
+        r = requests.get(url)
+        r.raise_for_status()
+        event.msg.reply('', attachments=[('{}.{}'.format(user.id, ext), r.content)])
