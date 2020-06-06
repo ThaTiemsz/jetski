@@ -417,11 +417,11 @@ class UtilitiesPlugin(Plugin):
         # Boosts
         content_boosts = []
         content_boosts.append(u'<{}> Level {}'.format(PREMIUM_GUILD_TIER_EMOJI[guild.premium_tier], int(guild.premium_tier)))
-        real_boost_count = len(filter(lambda y: guild.members.get(y).premium_since, guild.members))
-        content_boosts.append(u'<{}> {} boosts {}'.format(
+        # real_boost_count = len(filter(lambda y: guild.members.get(y).premium_since, guild.members))
+        content_boosts.append(u'<{}> {} boosts'.format(
             PREMIUM_GUILD_ICON_EMOJI,
             guild.premium_subscription_count,
-            '({} members)'.format(real_boost_count) if real_boost_count < guild.premium_subscription_count else ''
+            # '({} members)'.format(real_boost_count) if real_boost_count < guild.premium_subscription_count else ''
         ))
         embed.add_field(name=u'\u276F Server Boost', value='\n'.join(content_boosts), inline=True)
 
