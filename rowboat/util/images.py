@@ -47,7 +47,7 @@ def get_dominant_colors_user(user, url=None):
             r.raise_for_status()
         except:
             return 0
-        color = int(get_dominant_colors(Image.open(BytesIO(r.content)))[0], 16)
+        color = int(str(get_dominant_colors(Image.open(BytesIO(r.content)))[0]), 16)
         rdb.set(key, color)
         return color
 
@@ -67,7 +67,7 @@ def get_dominant_colors_guild(guild, url=None):
             r.raise_for_status()
         except:
             return 0
-        color = int(get_dominant_colors(Image.open(BytesIO(r.content)))[0], 16)
+        color = int(str(get_dominant_colors(Image.open(BytesIO(r.content)))[0]), 16)
         rdb.set(key, color)
         return color
 
