@@ -15,6 +15,7 @@ The spam plugin allows administrators and moderators to limit spam and enforce p
 | Option | Description | Type | Default |
 | :--- | :--- | :--- | :--- |
 | levels | A mapping of levels to Spam Configurations. This will match any user with a level that is equal or lower | dict | empty |
+| ignored_channels | A list of channels for the Spam Plugin to ignore | list | empty |
 
 ### Spam Configuration
 
@@ -40,6 +41,7 @@ The spam plugin allows administrators and moderators to limit spam and enforce p
 
 ```yaml
   spam:
+    ignored_channels: [476045501536665620, 330306773657321472]
     levels:
       0:
         punishment: TEMPMUTE
