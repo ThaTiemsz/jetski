@@ -18,7 +18,7 @@ from rowboat.plugins.admin import infraction_message
 from rowboat.util.leakybucket import LeakyBucket
 from rowboat.util.stats import timed
 from rowboat.types.plugin import PluginConfig
-from rowboat.types import SlottedModel, DictField, Field
+from rowboat.types import SlottedModel, DictField, Field, ListField, snowflake
 from rowboat.models.user import Infraction
 from rowboat.models.message import Message, EMOJI_RE
 
@@ -94,6 +94,7 @@ class SubConfig(SlottedModel):
 class SpamConfig(PluginConfig):
     roles = DictField(str, SubConfig)
     levels = DictField(int, SubConfig)
+    ignored_channels = ListField(snowflake, default=[])
 
     def compute_relevant_rules(self, member, level):
         if self.roles:
@@ -260,6 +261,10 @@ class SpamPlugin(Plugin):
             (Message.guild_id == event.guild.id),
             (Message.timestamp > (datetime.utcnow() - timedelta(seconds=rule.max_duplicates.interval)))
         ]
+        
+        # Ensure we don't include ignored channels
+        if event.config.ignored_channels:
+            q.append((Message.channel_id.not_in(event.config.ignored_channels)))
 
         # If we're not checking globally, include the member id
         if not rule.max_duplicates.meta or not rule.max_duplicates.meta.get('global'):
@@ -321,6 +326,9 @@ class SpamPlugin(Plugin):
             return
 
         if event.webhook_id:
+            return
+        
+        if event.channel_id in event.config.ignored_channels:
             return
 
         # Lineralize events by guild ID to prevent spamming events
