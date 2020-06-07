@@ -70,7 +70,7 @@ Functions are variables that take parameters, and return a result based on them.
 
 ## Configuration Example
 
-```text
+```yaml
   tags:
     max_tag_length: 1337
     min_level_remove_others: 50

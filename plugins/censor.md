@@ -35,7 +35,7 @@ This, combined with the Spam plugin can result in a very robust automatic abuse-
 
 ## Configuration Example
 
-```text
+```yaml
   censor:
     levels:
       0:

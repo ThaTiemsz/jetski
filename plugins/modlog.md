@@ -74,7 +74,7 @@ More information: [https://github.com/ThaTiemsz/jetski/blob/master/data/actions\
 
 ## Configuration Example
 
-```text
+```yaml
   modlog:
     channels:
       289494042000228352:

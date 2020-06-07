@@ -49,7 +49,7 @@ The admin plugin provides a set of administrator commands that help in moderatin
 
 ## Configuration Example
 
-```text
+```yaml
   admin:
     persist:
       roles: true

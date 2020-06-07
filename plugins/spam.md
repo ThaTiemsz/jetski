@@ -38,7 +38,7 @@ The spam plugin allows administrators and moderators to limit spam and enforce p
 
 ## Configuration Example
 
-```text
+```yaml
   spam:
     levels:
       0:

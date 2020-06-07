@@ -19,7 +19,7 @@ The Reddit plugin provides a feed of new posts on specified subreddits.
 
 ## Configuration Example
 
-```text
+```yaml
   reddit:
     subs:
       discordapp:

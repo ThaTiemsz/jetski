@@ -79,7 +79,7 @@ The reminders plugin provides reminder commands.
   </tbody>
 </table>## Configuration Example
 
-```text
+```yaml
 reminders: {}
 ```
 
