@@ -1068,7 +1068,7 @@ class AdminPlugin(Plugin):
 
     @Plugin.command('ban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     @Plugin.command('forceban', '<user:snowflake> [reason:str...]', level=CommandLevels.MOD)
-    @Plugin.command('cleanban', '<user:snowflake> <delete_message_days:int> [reason:str...]', aliases=['cban'], level=CommandLevels.MOD)
+    @Plugin.command('cleanban', '<user:user|snowflake> <delete_message_days:int> [reason:str...]', aliases=['cban'], level=CommandLevels.MOD)
     def ban(self, event, user, reason=None, delete_message_days=0, mode=None):
         if isinstance(user, (int, long)):
             user_id = user
