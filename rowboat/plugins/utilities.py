@@ -379,15 +379,7 @@ class UtilitiesPlugin(Plugin):
         embed.add_field(name=u'\u200B', value='\n'.join(content_counts2), inline=True)
 
         # Members
-        invite = None
-        if 'PUBLIC' in guild.features:
-            invite = guild.get_preview()
-        elif guild.vanity_url_code:
-            invite = self.client.api.invites_get(guild.vanity_url_code, with_counts=True)
-        elif guild.members[self.state.me.id].permissions.can(Permissions.ADMINISTRATOR) or guild.members[self.state.me.id].permissions.can(Permissions.MANAGE_GUILD):
-            guild_invites = guild.get_invites()
-            if len(guild_invites) > 0 and hasattr(guild_invites[0], 'code'):
-                invite = self.client.api.invites_get(guild_invites[0].code, with_counts=True)
+        invite = guild.get_preview()
 
         status_online = None
         if invite:
