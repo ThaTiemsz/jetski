@@ -276,7 +276,7 @@ class Infraction(BaseModel):
             reason=reason)
 
     @classmethod
-    def ban(cls, plugin, event, member, reason, guild):
+    def ban(cls, plugin, event, member, reason, guild, delete_message_days=0):
         from rowboat.plugins.modlog import Actions
         if isinstance(member, (int, long)):
             user_id = member
@@ -291,7 +291,7 @@ class Infraction(BaseModel):
             user_id=user_id,
         )
 
-        guild.create_ban(user_id, reason=reason)
+        guild.create_ban(user_id, delete_message_days if delete_message_days <= 7 else 7, reason=reason)
 
         plugin.call(
             'ModLogPlugin.log_action_ext',

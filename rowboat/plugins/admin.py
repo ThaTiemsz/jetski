@@ -835,7 +835,15 @@ class AdminPlugin(Plugin):
             if duration:
                 # Create the infraction
                 try:
-                    self.send_infraction_dm(event, member.id, 'tempmute', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason, duration)
+                    self.send_infraction_dm(
+                        event,
+                        member.id,
+                        'tempmute',
+                        event.msg.guild.name,
+                        unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
+                        reason,
+                        duration
+                    )
                 except APIException:
                     pass
                 Infraction.tempmute(self, event, member, reason, duration)
@@ -861,7 +869,14 @@ class AdminPlugin(Plugin):
                         raise CommandFail(u'{} is already muted'.format(member.user))
 
                 try:
-                    self.send_infraction_dm(event, member.id, 'mute', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
+                    self.send_infraction_dm(
+                        event,
+                        member.id,
+                        'mute',
+                        event.msg.guild.name,
+                        unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
+                        reason
+                    )
                 except APIException:
                     pass
                 Infraction.mute(self, event, member, reason)
@@ -952,7 +967,14 @@ class AdminPlugin(Plugin):
         if member:
             self.can_act_on(event, member.id)
             try:
-                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
+                self.send_infraction_dm(
+                    event,
+                    member.id,
+                    'kick',
+                    event.msg.guild.name,
+                    unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
+                    reason
+                )
             except APIException:
                 pass
             Infraction.kick(self, event, member, reason)
@@ -1012,7 +1034,14 @@ class AdminPlugin(Plugin):
         succeeded = []
         for member in members:
             try:
-                self.send_infraction_dm(event, member.id if hasattr(member, 'id') else member, 'kick', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
+                self.send_infraction_dm(
+                    event,
+                    member.id if hasattr(member, 'id') else member,
+                    'kick',
+                    event.msg.guild.name,
+                    unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
+                    args.reason
+                )
                 Infraction.kick(self, event, member, args.reason)
                 succeeded.append(member)
             except APIException:
@@ -1039,7 +1068,8 @@ class AdminPlugin(Plugin):
 
     @Plugin.command('ban', '<user:user|snowflake> [reason:str...]', level=CommandLevels.MOD)
     @Plugin.command('forceban', '<user:snowflake> [reason:str...]', level=CommandLevels.MOD)
-    def ban(self, event, user, reason=None):
+    @Plugin.command('cleanban', '<user:snowflake> <delete_message_days:int> [reason:str...]', aliases=['cban'], level=CommandLevels.MOD)
+    def ban(self, event, user, reason=None, delete_message_days=0, mode=None):
         if isinstance(user, (int, long)):
             user_id = user
             self.can_act_on(event, user)
@@ -1066,7 +1096,7 @@ class AdminPlugin(Plugin):
             pass
 
         try:
-            Infraction.ban(self, event, user, reason, guild=event.guild)
+            Infraction.ban(self, event, user, reason, guild=event.guild, delete_message_days=delete_message_days)
         except APIException:
             raise CommandFail('invalid user')
 
@@ -1082,7 +1112,7 @@ class AdminPlugin(Plugin):
     @Plugin.parser.add_argument('users', type=long, nargs='+')
     @Plugin.parser.add_argument('-r', '--reason', default='', help='reason for modlog')
     @Plugin.parser.add_argument('-h', '--hide', action='store_true', help='hide names like forceban')
-    #@Plugin.parser.add_argument('-c', '--clean', type=int, default=0, help='days of messages to clean')
+    @Plugin.parser.add_argument('-c', '--clean', type=int, default=0, help='days of messages to clean')
     def mban(self, event, args):
         members = []; cannot = []
         users = list(set(args.users))
@@ -1124,8 +1154,15 @@ class AdminPlugin(Plugin):
         succeeded = []
         for member in members:
             try:
-                self.send_infraction_dm(event, member.id if hasattr(member, 'id') else member, 'ban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), args.reason)
-                Infraction.ban(self, event, member, args.reason, guild=event.guild)
+                self.send_infraction_dm(
+                    event,
+                    member.id if hasattr(member, 'id') else member,
+                    'ban',
+                    event.msg.guild.name,
+                    unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
+                    args.reason
+                )
+                Infraction.ban(self, event, member, args.reason, guild=event.guild, delete_message_days=args.clean)
                 succeeded.append(member)
             except APIException:
                 if not isinstance(member, (int, long)):
@@ -1140,10 +1177,10 @@ class AdminPlugin(Plugin):
 
         #self.perform_cleanup(succeeded, args.clean, event.guild.id)
 
-        reply = 'banned {}/{} user{}'.format(total, members, 's' if members>1 else '')
+        reply = 'banned {}/{} user{}'.format(total, members, 's' if members > 1 else '')
         if failed:
             reply += '\nThe following ID{} could not be banned: `{}`'.format(
-                's' if len(failed)>1 else '',
+                's' if len(failed) > 1 else '',
                 '`, `'.join([str(id) for id in failed])
             )
 
@@ -1159,7 +1196,14 @@ class AdminPlugin(Plugin):
         if member:
             self.can_act_on(event, member.id)
             try:
-                self.send_infraction_dm(event, member.id, 'kick', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
+                self.send_infraction_dm(
+                    event,
+                    member.id,
+                    'kick',
+                    event.msg.guild.name,
+                    unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
+                    reason
+                    )
             except APIException:
                 pass
             Infraction.softban(self, event, member, reason)
@@ -1181,7 +1225,15 @@ class AdminPlugin(Plugin):
             self.can_act_on(event, member.id)
             expires_dt = parse_duration(duration)
             try:
-                self.send_infraction_dm(event, member.id, 'tempban', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason, expires_dt)
+                self.send_infraction_dm(
+                    event,
+                    member.id,
+                    'tempban',
+                    event.msg.guild.name,
+                    unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
+                    reason,
+                    expires_dt
+                )
             except APIException:
                 pass
             Infraction.tempban(self, event, member, reason, expires_dt)
@@ -1205,7 +1257,14 @@ class AdminPlugin(Plugin):
         if member:
             self.can_act_on(event, member.id)
             try:
-                self.send_infraction_dm(event, member.id, 'warn', event.msg.guild.name, unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'), reason)
+                self.send_infraction_dm(
+                    event,
+                    member.id,
+                    'warn',
+                    event.msg.guild.name,
+                    unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
+                    reason
+                )
             except APIException:
                 pass
             Infraction.warn(self, event, member, reason, guild=event.guild)
