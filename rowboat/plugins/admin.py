@@ -1042,6 +1042,10 @@ class AdminPlugin(Plugin):
                     unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
                     args.reason
                 )
+            except APIException:
+                pass
+
+            try:
                 Infraction.kick(self, event, member, args.reason)
                 succeeded.append(member)
             except APIException:
@@ -1162,6 +1166,10 @@ class AdminPlugin(Plugin):
                     unicode(u'{}#{}'.format(event.author.username, event.author.discriminator)).encode('utf-8'),
                     args.reason
                 )
+            except APIException:
+                pass
+
+            try:
                 Infraction.ban(self, event, member, args.reason, guild=event.guild, delete_message_days=args.clean)
                 succeeded.append(member)
             except APIException:
