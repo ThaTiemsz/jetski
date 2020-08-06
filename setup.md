@@ -29,9 +29,7 @@ plugins:
 
   utilities: {}
 
-  admin: {}
-
-  infractions:
+  admin:
     mute_role: 000000000000000000
 
   modlog:
