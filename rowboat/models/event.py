@@ -1,7 +1,5 @@
-from peewee import (
-    BigIntegerField, CharField, DateTimeField, CompositeKey
-)
 from datetime import datetime, timedelta
+from peewee import BigIntegerField, CharField, DateTimeField, CompositeKey
 from playhouse.postgres_ext import BinaryJSONField
 
 from rowboat.sql import BaseModel
@@ -17,7 +15,7 @@ class Event(BaseModel):
     data = BinaryJSONField()
 
     class Meta:
-        db_table = 'events'
+        table_name = 'events'
         primary_key = CompositeKey('session', 'seq')
         indexes = (
             (('timestamp', ), False),

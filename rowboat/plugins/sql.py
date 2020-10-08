@@ -11,6 +11,7 @@ from datetime import datetime
 
 from disco.types.base import UNSET
 from disco.types.message import MessageTable
+from disco.types.permissions import Permissions
 from disco.types.user import User as DiscoUser
 from disco.types.guild import Guild as DiscoGuild
 from disco.types.channel import Channel as DiscoChannel, MessageIterator
@@ -41,18 +42,11 @@ class SQLPlugin(Plugin):
 
     @Plugin.listen('VoiceStateUpdate', priority=Priority.BEFORE)
     def on_voice_state_update(self, event):
-        pre_state = self.state.voice_states.get(event.session_id)
+        pre_state = self.bot.client.state.voice_states.get(event.session_id)
         GuildVoiceSession.create_or_update(pre_state, event.state)
 
-    @Plugin.listen('GuildMemberUpdate')
-    def on_guild_member_update(self, event):
-        if self.state.is_presence_update_enabled():
-            return
-
-        self.on_presence_update(event)
-
-    @Plugin.listen('PresenceUpdate')
-    def on_presence_update(self, event):
+    @Plugin.listen('GuildMemberUpdate', priority=Priority.SEQUENTIAL)
+    def on_member_update(self, event):
         updates = {}
 
         if event.user.avatar != UNSET:
@@ -68,9 +62,6 @@ class SQLPlugin(Plugin):
             return
 
         User.update(**updates).where((User.user_id == event.user.id)).execute()
-
-        if event.user.id in self.state.users:
-            self.state.users[event.user.id].inplace_update(event.user)
 
     @Plugin.listen('MessageCreate')
     def on_message_create(self, event):
@@ -149,7 +140,7 @@ class SQLPlugin(Plugin):
 
     @Plugin.command('sql', level=-1, global_=True)
     def command_sql(self, event):
-        conn = database.obj.get_conn()
+        conn = database.connection()
 
         try:
             tbl = MessageTable(codeblock=False)
@@ -158,17 +149,15 @@ class SQLPlugin(Plugin):
                 start = time.time()
                 cur.execute(event.codeblock.format(e=event))
                 dur = time.time() - start
-
                 if not cur.description:
                     return event.msg.reply('_no result - took {}ms_'.format(int(dur * 1000)))
-
                 tbl.set_header(*[desc[0] for desc in cur.description])
 
                 for row in cur.fetchall():
                     tbl.add(*row)
 
                 result = tbl.compile()
-                if len(result) > 1900:
+                if len(result) > 1950:
                     return event.msg.reply(
                         '_took {}ms_'.format(int(dur * 1000)),
                         attachments=[('result.txt', result)])
@@ -186,7 +175,7 @@ class SQLPlugin(Plugin):
 
         text = [msg.content for msg in q]
         self.models[entity.id] = markovify.NewlineText('\n'.join(text))
-        event.msg.reply(u':ok_hand: created markov model for {} using {} messages'.format(entity, len(text)))
+        event.msg.reply(':ok_hand: created markov model for {} using {} messages'.format(entity, len(text)))
 
     @Plugin.command('one', '<entity:user|channel>', level=-1, group='markov', global_=True)
     def command_markov_one(self, event, entity):
@@ -197,7 +186,7 @@ class SQLPlugin(Plugin):
         if not sentence:
             event.msg.reply(':warning: not enough data :(')
             return
-        event.msg.reply(u'{}: {}'.format(entity, sentence))
+        event.msg.reply('{}: {}'.format(entity, sentence))
 
     @Plugin.command('many', '<entity:user|channel> [count|int]', level=-1, group='markov', global_=True)
     def command_markov_many(self, event, entity, count=5):
@@ -209,11 +198,11 @@ class SQLPlugin(Plugin):
             if not sentence:
                 event.msg.reply(':warning: not enough data :(')
                 return
-            event.msg.reply(u'{}: {}'.format(entity, sentence))
+            event.msg.reply('{}: {}'.format(entity, sentence))
 
     @Plugin.command('list', level=-1, group='markov', global_=True)
     def command_markov_list(self, event):
-        event.msg.reply(u'`{}`'.format(', '.join(map(str, self.models.keys()))))
+        event.msg.reply('`{}`'.format(', '.join(map(str, self.models.keys()))))
 
     @Plugin.command('delete', '<oid:snowflake>', level=-1, group='markov', global_=True)
     def command_markov_delete(self, event, oid):
@@ -230,7 +219,7 @@ class SQLPlugin(Plugin):
 
     @Plugin.command('message', '<channel:snowflake> <message:snowflake>', level=-1, group='backfill', global_=True)
     def command_backfill_message(self, event, channel, message):
-        channel = self.state.channels.get(channel)
+        channel = self.bot.client.state.channels.get(channel)
         Message.from_disco_message(channel.get_message(message))
         return event.msg.reply(':ok_hand: backfilled')
 
@@ -241,7 +230,7 @@ class SQLPlugin(Plugin):
         except Message.DoesNotExist:
             return event.msg.reply(':warning: no message found')
 
-        message = self.state.channels.get(message.channel_id).get_message(message.id)
+        message = self.bot.client.state.channels.get(message.channel_id).get_message(message.id)
         for reaction in message.reactions:
             for users in message.get_reactors(reaction.emoji, bulk=True):
                 Reaction.from_disco_reactors(message.id, reaction, (i.id for i in users))
@@ -249,13 +238,17 @@ class SQLPlugin(Plugin):
     @Plugin.command('global', '<duration:str> [pool:int]', level=-1, global_=True, context={'mode': 'global'}, group='recover')
     @Plugin.command('here', '<duration:str> [pool:int]', level=-1, global_=True, context={'mode': 'here'}, group='recover')
     def command_recover(self, event, duration, pool=4, mode=None):
+        channels = []
         if mode == 'global':
-            channels = list(self.state.channels.values())
+            chlist = self.bot.client.state.channels
         else:
-            channels = list(event.guild.channels.values())
+            chlist = event.guild.channels
+        for gch in chlist:
+            if self.bot.client.state.channels[gch].type == 0 or self.bot.client.state.channels[gch].type == 5:
+                if self.bot.client.state.channels[gch].get_permissions(self.bot.client.state.me).can(Permissions.VIEW_CHANNEL):
+                    channels.append(self.bot.client.state.channels[gch])
 
         start_at = parse_duration(duration, negative=True)
-
         pool = Pool(pool)
 
         total = len(channels)
@@ -289,7 +282,7 @@ class SQLPlugin(Plugin):
 
     @Plugin.command('backfill channel', '[channel:snowflake]', level=-1, global_=True)
     def command_backfill_channel(self, event, channel=None):
-        channel = self.state.channels.get(channel) if channel else event.channel
+        channel = self.bot.client.state.channels.get(channel) if channel else event.channel
         backfill_channel.queue(channel.id)
         event.msg.reply(':ok_hand: enqueued channel to be backfilled')
 
@@ -322,7 +315,7 @@ class SQLPlugin(Plugin):
             ON (date_trunc(%s, date) = results.dt);
         '''
 
-        msg = event.msg.reply(':alarm_clock: One moment pls...')
+        msg = event.msg.reply(':alarm_clock: One moment pls…')
 
         start = time.time()
         tuples = list(Message.raw(
@@ -422,7 +415,9 @@ class Recovery(object):
             if not chunk:
                 break
 
-            self._recovered += len(Message.from_disco_message_many(chunk, safe=True))
+            recov = Message.from_disco_message_many(chunk, safe=True)
+            if recov:
+                self._recovered += len(recov)
 
             if to_datetime(chunk[-1].id) > self.end_dt:
                 break

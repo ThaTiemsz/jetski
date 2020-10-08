@@ -1,15 +1,13 @@
 import json
-import subprocess
 
-from flask import Blueprint, request, g, make_response, jsonify, render_template
 from datetime import datetime
+from flask import Blueprint, request, make_response, jsonify, render_template
 
 from rowboat.redis import rdb
 from rowboat.models.message import Message, MessageArchive
 from rowboat.models.guild import Guild
 from rowboat.models.user import User
 from rowboat.models.channel import Channel
-from rowboat.util.decos import authed
 
 dashboard = Blueprint('dash', __name__)
 
@@ -36,8 +34,8 @@ class ServerSentEvent(object):
     def encode(self):
         if not self.data:
             return ""
-        lines = ["%s: %s" % (v, k) for k, v in self.desc_map.iteritems() if k]
-        return "%s\n\n" % "\n".join(lines)
+        lines = ["{}: {}".format(v, k) for k, v in self.desc_map.items() if k]
+        return "{}\n\n".format("\n".join(lines))
 
 
 @dashboard.route('/api/stats')
@@ -50,12 +48,11 @@ def stats():
         # stats['users'] = pretty_number(User.select().count())
         # stats['channels'] = pretty_number(Channel.select().count())
         stats['messages'] = Message.select().count()
-        stats['guilds'] = Guild.select().count()
+        stats['guilds'] = Guild.select().where(Guild.enabled).count()
         stats['users'] = User.select().count()
-        stats['channels'] = Channel.select().count()
+        stats['channels'] = Channel.select().where(~Channel.deleted & (Channel.type_ == 0)).count()
+        rdb.setex('web:dashboard:stats', 300, json.dumps(stats))
 
-        rdb.setex('web:dashboard:stats', json.dumps(stats), 300)
-    
     return jsonify(stats)
 
 
@@ -71,7 +68,7 @@ def archive(aid, fmt):
 
     mime_type = None
     if fmt == 'json':
-        mime_type == 'application/json'
+        mime_type = 'application/json'
     elif fmt == 'txt':
         mime_type = 'text/plain'
     elif fmt == 'csv':
@@ -83,16 +80,3 @@ def archive(aid, fmt):
     res = make_response(archive.encode(fmt))
     res.headers['Content-Type'] = mime_type
     return res
-
-
-@dashboard.route('/api/deploy', methods=['POST'])
-@authed
-def deploy():
-    if not g.user.admin:
-        return '', 401
-
-    subprocess.Popen(['git', 'pull', 'origin', 'master']).wait()
-    rdb.publish('actions', json.dumps({
-        'type': 'RESTART',
-    }))
-    return '', 200

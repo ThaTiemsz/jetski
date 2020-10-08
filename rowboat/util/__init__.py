@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import re
 import yaml
 from collections import OrderedDict
@@ -8,13 +6,12 @@ from datetime import datetime
 from gevent.local import local
 
 # Invisible space that can be used to escape mentions
-ZERO_WIDTH_SPACE = u'\u200B'
+ZERO_WIDTH_SPACE ='\u200B'
 
 # Replacement grave accent that can be used to escape codeblocks
-MODIFIER_GRAVE_ACCENT = u'\u02CB'
+MODIFIER_GRAVE_ACCENT ='\u02CB'
 
-
-def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+def ordered_load(stream, Loader=yaml.SafeLoader, object_pairs_hook=OrderedDict):
     class OrderedLoader(Loader):
         pass
 
@@ -68,4 +65,4 @@ class MetaException(Exception):
 def default_json(obj):
     if isinstance(obj, datetime):
         return obj.isoformat()
-    return TypeError('Type %s is not serializable' % type(obj))
+    return TypeError('Type {} is not serializable'.format(type(obj)))

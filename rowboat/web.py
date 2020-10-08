@@ -1,24 +1,29 @@
-import os; os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
 import logging
+import os; os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 from flask import Flask, g, session
 from holster.flask_ext import Holster
-
-from rowboat import ENV
-from rowboat.sql import init_db
-from rowboat.models.user import User
-from rowboat.types.guild import PluginsConfig
-
 from yaml import safe_load
+
+from rowboat.models.user import User
+from rowboat.sql import init_db
+from rowboat.types.guild import PluginsConfig
+from rowboat.views.auth import auth
+from rowboat.views.dashboard import dashboard
+from rowboat.views.guilds import guilds
+from rowboat.views.users import users
 
 rowboat = Holster(Flask(__name__))
 logging.getLogger('peewee').setLevel(logging.DEBUG)
+rowboat.app.register_blueprint(auth)
+rowboat.app.register_blueprint(dashboard)
+rowboat.app.register_blueprint(guilds)
+rowboat.app.register_blueprint(users)
 
 
 @rowboat.app.before_first_request
 def before_first_request():
-    init_db(ENV)
+    init_db()
 
     PluginsConfig.force_load_plugin_configs()
 

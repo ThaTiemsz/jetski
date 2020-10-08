@@ -5,9 +5,9 @@ from disco.bot.command import CommandError
 UNITS = {
     's': lambda v: v,
     'm': lambda v: v * 60,
-    'h': lambda v: v * 60 * 60,
-    'd': lambda v: v * 60 * 60 * 24,
-    'w': lambda v: v * 60 * 60 * 24 * 7,
+    'h': lambda v: v * 3600,
+    'd': lambda v: v * 86400,
+    'w': lambda v: v * 604800,
 }
 
 
@@ -34,7 +34,7 @@ def parse_duration(raw, source=None, negative=False, safe=False):
         digits = ''
 
     if negative:
-        value = value * -1
+        value *= -1
 
     return (source or datetime.utcnow()) + timedelta(seconds=value + 1)
 

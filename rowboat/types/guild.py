@@ -1,14 +1,12 @@
 import os
 
-from holster.enum import Enum
+from rowboat.types import Model, SlottedModel, Field, DictField, raw, rule_matcher
 
-from rowboat.types import Model, SlottedModel, Field, DictField, text, raw, rule_matcher
 
-CooldownMode = Enum(
-    'GUILD',
-    'CHANNEL',
-    'USER',
-)
+class CooldownMode(object):
+    GUILD = 'GUILD'
+    CHANNEL = 'CHANNEL'
+    USER = 'USER'
 
 
 class PluginConfigObj(object):
@@ -35,9 +33,7 @@ class PluginsConfig(Model):
         """
         plugins = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'plugins')
         for name in os.listdir(plugins):
-            __import__('rowboat.plugins.{}'.format(
-                name.rsplit('.', 1)[0]
-            ))
+            __import__('rowboat.plugins.{}'.format(name.rsplit('.', 1)[0]))
 
 
 class CommandOverrideConfig(SlottedModel):
@@ -55,7 +51,7 @@ class CommandsConfig(SlottedModel):
 
 
 class GuildConfig(SlottedModel):
-    nickname = Field(text)
+    nickname = Field(str)
     commands = Field(CommandsConfig, default=None, create=False)
     levels = DictField(int, int)
     plugins = Field(PluginsConfig.parse)

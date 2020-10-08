@@ -1,39 +1,30 @@
 import os
 import json
-import gevent
 import pprint
 import signal
 import inspect
-import humanize
 import functools
 import contextlib
 import re
-import time
 
 from datetime import datetime, timedelta
 from holster.emitter import Priority, Emitter
 from disco.bot import Bot
-from disco.types.base import UNSET
-from disco.types.user import User as DiscoUser
 from disco.types.message import MessageEmbed
-from disco.api.http import Routes, APIException
 from disco.bot.command import CommandEvent
 from disco.util.sanitize import S
 
 from rowboat import ENV
 from rowboat.util import LocalProxy
 from rowboat.util.input import humanize_duration
-from rowboat.util.stats import timed
 from rowboat.plugins import BasePlugin as Plugin
 from rowboat.plugins import CommandResponse, CommandFail
 from rowboat.sql import init_db
 from rowboat.redis import rdb
 
-import rowboat.models
 from rowboat.models.user import Infraction
 from rowboat.models.guild import Guild, GuildBan
 from rowboat.models.message import Command
-from rowboat.models.notification import Notification
 from rowboat.plugins.modlog import Actions
 from rowboat.constants import (
     GREEN_TICK_EMOJI, RED_TICK_EMOJI, ROWBOAT_GUILD_ID, ROWBOAT_USER_ROLE_ID,
@@ -42,7 +33,7 @@ from rowboat.constants import (
 
 from yaml import safe_load
 
-PY_CODE_BLOCK = u'```py\n{}\n```'
+PY_CODE_BLOCK ='```py\n{}\n```'
 
 BOT_INFO = '''
 Jetski is a moderation and utilitarian bot. [Join the server for updates and support.](https://discord.gg/CQX3Gju)
@@ -53,12 +44,12 @@ GUILDS_WAITING_SETUP_KEY = 'gws'
 
 class CorePlugin(Plugin):
     def load(self, ctx):
-        init_db(ENV)
+        init_db()
 
         self.startup = ctx.get('startup', datetime.utcnow())
         self.guilds = ctx.get('guilds', {})
-        self.guild_sync = []
-        self.guild_sync_debounces = {}
+        # self.guild_sync = []
+        # self.guild_sync_debounces = {}
 
         self.emitter = Emitter()
 
@@ -67,15 +58,17 @@ class CorePlugin(Plugin):
         # Overwrite the main bot instances plugin loader so we can magicfy events
         self.bot.add_plugin = self.our_add_plugin
 
-        if ENV != 'prod':
-            self.spawn(self.wait_for_plugin_changes)
-
         self.global_config = None
 
         with open('config.yaml', 'r') as f:
             self.global_config = safe_load(f)
 
         self._wait_for_actions_greenlet = self.spawn(self.wait_for_actions)
+
+    def unload(self, ctx):
+        ctx['guilds'] = self.guilds
+        ctx['startup'] = self.startup
+        super(CorePlugin, self).unload(ctx)
 
     def spawn_wait_for_actions(self, *args, **kwargs):
         self._wait_for_actions_greenlet = self.spawn(self.wait_for_actions)
@@ -91,27 +84,6 @@ class CorePlugin(Plugin):
         inst.register_trigger('listener', 'pre', functools.partial(self.on_pre, inst))
         Bot.add_plugin(self.bot, inst, *args, **kwargs)
 
-    def wait_for_plugin_changes(self):
-        import gevent_inotifyx as inotify
-
-        fd = inotify.init()
-        inotify.add_watch(fd, 'rowboat/plugins/', inotify.IN_MODIFY)
-        while True:
-            events = inotify.get_events(fd)
-            for event in events:
-                # Can't reload core.py sadly
-                if event.name.startswith('core.py'):
-                    continue
-
-                plugin_name = '{}Plugin'.format(event.name.split('.', 1)[0].title())
-                plugin = next((v for k, v in self.bot.plugins.items() if k.lower() == plugin_name.lower()), None)
-                if plugin:
-                    self.log.info('Detected change in %s, reloading...', plugin_name)
-                    try:
-                        plugin.reload()
-                    except Exception:
-                        self.log.exception('Failed to reload: ')
-
     def wait_for_actions(self):
         ps = rdb.pubsub()
         ps.subscribe('actions')
@@ -123,11 +95,11 @@ class CorePlugin(Plugin):
             data = json.loads(item['data'])
             if data['type'] == 'GUILD_UPDATE' and data['id'] in self.guilds:
                 with self.send_control_message() as embed:
-                    embed.title = u'Reloaded config for {}'.format(
+                    embed.title ='Reloaded config for {}'.format(
                         self.guilds[data['id']].name
                     )
 
-                self.log.info(u'Reloading guild %s', self.guilds[data['id']].name)
+                self.log.info('Reloading guild %s', self.guilds[data['id']].name)
 
                 # Refresh config, mostly to validate
                 try:
@@ -142,7 +114,7 @@ class CorePlugin(Plugin):
                     # Finally, emit the event
                     self.emitter.emit('GUILD_CONFIG_UPDATE', self.guilds[data['id']], config)
                 except:
-                    self.log.exception(u'Failed to reload config for guild %s', self.guilds[data['id']].name)
+                    self.log.exception('Failed to reload config for guild %s', self.guilds[data['id']].name)
                     continue
             elif data['type'] == 'RESTART':
                 self.log.info('Restart requested, signaling parent')
@@ -151,44 +123,33 @@ class CorePlugin(Plugin):
                 name = self.guilds[data['id']].name if self.guilds.has_key(data['id']) else Guild.with_id(data['id']).name
                 with self.send_control_message() as embed:
                     embed.color = 0xff6961
-                    embed.title = u'Guild Force Deleted {}'.format(
+                    embed.title ='Guild Force Deleted {}'.format(
                         name,
                     )
 
                 try:
-                    self.log.info(u'Leaving guild %s', name)
+                    self.log.info('Leaving guild %s', name)
                     self.bot.client.api.users_me_guilds_delete(guild=data['id'])
                 except:
-                    self.log.info(u'Cannot leave guild %s, bot not in guild', name)
+                    self.log.info('Cannot leave guild %s, bot not in guild', name)
                 finally:
-                    self.log.info(u'Disabling guild %s', name)
+                    self.log.info('Disabling guild %s', name)
                     Guild.update(enabled=False).where(Guild.guild_id == data['id']).execute()
 
-                    self.log.info(u'Unwhilelisting guild %s', name)
+                    self.log.info('Unwhilelisting guild %s', name)
                     rdb.srem(GUILDS_WAITING_SETUP_KEY, str(data['id']))
 
-    def unload(self, ctx):
-        ctx['guilds'] = self.guilds
-        ctx['startup'] = self.startup
-        super(CorePlugin, self).unload(ctx)
-
     def update_rowboat_guild_access(self):
-        # if ROWBOAT_GUILD_ID not in self.state.guilds or ENV != 'prod':
-        if ROWBOAT_GUILD_ID not in self.state.guilds or ENV not in ('prod', 'docker'):
+        if ROWBOAT_GUILD_ID not in self.bot.client.state.guilds or ENV != 'prod':
             return
 
-        rb_guild = self.state.guilds.get(ROWBOAT_GUILD_ID)
+        rb_guild = self.bot.client.state.guilds.get(ROWBOAT_GUILD_ID)
         if not rb_guild:
             return
 
         self.log.info('Updating Jetski guild access')
 
-        guilds = Guild.select(
-            Guild.guild_id,
-            Guild.config
-        ).where(
-            (Guild.enabled == 1)
-        )
+        guilds = Guild.select(Guild.guild_id, Guild.config).where(Guild.enabled)
 
         users_who_should_have_access = set()
         for guild in guilds:
@@ -264,12 +225,18 @@ class CorePlugin(Plugin):
         return event
 
     def get_config(self, guild_id, *args, **kwargs):
-        # Externally Used
-        return self.guilds[guild_id].get_config(*args, **kwargs)
+        """
+        Externally used by other plugins to provide info only available to the core plugin
+        """
+        g = self.guilds.get(guild_id)
+        if g:
+            return g.get_config(*args, **kwargs)
 
     def get_guild(self, guild_id):
-        # Externally Used
-        return self.guilds[guild_id]
+        """
+        Externally used by other plugins to provide info only available to the core plugin
+        """
+        return self.guilds.get(guild_id)
 
     def _attach_local_event_data(self, event, plugin_name, guild_id):
         if not hasattr(event, 'config'):
@@ -357,11 +324,6 @@ class CorePlugin(Plugin):
 
     @Plugin.listen('Resumed')
     def on_resumed(self, event):
-        Notification.dispatch(
-            Notification.Types.RESUME,
-            env=ENV,
-        )
-
         with self.send_control_message() as embed:
             embed.title = 'Resumed'
             embed.color = 0xffb347
@@ -371,10 +333,6 @@ class CorePlugin(Plugin):
     def on_ready(self, event):
         reconnects = self.client.gw.reconnects
         self.log.info('Started session %s', event.session_id)
-        Notification.dispatch(
-            Notification.Types.CONNECT,
-            env=ENV,
-        )
 
         # if reconnects:
         #     self.update_guild_syncs()
@@ -396,26 +354,26 @@ class CorePlugin(Plugin):
     #         self.client.gw.reset_sampled_events()
     #     else:
     #         self.log.warning('Sampled events is 0, forcing a fresh reconnect')
-    #         self.client.gw.ws.close()
+    #         self.client.gw.ws.close(status=4000)
 
-    @Plugin.schedule(30, init=False, repeat=False)
-    def update_guild_syncs(self):
-        if len(self.guild_sync) == 0:
-            return
-
-        guilds = [i for i in self.guild_sync] # hacky deepcopy basically
-        for guild_id in guilds:
-            if guild_id in self.guild_sync_debounces:
-                if self.guild_sync_debounces.get(guild_id) > time.time():
-                    self.guild_sync_debounces.pop(guild_id)
-                    guilds.remove(guild_id)
-            else:
-                self.guild_sync_debounces[guild_id] = time.time() + 10
-                self.guild_sync.remove(guild_id)
-
-        self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
-        for guild_id in guilds:
-            self.bot.client.gw.request_guild_members(guild_id_or_ids=guild_id)
+    # @Plugin.schedule(30, init=False, repeat=False)
+    # def update_guild_syncs(self):
+    #     if len(self.guild_sync) == 0:
+    #         return
+    #
+    #     guilds = [i for i in self.guild_sync] # hacky deepcopy basically
+    #     for guild_id in guilds:
+    #         if guild_id in self.guild_sync_debounces:
+    #             if self.guild_sync_debounces.get(guild_id) > time.time():
+    #                 self.guild_sync_debounces.pop(guild_id)
+    #                 guilds.remove(guild_id)
+    #         else:
+    #             self.guild_sync_debounces[guild_id] = time.time() + 10
+    #             self.guild_sync.remove(guild_id)
+    #
+    #     self.log.info('Requesting Guild Member States for {} guilds'.format(len(guilds)))
+    #     for guild_id in guilds:
+    #         self.bot.client.gw.request_guild_members(guild_id_or_ids=guild_id)
 
     @Plugin.listen('GuildCreate', priority=Priority.SEQUENTIAL, conditional=lambda e: not e.created)
     def on_guild_create(self, event):
@@ -454,12 +412,12 @@ class CorePlugin(Plugin):
         self.guilds[event.id] = guild
 
         # Request guild members chunk
-        self.log.info('Adding guild {} to chunks'.format(event.id))
-        self.guild_sync.append(event.id)
+        # self.log.info('Adding guild {} to chunks'.format(event.id))
+        # self.guild_sync.append(event.id)
 
         # if config.nickname:
         #     def set_nickname():
-        #         m = event.members.select_one(id=self.state.me.id)
+        #         m = event.members.select_one(id=self.bot.client.state.me.id)
         #         if m and m.nick != config.nickname:
         #             try:
         #                 m.set_nickname(config.nickname)
@@ -493,10 +451,7 @@ class CorePlugin(Plugin):
         commands.
         """
         # Ignore messages sent by bots
-        if event.message.author.bot:
-            return
-
-        if rdb.sismember('ignored_channels', event.message.channel_id):
+        if event.message.author.bot or rdb.sismember('ignored_channels', event.message.channel_id):
             return
 
         # If this is message for a guild, grab the guild object
@@ -523,7 +478,7 @@ class CorePlugin(Plugin):
             commands = list(self.bot.get_commands_for_message(True, {}, '', event.message))
         else:
             # if ENV != 'prod':
-            if ENV not in ('prod', 'docker'):
+            if ENV not in 'prod':
                 if not event.message.content.startswith(ENV + '!'):
                     return
                 event.message.content = event.message.content[len(ENV) + 1:]
@@ -546,7 +501,7 @@ class CorePlugin(Plugin):
             if cc.prefix:
                 prefixes.append(cc.prefix)
             if cc.mention:
-                prefixes.append('{} '.format(self.state.me.mention))
+                prefixes.append('{} '.format(self.bot.client.state.me.mention))
             if not prefixes:
                 return
 
@@ -558,13 +513,14 @@ class CorePlugin(Plugin):
             sqlplugin = self.bot.plugins.get('SQLPlugin')
             if sqlplugin:
                 sqlplugin.tag_messages.append(event.message.id)
-            event.message.content = u'{}tags show {}'.format(m.group(1), m.group(2))
+            event.message.content ='{}tags show {}'.format(m.group(1), m.group(2))
             return self.on_message_create(event, True)
 
         event.user_level = self.get_level(event.guild, event.author) if event.guild else 0
 
         # Grab whether this user is a global admin
         # TODO: cache this
+        ## this is technically already cached and runs fastest this way
         global_admin = rdb.sismember('global_admins', event.author.id)
 
         # Iterate over commands and find a match
@@ -589,31 +545,30 @@ class CorePlugin(Plugin):
             if not global_admin and event.user_level < level:
                 continue
 
-            with timed('rowboat.command.duration', tags={'plugin': command.plugin.name, 'command': command.name}):
-                try:
-                    command_event = CommandEvent(command, event.message, match)
-                    command_event.user_level = event.user_level
-                    command.plugin.execute(command_event)
-                except CommandResponse as e:
-                    if is_tag:
-                        return
-                    event.reply(e.response)
-                except:
-                    tracked = Command.track(event, command, exception=True)
-                    self.log.exception('Command error:')
+            try:
+                command_event = CommandEvent(command, event.message, match)
+                command_event.user_level = event.user_level
+                command.plugin.execute(command_event)
+            except CommandResponse as e:
+                if is_tag:
+                    return
+                event.reply(e.response)
+            except:
+                tracked = Command.track(event, command, exception=True)
+                self.log.exception('Command error:')
 
-                    with self.send_control_message() as embed:
-                        embed.title = u'Command Error: {}'.format(command.name)
-                        embed.color = 0xff6961
-                        embed.add_field(
-                            name='Author', value='({}) `{}`'.format(event.author, event.author.id), inline=True)
-                        embed.add_field(name='Channel', value='({}) `{}`'.format(
-                            event.channel.name,
-                            event.channel.id
-                        ), inline=True)
-                        embed.description = '```{}```'.format(u'\n'.join(tracked.traceback.split('\n')[-8:]))
+                with self.send_control_message() as embed:
+                    embed.title ='Command Error: {}'.format(command.name)
+                    embed.color = 0xff6961
+                    embed.add_field(
+                        name='Author', value='({}) `{}`'.format(event.author, event.author.id), inline=True)
+                    embed.add_field(name='Channel', value='({}) `{}`'.format(
+                        event.channel.name,
+                        event.channel.id
+                    ), inline=True)
+                    embed.description = '```{}```'.format('\n'.join(tracked.traceback.split('\n')[-8:]))
 
-                    return event.reply('<:{}> something went wrong, perhaps try again later'.format(RED_TICK_EMOJI))
+                return event.reply('<:{}> something went wrong, perhaps try again later'.format(RED_TICK_EMOJI))
 
             Command.track(event, command)
 
@@ -651,7 +606,7 @@ class CorePlugin(Plugin):
                 return event.msg.reply(':warning: only the server owner can setup Jetski')
 
         # Make sure we have admin perms
-        m = event.guild.members.select_one(id=self.state.me.id)
+        m = event.guild.members.select_one(id=self.bot.client.state.me.id)
         if not m.permissions.administrator and not global_admin:
             return event.msg.reply(':warning: bot must have the Administrator permission')
 
@@ -665,11 +620,11 @@ class CorePlugin(Plugin):
         contents = []
 
         for gid, guild in self.guilds.items():
-            guild = self.state.guilds[gid]
-            perms = guild.get_permissions(self.state.me)
+            guild = self.bot.client.state.guilds[gid]
+            perms = guild.get_permissions(self.bot.client.state.me)
 
             if not perms.ban_members and not perms.administrator:
-                contents.append(u':x: {} - No Permissions'.format(
+                contents.append(':x: {} - No Permissions'.format(
                     guild.name
                 ))
                 continue
@@ -682,12 +637,12 @@ class CorePlugin(Plugin):
                     reason,
                     guild=guild)
             except:
-                contents.append(u':x: {} - Unknown Error'.format(
+                contents.append(':x: {} - Unknown Error'.format(
                     guild.name
                 ))
                 self.log.exception('Failed to force ban %s in %s', user, gid)
 
-            contents.append(u':white_check_mark: {} - :regional_indicator_f:'.format(
+            contents.append(':white_check_mark: {} - :regional_indicator_f:'.format(
                 guild.name
             ))
 
@@ -699,7 +654,7 @@ class CorePlugin(Plugin):
         embed.color = 0x7289da
         embed.set_author(name='Jetski', icon_url=self.client.state.me.avatar_url, url='https://jetski.ga/')
         embed.description = BOT_INFO
-        embed.add_field(name='Servers', value=str(Guild.select().count()), inline=True)
+        embed.add_field(name='Servers', value=str(Guild.select().where(Guild.enabled).count()), inline=True)
         embed.add_field(name='Uptime', value=humanize_duration(datetime.utcnow() - self.startup), inline=True)
         event.msg.reply(embed=embed)
 
@@ -715,7 +670,7 @@ class CorePlugin(Plugin):
             if command.lower() in cmd.triggers:
                 break
         else:
-            event.msg.reply(u"Couldn't find command for `{}`".format(S(command, escape_codeblocks=True)))
+            event.msg.reply("Couldn't find command for `{}`".format(S(command, escape_codeblocks=True)))
             return
 
         code = cmd.func.__code__
@@ -729,6 +684,9 @@ class CorePlugin(Plugin):
 
     @Plugin.command('eval', level=-1)
     def command_eval(self, event):
+        global_admin = rdb.sismember('global_admins', event.author.id)
+        if not global_admin:
+            return self.log.error('Check CommandLevels; this line should never run.')
         ctx = {
             'bot': self.bot,
             'client': self.bot.client,
@@ -740,10 +698,10 @@ class CorePlugin(Plugin):
             'author': event.msg.author
         }
 
-        # Mulitline eval
+        # Multiline eval
         src = event.codeblock
         if src.count('\n'):
-            lines = filter(bool, src.split('\n'))
+            lines = list(filter(bool, src.split('\n')))
             if lines[-1] and 'return' not in lines[-1]:
                 lines[-1] = 'return ' + lines[-1]
             lines = '\n'.join('    ' + i for i in lines)
@@ -751,31 +709,27 @@ class CorePlugin(Plugin):
             local = {}
 
             try:
-                exec compile(code, '<eval>', 'exec') in ctx, local
+                exec(compile(code, '<eval>', 'exec'), ctx, local)
             except Exception as e:
-                event.msg.reply(PY_CODE_BLOCK.format(type(e).__name__ + ': ' + str(e)))
-                return
+                return event.msg.reply(PY_CODE_BLOCK.format(type(e).__name__ + ': ' + str(e)))
 
             result = pprint.pformat(local['x'])
         else:
             try:
                 result = str(eval(src, ctx))
             except Exception as e:
-                event.msg.reply(PY_CODE_BLOCK.format(type(e).__name__ + ': ' + str(e)))
-                return
+                return event.msg.reply(PY_CODE_BLOCK.format(type(e).__name__ + ': ' + str(e)))
 
-        if len(result) > 1990:
+        if len(result) > 1980:
             event.msg.reply('', attachments=[('result.txt', result)])
         else:
             event.msg.reply(PY_CODE_BLOCK.format(result))
 
     @Plugin.command('sync-bans', group='control', level=-1)
     def control_sync_bans(self, event):
-        guilds = list(Guild.select().where(
-            Guild.enabled == 1
-        ))
+        guilds = list(Guild.select().where(Guild.enabled))
 
-        msg = event.msg.reply(':timer: pls wait while I sync...')
+        msg = event.msg.reply(':timer: pls wait while I sync…')
 
         for guild in guilds:
             guild.sync_bans(self.client.state.guilds.get(guild.guild_id))
@@ -785,15 +739,15 @@ class CorePlugin(Plugin):
     @Plugin.command('reconnect', group='control', level=-1)
     def control_reconnect(self, event):
         event.msg.reply('Ok, closing connection')
-        self.client.gw.ws.close()
+        self.client.gw.ws.close(status=4000)
 
     @Plugin.command('invite', '<guild:snowflake>', group='guilds', level=-1)
     def guild_join(self, event, guild):
-        guild = self.state.guilds.get(guild)
+        guild = self.bot.client.state.guilds.get(guild)
         if not guild:
             return event.msg.reply(':no_entry_sign: invalid or unknown guild ID')
 
-        msg = event.msg.reply(u'Ok, hold on while I get you setup with an invite link to {}'.format(
+        msg = event.msg.reply('Ok, hold on while I get you setup with an invite link to {}'.format(
             guild.name,
         ))
 
@@ -806,11 +760,11 @@ class CorePlugin(Plugin):
                 unique=True,
             )
         except:
-            return msg.edit(u':no_entry_sign: Hmmm, something went wrong creating an invite for {}'.format(
+            return msg.edit(':no_entry_sign: Hmmm, something went wrong creating an invite for {}'.format(
                 guild.name,
             ))
 
-        msg.edit(u'Ok, here is a temporary invite for you: {}'.format(
+        msg.edit('Ok, here is a temporary invite for you: {}'.format(
             invite.code,
         ))
 
@@ -873,7 +827,7 @@ class CorePlugin(Plugin):
         if mode == 'list':
             embed = MessageEmbed()
             embed.color = 0x7289da
-            embed.set_author(name='Loaded Plugins ({})'.format(len(self.bot.plugins)), icon_url=self.state.me.avatar_url)
+            embed.set_author(name='Loaded Plugins ({})'.format(len(self.bot.plugins)), icon_url=self.bot.client.state.me.avatar_url)
             embed.description = '```md\n{}```'.format('\n'.join('- {}'.format(key) for key in self.bot.plugins))
             embed.set_footer(text='Use file name for load, registered name for unload/reload.')
             return event.msg.reply('', embed=embed)

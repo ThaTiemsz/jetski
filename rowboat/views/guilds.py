@@ -1,9 +1,10 @@
-import yaml
-import json
 import functools
+import json
 import operator
+import yaml
 
 from flask import Blueprint, request, g, jsonify
+from functools import reduce
 
 from rowboat.util.decos import authed
 from rowboat.models.guild import Guild, GuildConfigChange
@@ -71,7 +72,7 @@ def guild_delete(guild):
 @with_guild
 def guild_config(guild):
     return jsonify({
-        'contents': unicode(guild.config_raw) if guild.config_raw else yaml.safe_dump(guild.config),
+        'contents': str(guild.config_raw.tobytes(), "utf-8") if guild.config_raw else yaml.safe_dump(guild.config),
     })
 
 
@@ -87,15 +88,15 @@ def guild_z_config_update(guild):
     except:
         return 'Invalid YAML', 400
 
-    before = sorted(guild.config.get('web', {}).items(), key=lambda i: i[0])
-    after = sorted([(str(k), v) for k, v in data.get('web', {}).items()], key=lambda i: i[0])
+    before = sorted(list(guild.config.get('web', {}).items()), key=lambda i: i[0])
+    after = sorted([(str(k), v) for k, v in list(data.get('web', {}).items())], key=lambda i: i[0])
 
     if guild.role != 'admin' and before != after:
         return 'Invalid Access', 403
 
     role = data.get('web', {}).get(g.user.user_id) or data.get('web', {}).get(str(g.user.user_id))
     if guild.role != role and not g.user.admin:
-        print g.user.admin
+        print(g.user.admin)
         return 'Cannot change your own permissions', 400
 
     try:
@@ -104,7 +105,7 @@ def guild_z_config_update(guild):
     except Guild.DoesNotExist:
         return 'Invalid Guild', 404
     except Exception as e:
-        return 'Invalid Data: %s' % e, 400
+        return 'Invalid Data: {}'.format(e), 400
 
 
 CAN_FILTER = ['id', 'user_id', 'actor_id', 'type', 'reason']
@@ -192,8 +193,8 @@ def guild_config_history(guild):
     def serialize(gcc):
         return {
             'user': serialize_user(gcc.user_id),
-            'before': str(gcc.before_raw).decode("latin-1"),
-            'after': str(gcc.after_raw).decode("latin-1"),
+            'before': str(gcc.before_raw, 'utf-8'),
+            'after': str(gcc.after_raw, 'utf-8'),
             'created_at': gcc.created_at.isoformat(),
         }
 
@@ -203,7 +204,7 @@ def guild_config_history(guild):
         GuildConfigChange.created_at.desc()
     ).paginate(int(request.values.get('page', 1)), 25)
 
-    return jsonify(map(serialize, q))
+    return jsonify(list(map(serialize, q)))
 
 
 @guilds.route('/<gid>/stats/messages', methods=['GET'])

@@ -1,14 +1,13 @@
-from flask import g, jsonify
-from httplib import FORBIDDEN
-
 import functools
+
+from flask import g, jsonify
 
 
 def _authed(func):
     @functools.wraps(func)
     def deco(*args, **kwargs):
         if not hasattr(g, 'user') or not g.user:
-            return jsonify({'error': 'Authentication Required'}), FORBIDDEN
+            return jsonify({'error': 'Authentication Required'}), 403
 
         return func(*args, **kwargs)
     return deco

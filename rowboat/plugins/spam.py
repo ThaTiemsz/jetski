@@ -5,8 +5,8 @@ import operator
 from gevent.lock import Semaphore
 from datetime import datetime, timedelta
 from collections import defaultdict
+from functools import reduce
 from holster.enum import Enum
-from holster.emitter import Priority
 from disco.util.sanitize import ZERO_WIDTH_SPACE
 from disco.api.http import APIException
 
@@ -16,7 +16,6 @@ from rowboat.plugins.modlog import Actions
 from rowboat.plugins.censor import URL_RE
 from rowboat.plugins.admin import infraction_message
 from rowboat.util.leakybucket import LeakyBucket
-from rowboat.util.stats import timed
 from rowboat.types.plugin import PluginConfig
 from rowboat.types import SlottedModel, DictField, Field, ListField, snowflake
 from rowboat.models.user import Infraction
@@ -81,7 +80,7 @@ class SubConfig(SlottedModel):
     def get_bucket(self, attr, guild_id):
         obj = getattr(self, attr)
         if not obj or not obj.count or not obj.interval:
-            return (None, None)
+            return None, None
 
         bucket = getattr(self, '_cached_{}_bucket'.format(attr), None)
         if not bucket:
@@ -134,7 +133,7 @@ class SpamPlugin(Plugin):
     def violate(self, violation):
         key = 'lv:{e.member.guild_id}:{e.member.id}'.format(e=violation.event)
         last_violated = int(rdb.get(key) or 0)
-        rdb.setex('lv:{e.member.guild_id}:{e.member.id}'.format(e=violation.event), int(time.time()), 60)
+        rdb.setex('lv:{e.member.guild_id}:{e.member.id}'.format(e=violation.event), 60, int(time.time()))
 
         if not last_violated > time.time() - 10:
             self.call(
@@ -151,7 +150,7 @@ class SpamPlugin(Plugin):
                 embed.add_field(name='Guild', value=violation.event.guild.name, inline=True)
                 embed.add_field(name='Guild ID', value=violation.event.guild.id, inline=True)
                 embed.add_field(name=ZERO_WIDTH_SPACE, value=ZERO_WIDTH_SPACE, inline=True)
-                embed.add_field(name='User', value=unicode(violation.member), inline=True)
+                embed.add_field(name='User', value=violation.member, inline=True)
                 embed.add_field(name='User ID', value=violation.event.member.id, inline=True)
                 embed.add_field(name=ZERO_WIDTH_SPACE, value=ZERO_WIDTH_SPACE, inline=True)
 
@@ -161,7 +160,7 @@ class SpamPlugin(Plugin):
             if punishment == PunishmentType.MUTE:
                 if violation.rule.punishment_dms:
                     try:
-                        infractions, embed = infraction_message(violation.event, violation.member.id, 'mute', violation.event.guild.name, str(self.state.me), 'Spam Detected', auto=True)
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'mute', violation.event.guild.name, str(self.bot.client.state.me), 'Spam Detected', auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('You\'ve been {} in **{}**.'.format('muted', violation.event.guild.name), embed=embed)
                     except APIException:
@@ -176,7 +175,7 @@ class SpamPlugin(Plugin):
                 expiration_date = datetime.utcnow() + timedelta(seconds=punishment_duration)
                 if violation.rule.punishment_dms:
                     try:
-                        infractions, embed = infraction_message(violation.event, violation.member.id, 'tempmute', violation.event.guild.name, str(self.state.me), 'Spam Detected', expires=expiration_date, auto=True)
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'tempmute', violation.event.guild.name, str(self.bot.client.state.me), 'Spam Detected', expires=expiration_date, auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('You\'ve been {} in **{}**.'.format('temporarily muted', violation.event.guild.name), embed=embed)
                     except APIException:
@@ -191,7 +190,7 @@ class SpamPlugin(Plugin):
             elif punishment == PunishmentType.KICK:
                 if violation.rule.punishment_dms:
                     try:
-                        infractions, embed = infraction_message(violation.event, violation.member.id, 'kick', violation.event.guild.name, str(self.state.me), 'Spam Detected', auto=True)
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'kick', violation.event.guild.name, str(self.bot.client.state.me), 'Spam Detected', auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('You\'ve been {} from **{}**.'.format('kicked', violation.event.guild.name), embed=embed)
                     except APIException:
@@ -206,7 +205,7 @@ class SpamPlugin(Plugin):
                 expiration_date = datetime.utcnow() + timedelta(seconds=punishment_duration)
                 if violation.rule.punishment_dms:
                     try:
-                        infractions, embed = infraction_message(violation.event, violation.member.id, 'tempban', violation.event.guild.name, str(self.state.me), 'Spam Detected', expires=expiration_date, auto=True)
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'tempban', violation.event.guild.name, str(self.bot.client.state.me), 'Spam Detected', expires=expiration_date, auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('You\'ve been {} from **{}**.'.format('temporarily banned', violation.event.guild.name), embed=embed)
                     except APIException:
@@ -221,7 +220,7 @@ class SpamPlugin(Plugin):
             elif punishment == PunishmentType.BAN:
                 if violation.rule.punishment_dms:
                     try:
-                        infractions, embed = infraction_message(violation.event, violation.member.id, 'ban', violation.event.guild.name, str(self.state.me), 'Spam Detected', auto=True)
+                        infractions, embed = infraction_message(violation.event, violation.member.id, 'ban', violation.event.guild.name, str(self.bot.client.state.me), 'Spam Detected', auto=True)
                         dm = self.client.api.users_me_dms_create(violation.member.id)
                         dm.send_message('You\'ve been {} from **{}**.'.format('banned', violation.event.guild.name), embed=embed)
                     except APIException:
@@ -250,7 +249,7 @@ class SpamPlugin(Plugin):
                     channels[chan].append(mid)
 
                 for channel, messages in channels.items():
-                    channel = self.state.channels.get(channel)
+                    channel = self.bot.client.state.channels.get(channel)
                     if not channel:
                         continue
 
@@ -322,7 +321,7 @@ class SpamPlugin(Plugin):
 
     @Plugin.listen('MessageCreate')
     def on_message_create(self, event):
-        if event.author.id == self.state.me.id:
+        if event.author.id == self.bot.client.state.me.id:
             return
 
         if event.webhook_id:
@@ -336,23 +335,21 @@ class SpamPlugin(Plugin):
             self.guild_locks[event.guild.id] = Semaphore()
         self.guild_locks[event.guild.id].acquire()
 
-        tags = {'guild_id': event.guild.id, 'channel_id': event.channel.id}
-        with timed('rowboat.plugin.spam.duration', tags=tags):
-            try:
-                member = event.guild.get_member(event.author)
-                if not member:
-                    self.log.warning(
-                        'Failed to find member for guild id %s and author id %s', event.guild.id, event.author.id)
-                    return
+        try:
+            member = event.guild.get_member(event.author)
+            if not member:
+                self.log.warning(
+                    'Failed to find member for guild id %s and author id %s', event.guild.id, event.author.id)
+                return
 
-                level = int(self.bot.plugins.get('CorePlugin').get_level(event.guild, event.author))
+            level = int(self.bot.plugins.get('CorePlugin').get_level(event.guild, event.author))
 
-                # TODO: We should linerialize the work required for all rules in one go,
-                #  we repeat all the work in each rule which sucks.
+            # TODO: We should linerialize the work required for all rules in one go,
+            #  we repeat all the work in each rule which sucks.
 
-                for rule in event.config.compute_relevant_rules(member, level):
-                    self.check_message_simple(event, member, rule)
-            except Violation as v:
-                self.violate(v)
-            finally:
-                self.guild_locks[event.guild.id].release()
+            for rule in event.config.compute_relevant_rules(member, level):
+                self.check_message_simple(event, member, rule)
+        except Violation as v:
+            self.violate(v)
+        finally:
+            self.guild_locks[event.guild.id].release()

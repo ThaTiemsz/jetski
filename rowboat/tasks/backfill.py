@@ -31,4 +31,4 @@ def backfill_channel(task, channel_id):
         scanned += len(chunk)
         inserted += len(Message.from_disco_message_many(chunk, safe=True))
 
-    task.log.info('Completed backfill on channel %s, %s scanned and %s inserted', channel_id, scanned, inserted)
+    task.log.info('Completed backfill on channel {}, {} scanned and {} inserted'.format(channel_id, scanned, inserted))

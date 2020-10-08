@@ -1,70 +1,32 @@
-pycparser==2.19
-setuptools
-wheel==0.32.3
-arrow==0.10.0
-cairocffi==0.8.0
-CairoSVG==1.0.19
-cffi==1.9.1
-click==6.7
-contextlib2==0.5.4
-cssselect==1.0.1
-dill==0.2.6
--e git+https://github.com/ThaTiemsz/disco.git@1f27c822f0df3a0e58c8564281a6fc8e47b31673#egg=disco-py
-# disco-py==0.0.11-rc.8
-Distance==0.1.3
-emoji==0.3.9
-enum34==1.1.6
-erlpack==0.3.2
-Flask==0.12.4
-future==0.16.0
-futures==3.0.5
-# greenlet==0.4.11
-# holster==1.0.11
-httplib2==0.10.3
-humanize==0.5.1
-inflection==0.3.1
-influxdb==4.0.0
-itsdangerous==0.24
-Jinja2==2.9.5
-lxml==3.7.2
-markovify==0.5.4
-MarkupSafe==0.23
-oauth2client==3.0.0
-oauthlib==2.0.1
-olefile==0.44
-packaging==16.8
-Pillow==6.2.0
-ply==3.8
-protobuf==3.2.0
-psycogreen==1.0
-psycopg2==2.6.2
-pyasn1==0.2.3
-pyasn1-modules==0.0.8
-# pycparser==2.17
-pygal==2.3.1
-pyparsing==2.2.0
-pyquery==1.2.17
-python-dateutil==2.6.0
-pytz==2016.10
-PyYAML==5.1.1
-raven==5.32.0
-redis==2.10.5
-regex==2017.2.8
-requests-oauthlib==0.8.0
-rsa==3.4.2
-ruamel.ordereddict==0.4.9
-ruamel.yaml==0.13.14
-tinycss==0.4
-typing==3.5.3.0
-tzlocal==1.3
+pip==20.2.3
+setuptools==50.3.0
+wheel==0.35.1
+pycparser==2.20
+earl-etf==2.1.2
+PyYAML==5.3.1
+numpy==1.19.2
+wsaccel==0.6.2
+-e git+https://github.com/elderlabs/BetterDisco.git@v8/py3-testing#egg=disco-py
+click==7.1.2
+Flask==1.1.2
+greenlet==0.4.17
+-e git+https://github.com/elderlabs/holster#egg=holster
+peewee==3.13.3
+psycogreen==1.0.2
+psycopg2-binary==2.8.6
+redis==3.5.3
+werkzeug==1.0.1
+emoji==0.6.0
+fuzzywuzzy==0.18.0
+GitPython==3.1.9
+humanize==3.0.1
+markovify==0.8.3
+regex==2020.9.27
+sentry-sdk[flask]==0.18.0
+pytz==2020.1
 Unidecode==1.1.1
-# websocket-client==0.37.0
-Werkzeug==0.16.0
-# wheel==0.24.0
-xxhash==1.0.1
-fuzzywuzzy==0.15.0
-pytest==3.0.7
-python-Levenshtein==0.12.0
--e git+https://github.com/b1naryth1ef/peewee.git@3f1f843ac2d94c212053f46d95ae7040e2f5d753#egg=peewee
-gevent_inotifyx==0.1.1
-datadog==0.16.0
+cffi==1.14.3
+cairocffi==1.1.0
+Pillow==7.2.0
+CairoSVG==2.4.2
+-e git+https://github.com/elderlabs/pygal#egg=pygal

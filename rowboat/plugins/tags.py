@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
 # Full credit to Xenthys for coding this
 import re
 import requests
 from time import time
 from random import randint
-from string import Formatter
 from datetime import datetime
 
 from disco.bot import CommandLevels
@@ -19,7 +17,7 @@ from rowboat.models.user import User
 
 def clamp(string, size):
     if len(string) > size:
-        return string[:size-1] + u'…'
+        return string[:size-1] +'…'
     return string
 
 class TagsConfig(PluginConfig):
@@ -172,7 +170,7 @@ class TagsPlugin(Plugin):
             return ''
 
         a, b = int(a), int(b)
-        if (a > b):
+        if a > b:
             a, b = b, a
 
         return str(randint(a, b))
@@ -244,13 +242,13 @@ class TagsPlugin(Plugin):
 
         avatar = user.avatar
         if avatar:
-            avatar = u'https://cdn.discordapp.com/avatars/{}/{}.{}'.format(
-                user.id, avatar, u'gif' if avatar.startswith('a_') else u'png'
+            avatar ='https://cdn.discordapp.com/avatars/{}/{}.{}'.format(
+                user.id, avatar,'gif' if avatar.startswith('a_') else'png'
             )
         else:
-            avatar = u'https://cdn.discordapp.com/embed/avatars/{}.png'.format(int(disc)%5)
+            avatar ='https://cdn.discordapp.com/embed/avatars/{}.png'.format(int(disc)%5)
 
-        bot = guild.members.select_one(id=self.state.me.id)
+        bot = guild.members.select_one(id=self.bot.client.state.me.id)
 
         now = datetime.utcnow()
 
@@ -260,11 +258,11 @@ class TagsPlugin(Plugin):
             'discriminator': disc,
             'username': member.name,
             'user_id': str(user.id),
-            'user_tag': u'{}'.format(user),
+            'user_tag':user,
             'nickname': self.S(member.nick) or self.S(member.name),
             'channel': channel.mention,
             'channel_id': str(channel.id),
-            'channel_name': u'{}'.format(channel),
+            'channel_name':channel,
             'bot_nickname': self.S(bot.nick) or self.S(bot.name),
             'server_name': event.guild.name,
             'year': now.strftime('%Y'),
@@ -286,8 +284,8 @@ class TagsPlugin(Plugin):
             if w and w != '0':
                 w = int(w)
                 if w <= 1:
-                    return u'{{get:{}}}'.format(k)
-                return u'{{get:{}|{}}}'.format(k, w-1)
+                    return'{{get:{}}}'.format(k)
+                return'{{get:{}|{}}}'.format(k, w-1)
 
             if not k:
                 return ''
@@ -296,7 +294,7 @@ class TagsPlugin(Plugin):
 
         if debug:
             start = time()
-            debug = u'Initialization\nContent: {}\nInput: {}\n\n'.format(content, args or '(none)')
+            debug ='Initialization\nContent: {}\nInput: {}\n\n'.format(content, args or '(none)')
         content = self.source_re.sub('', content)
         for i in range(10):
             old = content
@@ -317,11 +315,11 @@ class TagsPlugin(Plugin):
             if content == old:
                 break
             if debug:
-                debug += u'Step #{}\nContent: {}\nStorage: {}\n\n'.format(
+                debug +='Step #{}\nContent: {}\nStorage: {}\n\n'.format(
                     i+1,
                     content,
-                    u'; '.join(map(
-                        lambda x: u'[{}] "{}"'.format(x[0], x[1]),
+                   '; '.join(map(
+                        lambda x:'[{}] "{}"'.format(x[0], x[1]),
                         storage.iteritems()
                     )) or '(empty)'
                 )
@@ -331,16 +329,16 @@ class TagsPlugin(Plugin):
         perms = event.member.permissions
         if not (perms.administrator or perms.mention_everyone):
             content = content.\
-                replace('@here', u'@\u200Bhere').\
-                replace('@everyone', u'@\u200Beveryone')
+                replace('@here','@\u200Bhere').\
+                replace('@everyone','@\u200Beveryone')
 
         if debug:
-            debug += u'End result: {}'.format(content)
+            debug +='End result: {}'.format(content)
             parsing = '_Parsing took {}ms_'.format(
                 format((time() - start) * 1000, '.3f')
             )
             if len(debug) < 1970:
-                return event.msg.reply(u'```\n{}\n```{}'.format(debug, parsing))
+                return event.msg.reply('```\n{}\n```{}'.format(debug, parsing))
             return event.msg.reply(parsing, attachments=[(
                 'tag_debug_{}.txt'.format(event.msg.id), debug
             )])
@@ -370,7 +368,7 @@ class TagsPlugin(Plugin):
 
             content = content.group(1).decode('utf8').strip('`\n')
             if not self.source_re.search(content):
-                content = u'{{source:{}}}{}'.format(remote, content)
+                content ='{{source:{}}}{}'.format(remote, content)
         else:
             content = self.source_re.sub('', content)
 
@@ -394,7 +392,7 @@ class TagsPlugin(Plugin):
             content=content
         )
 
-        raise CommandSuccess(u'ok, your tag named `{}` has been {}'.format(
+        raise CommandSuccess('ok, your tag named `{}` has been {}'.format(
             name, 'imported' if import_tag else 'created'
         ))
 
@@ -418,7 +416,7 @@ class TagsPlugin(Plugin):
         content = self.compile_tag(event, tag.content, text, debug)
 
         if not debug:
-            event.msg.reply(clamp(u':information_source: {}'.format(content), 2000))
+            event.msg.reply(clamp(':information_source: {}'.format(content), 2000))
 
     @Plugin.command('eval', parser=True, group='tags', level=CommandLevels.TRUSTED)
     @Plugin.parser.add_argument('content', nargs='+')
@@ -427,13 +425,13 @@ class TagsPlugin(Plugin):
     def on_tags_eval(self, event, args):
         content = self.compile_tag(
             event,
-            u' '.join(args.content),
+           ' '.join(args.content),
             args.input,
             args.debug
         )
 
         if not args.debug:
-            event.msg.reply(clamp(u':information_source: {}'.format(content), 2000))
+            event.msg.reply(clamp(':information_source: {}'.format(content), 2000))
 
     @Plugin.command('remove', '<name:str>', group='tags', aliases=['delete', 'del', 'rm'], level=CommandLevels.TRUSTED)
     def on_tags_remove(self, event, name):
@@ -452,7 +450,7 @@ class TagsPlugin(Plugin):
                 raise CommandFail('you do not have the required permissions to remove other users tags')
 
         tag.delete_instance()
-        raise CommandSuccess(u'ok, deleted tag `{}`'.format(tag.name))
+        raise CommandSuccess('ok, deleted tag `{}`'.format(tag.name))
 
     @Plugin.command('info', '<name:str>', group='tags', level=CommandLevels.TRUSTED)
     def on_tags_info(self, event, name):
@@ -487,7 +485,7 @@ class TagsPlugin(Plugin):
         embed = MessageEmbed()
         embed.title = tag.name
         embed.description = clamp(content, 2048)
-        embed.add_field(name='Author', value=unicode(tag.author), inline=True)
+        embed.add_field(name='Author', value=tag.author, inline=True)
         embed.add_field(name='Times Used', value=str(tag.times_used), inline=True)
         embed.add_field(name='Imported', inline=True, value='No' if not source else ('Yes: [{source}]'
             '(https://github.com/ThaTiemsz/RawgoatTags/blob/master/tags/{source}.md)').format(source=source))
@@ -529,11 +527,11 @@ class TagsPlugin(Plugin):
                 attachments=[('tag_raw_{}.txt'.format(event.msg.id), content)]
             )
 
-        event.msg.reply(u'```\n{}\n```'.format(S(content, False, True)))
+        event.msg.reply('```\n{}\n```'.format(S(content, False, True)))
 
     @Plugin.command('list', '[pattern:str]', group='tags', level=CommandLevels.TRUSTED)
     def on_tags_list(self, event, pattern=None):
-        buff = u'Available tags: '
+        buff ='Available tags: '
         query = Tag.select(Tag.name).where(Tag.guild_id == event.guild.id)
         tags = sorted([i[0] for i in query.tuples()])
         if not tags:
@@ -541,13 +539,13 @@ class TagsPlugin(Plugin):
         found = 0
         for tag in tags:
             if pattern and tag.lower().find(pattern.lower()) == -1: continue
-            tag = u'`{}`, '.format(S(tag, escape_codeblocks=True))
+            tag ='`{}`, '.format(S(tag, escape_codeblocks=True))
             if len(tag) + len(buff) > 1980:
                 event.msg.reply(buff[:-2])
-                buff = u''
+                buff =''
             buff += tag
             found += 1
 
         if not found:
             return event.msg.reply('No tags found for this server.')
-        return event.msg.reply(u'{} (total: {})'.format(buff[:-2], found))
+        return event.msg.reply('{} (total: {})'.format(buff[:-2], found))

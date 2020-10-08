@@ -1,3 +1,4 @@
+import gevent
 import json
 import uuid
 import logging
@@ -31,7 +32,7 @@ def task(*args, **kwargs):
         task = Task(f.__name__, f, *args, **kwargs)
 
         if f.__name__ in TASKS:
-            raise Exception("Conflicting task name: %s" % f.__name__)
+            raise Exception("Conflicting task name: {}".format(f.__name__))
 
         TASKS[f.__name__] = task
         return task
@@ -54,11 +55,11 @@ class Task(object):
 
     def queue(self, *args, **kwargs):
         # Make sure we have space
-        if self.max_queue_size and (rdb.llen('task_queue:%s' % self.name) or 0) > self.max_queue_size:
-            raise Exception("Queue for task %s is full!" % self.name)
+        if self.max_queue_size and (rdb.llen('task_queue:{}'.format(self.name)) or 0) > self.max_queue_size:
+            raise Exception("Queue for task {} is full!".format(self.name))
 
         task_id = str(uuid.uuid4())
-        rdb.rpush('task_queue:%s' % self.name, json.dumps({
+        rdb.rpush('task_queue:{}'.format(self.name), json.dumps({
             'id': task_id,
             'args': args,
             'kwargs': kwargs
@@ -73,7 +74,7 @@ class TaskRunner(object):
         self.lock = Semaphore(task.max_concurrent)
 
     def process(self, job):
-        log.info('[%s] Running job %s...', job['id'], self.name)
+        log.info('[{}] Running job {}…'.format(job['id'], self.name))
         start = time.time()
 
         try:
@@ -81,9 +82,9 @@ class TaskRunner(object):
             if self.task.buffer_time:
                 time.sleep(self.task.buffer_time)
         except:
-            log.exception('[%s] Failed in %ss', job['id'], time.time() - start)
+            log.exception('[{}] Failed in {}s'.format(job['id'], time.time() - start))
 
-        log.info('[%s] Completed in %ss', job['id'], time.time() - start)
+        log.info('[{}] Completed in {}s'.format(job['id'], time.time() - start))
 
     def run(self, job):
         lock = None
@@ -119,10 +120,10 @@ class TaskWorker(object):
     def load(self):
         for f in os.listdir(os.path.dirname(os.path.abspath(__file__))):
             if f.endswith('.py') and not f.startswith('__'):
-                __import__('rowboat.tasks.' + f.rsplit('.')[0])
+                __import__('rowboat.tasks.' + str(f.rsplit('.')[0]))
 
     def run(self):
-        log.info('Running TaskManager on %s queues...', len(self.queues))
+        log.info('Running TaskManager on {} queues…'.format(len(self.queues)))
 
         while self.active:
             chan, job = rdb.blpop(self.queues)
@@ -130,7 +131,7 @@ class TaskWorker(object):
             job = json.loads(job)
 
             if job_name not in TASKS:
-                log.error("Cannot handle task %s", job_name)
+                log.error("Cannot handle task {}".format(job_name))
                 continue
 
             gevent.spawn(self.runners[job_name].run, job)

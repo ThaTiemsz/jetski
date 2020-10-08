@@ -1,24 +1,22 @@
-import re
-import six
 import json
-import uuid
+import re
 import traceback
+import uuid
+import yaml
 
-from peewee import (
-    PrimaryKeyField, BigIntegerField, ForeignKeyField, TextField, DateTimeField,
-    BooleanField, UUIDField
-)
-from yaml import safe_load
 from datetime import datetime, timedelta
+from peewee import BigIntegerField, ForeignKeyField, TextField, DateTimeField, BooleanField, UUIDField
 from playhouse.postgres_ext import BinaryJSONField, ArrayField
+
 from disco.types.base import UNSET
 
 from rowboat import REV
-from rowboat.util import default_json
+from rowboat.models.channel import Channel
 from rowboat.models.user import User
-from rowboat.sql import BaseModel, database
+from rowboat.sql import BaseModel
+from rowboat.util import default_json
 
-EMOJI_RE = re.compile(r'<:.+:([0-9]+)>')
+EMOJI_RE = re.compile(r'<a?:.+:([0-9]+)>')
 
 
 @BaseModel.register
@@ -47,7 +45,7 @@ class Message(BaseModel):
     '''
 
     class Meta:
-        db_table = 'messages'
+        table_name = 'messages'
 
         indexes = (
             # These indexes are mostly just general use
@@ -64,7 +62,7 @@ class Message(BaseModel):
 
     @classmethod
     def from_disco_message_update(cls, obj):
-        if not obj.edited_timestamp:
+        if not obj.edited_timestamp or obj.author.bot:
             return
 
         to_update = {
@@ -91,32 +89,33 @@ class Message(BaseModel):
         if is_tag:
             msg = msg.replace('tags show ', '', 1)
 
-        _, created = cls.get_or_create(
-            id=obj.id,
-            defaults=dict(
-                channel_id=obj.channel_id,
-                guild_id=(obj.guild and obj.guild.id),
-                author=User.from_disco_user(obj.author),
-                content=msg,
-                timestamp=obj.timestamp,
-                edited_timestamp=obj.edited_timestamp,
-                num_edits=(0 if not obj.edited_timestamp else 1),
-                mentions=list(obj.mentions.keys()),
-                emojis=list(map(int, EMOJI_RE.findall(obj.content))),
-                attachments=[i.url for i in obj.attachments.values()],
-                embeds=[json.dumps(i.to_dict(), default=default_json) for i in obj.embeds]))
+        if not obj.author.bot:
+            _, created = cls.get_or_create(
+                id=obj.id,
+                defaults=dict(
+                    channel_id=obj.channel_id,
+                    guild_id=(obj.guild and obj.guild.id),
+                    author=User.from_disco_user(obj.author),
+                    content=msg,
+                    timestamp=obj.timestamp,
+                    edited_timestamp=obj.edited_timestamp,
+                    num_edits=(0 if not obj.edited_timestamp else 1),
+                    mentions=list(obj.mentions.keys()),
+                    emojis=list(map(int, EMOJI_RE.findall(obj.content))),
+                    attachments=[i.url for i in obj.attachments.values()],
+                    embeds=[json.dumps(i.to_dict(), default=default_json) for i in obj.embeds]))
 
-        for user in obj.mentions.values():
-            User.from_disco_user(user)
+            for user in obj.mentions.values():
+                User.from_disco_user(user)
 
-        return created
+            return created
 
     @classmethod
     def from_disco_message_many(cls, messages, safe=False):
         q = cls.insert_many(map(cls.convert_message, messages)).returning(cls.id)
 
         if safe:
-            q = q.on_conflict('DO NOTHING')
+            q = q.on_conflict_ignore()
 
         return q.execute()
 
@@ -150,7 +149,7 @@ class Reaction(BaseModel):
     emoji_name = TextField()
 
     class Meta:
-        db_table = 'reactions'
+        table_name = 'reactions'
 
         indexes = (
             (('message_id', 'user_id', 'emoji_id', 'emoji_name'), True),
@@ -167,7 +166,7 @@ class Reaction(BaseModel):
                 'emoji_id': reaction.emoji.id or None,
                 'emoji_name': reaction.emoji.name or None
             } for i in user_ids
-        ]).on_conflict('DO NOTHING').execute()
+        ]).on_conflict_ignore().execute()
 
     @classmethod
     def from_disco_reaction(cls, obj):
@@ -190,7 +189,7 @@ class MessageArchive(BaseModel):
     expires_at = DateTimeField(default=lambda: datetime.utcnow() + timedelta(days=7))
 
     class Meta:
-        db_table = 'message_archives'
+        table_name = 'message_archives'
 
         indexes = (
             (('created_at', ), False),
@@ -204,7 +203,7 @@ class MessageArchive(BaseModel):
     @property
     def url(self):
         with open('config.yaml', 'r') as f:
-            config = safe_load(f)
+            config = yaml.safe_load(f)
 
         return '{}/api/archive/{}.html'.format(config['web']['DOMAIN'], self.archive_id)
 
@@ -231,14 +230,14 @@ class MessageArchive(BaseModel):
         )
 
         if fmt == 'txt':
-            return u'\n'.join(map(self.encode_message_text, q))
+            return '\n'.join(map(self.encode_message_text, q))
         elif fmt == 'csv':
-            return u'\n'.join([
+            return '\n'.join([
                 'id,channel_id,timestamp,author_id,author,content,deleted,attachments'
-            ] + map(self.encode_message_csv, q))
+            ] + list(map(self.encode_message_csv, q)))
         elif fmt == 'json':
             return json.dumps({
-                'messages': map(self.encode_message_json, q)
+                'messages': list(map(self.encode_message_json, q))
             })
         elif fmt == 'html':
             return q
@@ -246,15 +245,15 @@ class MessageArchive(BaseModel):
     @staticmethod
     def encode_message_text(msg):
         attachments = msg.attachments or []
-        return u'{m.timestamp} ({m.id} / {m.channel_id} / {m.author.id}) {m.author}: {m.content}{attach}'.format(
+        return '{m.timestamp} ({m.id} / {m.channel_id} / {m.author.id}) {m.author}: {m.content}{attach}'.format(
             m=msg,
-            attach=' ({})'.format(', '.join(unicode(i).replace('cdn.discordapp.com', 'media.discordapp.net', 1) for i in attachments)) if len(attachments) > 0 else ''
+            attach=' ({})'.format(', '.join(i.replace('cdn.discordapp.com', 'media.discordapp.net', 1) for i in attachments)) if len(attachments) > 0 else ''
         )
 
     @staticmethod
     def encode_message_csv(msg):
         def wrap(i):
-            return u'"{}"'.format(six.text_type(i).replace('"', '""'))
+            return '"{}"'.format(str(i).replace('"', '""'))
 
         return ','.join(map(wrap, [
             msg.id,
@@ -268,12 +267,10 @@ class MessageArchive(BaseModel):
 
     @staticmethod
     def encode_message_json(msg):
-        conn = database.obj.get_conn()
-        channel_name = None
-        with conn.cursor() as cur:
-            cur.execute('SELECT name FROM channels WHERE channel_id = {};'.format(int(msg.channel_id)))
-            row = cur.fetchone()
-            channel_name = row[0] if row else None
+        try:
+            channel_name = Channel.select(Channel.name).where(Channel.channel_id == msg.channel_id).tuples()[0][0]
+        except IndexError:
+            channel_name = None
 
         return dict(
             id=str(msg.id),
@@ -296,7 +293,7 @@ class StarboardEntry(BaseModel):
     star_channel_id = BigIntegerField(null=True)
     star_message_id = BigIntegerField(null=True)
 
-    # List of user ids who stared this message, not guarenteed to be accurate
+    # List of user ids who stared this message, not guaranteed to be accurate
     stars = ArrayField(BigIntegerField, default=[])
 
     # List of user ids who starred this message, but are blocked
@@ -311,7 +308,7 @@ class StarboardEntry(BaseModel):
     '''
 
     class Meta:
-        db_table = 'starboard_entries'
+        table_name = 'starboard_entries'
 
         indexes = (
             (('star_channel_id', 'star_message_id'), True),
@@ -386,15 +383,14 @@ class StarboardEntry(BaseModel):
 
 @BaseModel.register
 class Reminder(BaseModel):
-    id = PrimaryKeyField()
-    message_id = BigIntegerField()
+    message_id = BigIntegerField(primary_key=True)
 
     created_at = DateTimeField(default=datetime.utcnow)
     remind_at = DateTimeField()
     content = TextField()
 
     class Meta:
-        db_table = 'reminders'
+        table_name = 'reminders'
 
     @classmethod
     def with_message_join(cls, fields=None):
@@ -407,14 +403,14 @@ class Reminder(BaseModel):
     @classmethod
     def count_for_user(cls, user_id, guild_id=None):
         return cls.with_message_join().where(
-            (Message.author_id == user_id) & (Message.guild_id == guild_id if guild_id is not None else True)
+            (Message.author_id == user_id) & (Message.guild_id == guild_id if guild_id else True)
         ).count()
 
     @classmethod
     def delete_all_for_user(cls, user_id, guild_id=None):
         return cls.delete().where(
             (cls.message_id << cls.with_message_join((Message.id, )).where(
-                (Message.author_id == user_id) & (Message.guild_id == guild_id if guild_id is not None else True)
+                (Message.author_id == user_id) & (Message.guild_id == guild_id if guild_id else True)
             ))
         ).execute()
 
@@ -438,7 +434,7 @@ class Command(BaseModel):
     traceback = TextField(null=True)
 
     class Meta:
-        db_table = 'commands'
+        table_name = 'commands'
 
         indexes = (
             (('success', ), False),

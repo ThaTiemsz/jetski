@@ -3,13 +3,13 @@ import fnmatch
 from disco.types.base import Model, SlottedModel, Field, ListField, DictField, text, snowflake
 
 __all__ = [
-    'Model', 'SlottedModel', 'Field', 'ListField', 'DictField', 'text', 'snowflake', 'channel', 'raw',
-    'rule_matcher', 'lower',
+    'Model', 'SlottedModel', 'Field', 'ListField', 'DictField', 'ChannelField',
+    'text', 'snowflake', 'raw', 'rule_matcher', 'lower',
 ]
 
 
 def lower(raw):
-    return unicode(raw).lower()
+    return str(raw).lower()
 
 
 def raw(obj):
@@ -18,15 +18,11 @@ def raw(obj):
 
 def ChannelField(raw):
     # Non-integers must be channel names
-    if isinstance(raw, basestring) and raw:
+    if isinstance(raw, str) and raw:
         if raw[0] == '#':
             return raw[1:]
         elif not raw[0].isdigit():
             return raw
-    return snowflake(raw)
-
-
-def UserField(raw):
     return snowflake(raw)
 
 
@@ -39,12 +35,12 @@ _FUNCS = {
 }
 
 _FILTERS = {
-    'eq': ((str, unicode, int, float, list, tuple, set), lambda a, b: a == b),
+    'eq': ((str, int, float, list, tuple, set), lambda a, b: a == b),
     'gt': ((int, float), lambda a, b: a > b),
     'lt': ((int, float), lambda a, b: a < b),
     'gte': ((int, float), lambda a, b: a >= b),
     'lte': ((int, float), lambda a, b: a <= b),
-    'match': ((str, unicode), lambda a, b: fnmatch.fnmatch(a, b)),
+    'match': (str, lambda a, b: fnmatch.fnmatch(a, b)),
     'contains': ((list, tuple, set), lambda a, b: a.contains(b)),
 }
 
