@@ -3,7 +3,7 @@ setuptools
 wheel==0.32.3
 arrow==0.10.0
 cairocffi==0.8.0
-CairoSVG==1.0.19
+CairoSVG==2.5.1
 cffi==1.9.1
 click==6.7
 contextlib2==0.5.4
