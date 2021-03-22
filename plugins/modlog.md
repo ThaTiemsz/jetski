@@ -47,8 +47,8 @@ More information: [https://github.com/ThaTiemsz/jetski/blob/master/data/actions\
 | GUILD\_ROLE\_CREATE | A role is created |
 | GUILD\_ROLE\_DELETE | A role is deleted |
 | GUILD\_BAN\_ADD | A ban is added |
-| MEMBER\_ROLE\_ADD | A role is added to a member |
-| MEMBER\_ROLE\_RMV | A role is removed from a member |
+| GUILD\_MEMBER\_ROLES\_ADD | A role is added to a member |
+| GUILD\_MEMBER\_ROLES\_RMV | A role is removed from a member |
 | MEMBER\_TEMP\_MUTED | A tempmute is added |
 | MEMBER\_MUTED | A mute is added |
 | MEMBER\_UNMUTED | A mute is removed |
