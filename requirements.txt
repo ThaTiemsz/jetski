@@ -51,7 +51,7 @@ raven==5.32.0
 redis==2.10.5
 regex==2017.2.8
 requests-oauthlib==0.8.0
-rsa==3.4.2
+rsa==4.1
 ruamel.ordereddict==0.4.9
 ruamel.yaml==0.13.14
 tinycss==0.4
