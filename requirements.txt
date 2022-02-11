@@ -35,7 +35,7 @@ olefile==0.44
 packaging==16.8
 Pillow==6.2.0
 ply==3.8
-protobuf==3.2.0
+protobuf==3.15.0
 psycogreen==1.0
 psycopg2==2.6.2
 pyasn1==0.2.3
