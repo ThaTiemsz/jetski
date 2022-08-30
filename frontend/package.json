@@ -13,7 +13,7 @@
     "http-proxy-middleware": "^0.19.1",
     "lodash": "^4.17.15",
     "moment": "^2.22.2",
-    "moment-timezone": "^0.5.25",
+    "moment-timezone": "^0.5.35",
     "parcel-bundler": "^1.12.4",
     "punycode": "^2.1.1",
     "react": "^16.7.0",
