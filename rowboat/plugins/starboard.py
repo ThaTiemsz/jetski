@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import peewee
 
 from peewee import fn, JOIN
@@ -57,12 +55,12 @@ class StarboardConfig(PluginConfig):
     def get_board(self, channel_id):
         # Starboards can't work recursively
         if channel_id in self.channels:
-            return (None, None)
+            return None, None
 
         for starboard, config in self.channels.items():
             if not config.sources or channel_id in config.sources:
-                return (starboard, config)
-        return (None, None)
+                return starboard, config
+        return None, None
 
 
 @Plugin.with_config(StarboardConfig)
@@ -195,7 +193,7 @@ class StarboardPlugin(Plugin):
             ).execute()
 
         self.queue_update(event.guild.id, event.config)
-        event.msg.reply(u'Forcing an update on message {}'.format(mid))
+        event.msg.reply('Forcing an update on message {}'.format(mid))
 
     @Plugin.command('block', '<user:user>', group='stars', level=CommandLevels.MOD)
     def stars_block(self, event, user):
@@ -207,7 +205,7 @@ class StarboardPlugin(Plugin):
             })
 
         if not created:
-            event.msg.reply(u'{} is already blocked from the starboard'.format(
+            event.msg.reply('{} is already blocked from the starboard'.format(
                 user,
             ))
             return
@@ -218,7 +216,7 @@ class StarboardPlugin(Plugin):
         # Finally, queue an update for the guild
         self.queue_update(event.guild.id, event.config)
 
-        event.msg.reply(u'Blocked {} from the starboard'.format(
+        event.msg.reply('Blocked {} from the starboard'.format(
             user,
         ))
 
@@ -230,7 +228,7 @@ class StarboardPlugin(Plugin):
         ).execute()
 
         if not count:
-            event.msg.reply(u'{} was not blocked from the starboard'.format(
+            event.msg.reply('{} was not blocked from the starboard'.format(
                 user,
             ))
             return
@@ -241,7 +239,7 @@ class StarboardPlugin(Plugin):
         # Finally, queue an update for the guild
         self.queue_update(event.guild.id, event.config)
 
-        event.msg.reply(u'Unblocked {} from the starboard'.format(
+        event.msg.reply('Unblocked {} from the starboard'.format(
             user,
         ))
 
@@ -252,15 +250,15 @@ class StarboardPlugin(Plugin):
             dirty=True,
         ).where(
             (StarboardEntry.message_id == mid) &
-            (StarboardEntry.blocked == 1)
+            StarboardEntry.blocked
         ).execute()
 
         if not count:
-            event.msg.reply(u'No hidden starboard message with that ID')
+            event.msg.reply('No hidden starboard message with that ID')
             return
 
         self.queue_update(event.guild.id, event.config)
-        event.msg.reply(u'Message {} has been unhidden from the starboard'.format(
+        event.msg.reply('Message {} has been unhidden from the starboard'.format(
             mid,
         ))
 
@@ -274,11 +272,11 @@ class StarboardPlugin(Plugin):
         ).execute()
 
         if not count:
-            event.msg.reply(u'No starred message with that ID')
+            event.msg.reply('No starred message with that ID')
             return
 
         self.queue_update(event.guild.id, event.config)
-        event.msg.reply(u'Message {} has been hidden from the starboard'.format(
+        event.msg.reply('Message {} has been hidden from the starboard'.format(
             mid,
         ))
 
@@ -292,7 +290,7 @@ class StarboardPlugin(Plugin):
             (~ (StarboardEntry.star_message_id >> None))
         ).order_by(Message.timestamp.desc()).limit(100)
 
-        info_msg = event.msg.reply('Updating starboard...')
+        info_msg = event.msg.reply('Updating starboard…')
 
         for star in stars:
             msg = self.client.api.channels_messages_get(
@@ -349,7 +347,7 @@ class StarboardPlugin(Plugin):
     def update_starboard(self, guild_id, config):
         # Grab all dirty stars that where posted in the last 32 hours
         stars = StarboardEntry.select().join(Message).where(
-            (StarboardEntry.dirty == 1) &
+            StarboardEntry.dirty &
             (Message.guild_id == guild_id) &
             (Message.timestamp > (datetime.utcnow() - timedelta(hours=32)))
         )
@@ -378,14 +376,14 @@ class StarboardPlugin(Plugin):
             except:
                 self.log.exception('Star message went missing %s / %s: ', star.message.channel_id, star.message_id)
                 # TODO: really delete this
-                self.delete_star(star, update=True)
+                self.delete_star(star)
                 continue
 
             # If we previously posted this in the wrong starboard, delete it
             if star.star_channel_id and (
                     star.star_channel_id != sb_id or
                     len(star.stars) < sb_config.min_stars) or star.blocked:
-                self.delete_star(star, update=True)
+                self.delete_star(star)
 
             if len(star.stars) < sb_config.min_stars or star.blocked:
                 StarboardEntry.update(dirty=False).where(StarboardEntry.message_id == star.message_id).execute()
@@ -420,12 +418,12 @@ class StarboardPlugin(Plugin):
         content, embed = self.get_embed(star, source_msg, config)
 
         if not source_msg.guild.channels.get(starboard_id):
-            target = self.state.channels.get(starboard_id)
+            target = self.bot.client.state.channels.get(starboard_id)
             if not (target and target.guild):
                 return
             return self.log.exception((
-                u'post_star: attempted cross-guild post from '
-                u'{} ({}) to {} ({}) - #{} ({})'.format(
+               'post_star: attempted cross-guild post from '
+               '{} ({}) to {} ({}) - #{} ({})'.format(
                     source_msg.guild.name,
                     source_msg.guild.id,
                     target.guild.name,
@@ -574,7 +572,7 @@ class StarboardPlugin(Plugin):
         if len(star.stars) > 1:
             if len(star.stars) >= config.star_color_max:
                 stars = ':star2:'
-            stars = stars + ' {}'.format(len(star.stars))
+            stars += ' {}'.format(len(star.stars))
 
         content = '{} <#{}> ({})'.format(
             stars,
@@ -608,8 +606,8 @@ class StarboardPlugin(Plugin):
                 name=msg.author.username,
                 icon_url=msg.author.avatar_url)
 
-        embed.add_field(name=u'\u200b', value=(u'→ [Jump to original message]'
-            u'(https://discordapp.com/channels/{}/{}/{})'.format(msg.guild.id, msg.channel_id, msg.id)))
+        embed.add_field(name='\u200b', value=('→ [Jump to original message]'
+           '(https://discordapp.com/channels/{}/{}/{})'.format(msg.guild.id, msg.channel_id, msg.id)))
 
         embed.timestamp = msg.timestamp.isoformat()
         embed.color = config.get_color(len(star.stars))

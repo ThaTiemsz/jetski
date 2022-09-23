@@ -1,23 +1,19 @@
-# -*- coding: utf-8 -*-
-import humanize
 import gevent
 
 from datetime import datetime, timedelta
 
-from disco.bot import CommandLevels
 from disco.util.sanitize import S
 from disco.types.message import MessageEmbed
 from disco.types.channel import ChannelType
 
-from rowboat.plugins import RowboatPlugin as Plugin, CommandFail, CommandSuccess
+from rowboat.plugins import RowboatPlugin as Plugin
 from rowboat.types.plugin import PluginConfig
 from rowboat.util.timing import Eventual
 from rowboat.util.input import parse_duration, humanize_duration
-from rowboat.models.user import User
 from rowboat.models.message import Message, Reminder
-from rowboat.util.images import get_dominant_colors_user, get_dominant_colors_guild
+from rowboat.util.images import get_dominant_colors_user
 from rowboat.constants import (
-    STATUS_EMOJI, SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI, RED_TICK_EMOJI_ID, YEAR_IN_SEC
+    SNOOZE_EMOJI, GREEN_TICK_EMOJI, GREEN_TICK_EMOJI_ID, RED_TICK_EMOJI, RED_TICK_EMOJI_ID, YEAR_IN_SEC
 )
 
 
@@ -58,14 +54,14 @@ class RemindersPlugin(Plugin):
 
     def trigger_reminder(self, reminder):
         message = reminder.message_id
-        channel = self.state.channels.get(message.channel_id)
+        channel = self.bot.client.state.channels.get(message.channel_id)
         if not channel:
             self.log.warning('Not triggering reminder, channel %s was not found!',
                 message.channel_id)
             reminder.delete_instance()
             return
 
-        msg = channel.send_message(u'<@{}> you asked me at {} ({} ago) to remind you about: {}'.format(
+        msg = channel.send_message('<@{}> you asked me at {} ({} ago) to remind you about: {}'.format(
             message.author_id,
             reminder.created_at,
             humanize_duration(reminder.created_at - datetime.utcnow()),
@@ -96,7 +92,7 @@ class RemindersPlugin(Plugin):
         if mra_event.emoji.name == SNOOZE_EMOJI:
             reminder.remind_at = datetime.utcnow() + timedelta(minutes=20)
             reminder.save()
-            msg.edit(u'Ok, I\'ve snoozed that reminder for 20 minutes.')
+            msg.edit('Ok, I\'ve snoozed that reminder for 20 minutes.')
             return
 
         reminder.delete_instance()
@@ -215,10 +211,7 @@ class RemindersPlugin(Plugin):
             total_count
         )
 
-        embed.set_author(name=u'{}#{}'.format(
-            user.username,
-            user.discriminator,
-        ), icon_url=user.avatar_url)
+        embed.set_author(name=user, icon_url=user.avatar_url)
         embed.color = get_dominant_colors_user(user, user.get_avatar_url('png'))
         embed.set_footer(text='You can cancel reminders with !r clear [ID]')
 
@@ -234,14 +227,14 @@ class RemindersPlugin(Plugin):
             for reminder in query:
                 time = humanize_duration(reminder.remind_at - datetime.utcnow())
                 channel = Message.select().where(Message.id == reminder.message_id).get().channel_id
-                channel = self.state.channels.get(channel)
+                channel = self.bot.client.state.channels.get(channel)
 
                 embed.add_field(
-                    name=u'#{} in {}'.format(
+                    name='#{} in {}'.format(
                         reminder.id,
                         time
                     ),
-                    value=u'[`#{}`](https://discordapp.com/channels/{}/{}/{}) {}'.format(
+                    value='[`#{}`](https://discordapp.com/channels/{}/{}/{}) {}'.format(
                         channel.name if channel.type != ChannelType.DM else 'Jetski',
                         channel.guild_id if channel.type != ChannelType.DM else '@me',
                         channel.id,

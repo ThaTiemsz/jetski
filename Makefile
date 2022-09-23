@@ -1,23 +1,24 @@
 up:
-	docker-compose up -d
+	find /home/jetski/rowboat -name '*.pyc' -delete
+	pm2 start start.yml
 
 restart:
-	docker-compose restart
+	pm2 restart all
 
 stop:
-	docker-compose stop
+	pm2 stop all
 
 down:
-	docker-compose down
+	pm2 delete all
 
 build:
-	docker-compose up -d --no-deps --build
-
-cli:
-	docker-compose exec bot /bin/bash
+	pm2 stop all
+	pm2 delete all
+	find /home/jetski/rowboat -name '*.pyc' -delete
+	pm2 start start.yml
 
 worker-logs:
-	docker-compose exec workers tail -F worker-0.log
+	pm2 log worker
 
 logs:
-	docker-compose logs -f --tail="1500" $(image)
+	pm2 log bot

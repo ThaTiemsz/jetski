@@ -1,7 +1,6 @@
-from peewee import (BigIntegerField, SmallIntegerField, CharField, TextField, BooleanField)
+from peewee import BigIntegerField, SmallIntegerField, CharField, TextField, BooleanField
 
 from rowboat.sql import BaseModel
-from rowboat.models.message import Message
 
 
 @BaseModel.register
@@ -17,10 +16,11 @@ class Channel(BaseModel):
     deleted = BooleanField(default=False)
 
     class Meta:
-        db_table = 'channels'
+        table_name = 'channels'
 
     @classmethod
     def generate_first_message_id(cls, channel_id):
+        from rowboat.models.message import Message
         try:
             return Message.select(Message.id).where(
                 (Message.channel_id == channel_id)
@@ -30,14 +30,18 @@ class Channel(BaseModel):
 
     @classmethod
     def from_disco_channel(cls, channel):
-        # Upsert channel information
+        # Update channel information
         channel = list(cls.insert(
             channel_id=channel.id,
             guild_id=channel.guild.id if channel.guild else None,
             name=channel.name or None,
             topic=channel.topic or None,
             type_=channel.type,
-        ).upsert(target=cls.channel_id).returning(cls.first_message_id).execute())[0]
+        ).on_conflict(
+            conflict_target=cls.channel_id,
+            preserve=(cls.channel_id, cls.guild_id, cls.type_),
+            update={cls.name: channel.name, cls.topic: channel.topic}
+        ).returning(cls.first_message_id).execute())[0]
 
         # Update the first message ID
         if not channel.first_message_id:

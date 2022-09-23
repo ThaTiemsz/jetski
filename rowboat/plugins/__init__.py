@@ -1,14 +1,15 @@
-from disco.bot import Plugin
-from disco.types.base import Unset
+import sentry_sdk
+
 from disco.api.http import APIException
+from disco.bot import Plugin
 from disco.bot.command import CommandEvent
 from disco.bot.plugin import register_plugin_base_class
 from disco.gateway.events import GatewayEvent
+from disco.types.base import Unset
 
-from rowboat import raven_client
-from rowboat.util import MetaException
 from rowboat.types import Field
 from rowboat.types.guild import PluginsConfig
+from rowboat.util import MetaException
 
 
 class SafePluginInterface(object):
@@ -24,9 +25,9 @@ class SafePluginInterface(object):
         return wrapped
 
 
-class RavenPlugin(object):
+class SentryPlugin(object):
     """
-    The RavenPlugin base plugin class manages tracking exceptions on a plugin
+    The SentryPlugin base plugin class manages tracking exceptions on a plugin
     level, by hooking the `handle_exception` function from disco.
     """
     def handle_exception(self, greenlet, event):
@@ -67,20 +68,24 @@ class RavenPlugin(object):
             except:
                 pass
 
-        raven_client.captureException(exc_info=greenlet.exc_info, extra=extra)
+        with sentry_sdk.push_scope() as scope:
+            scope.set_extra('extra', extra)
+            sentry_sdk.capture_exception(exc_info=greenlet.exc_info)
 
 
-class BasePlugin(RavenPlugin, Plugin):
+class BasePlugin(SentryPlugin, Plugin):
     """
-    A BasePlugin is simply a normal Disco plugin, but aliased so we have more
-    control. BasePlugins do not have hooked/altered events, unlike a RowboatPlugin.
+    A BasePlugin is an aliased Disco plugin that allows tracking and finer control.
+    BasePlugins, unlike RowboatPlugins, do not have hooked/altered events.
     """
     pass
 
 
-class RowboatPlugin(RavenPlugin, Plugin):
+class RowboatPlugin(SentryPlugin, Plugin):
     """
-    A plugin which wraps events to load guild configuration.
+    A RowboatPlugin wraps events in order to load guild-specific configurations.
+    RowboatPlugins can hook and alter events as they're recieved from Discord.
+    Unlike a BasePlugin, a RowboatPlugin can be called from within other plugins.
     """
     global_plugin = False
 
@@ -93,7 +98,6 @@ class RowboatPlugin(RavenPlugin, Plugin):
             name = plugin_cls.__name__.replace('Plugin', '').lower()
             PluginsConfig._fields[name] = Field(config_cls, default=Unset)
             PluginsConfig._fields[name].name = name
-            # PluginsConfig._fields[name].default = None
             return plugin_cls
         return deco
 
@@ -106,11 +110,11 @@ class RowboatPlugin(RavenPlugin, Plugin):
 
         plugin = self.bot.plugins.get(plugin_name)
         if not plugin:
-            raise Exception('Cannot resolve plugin %s (%s)' % (plugin_name, query))
+            raise Exception('Cannot resolve plugin {} ({})'.format(plugin_name, query))
 
         method = getattr(plugin, method_name, None)
         if not method:
-            raise Exception('Cannot resolve method %s for plugin %s' % (method_name, plugin_name))
+            raise Exception('Cannot resolve method {} for plugin {}'.format(method_name, plugin_name))
 
         return method(*args, **kwargs)
 
@@ -124,7 +128,7 @@ class CommandResponse(Exception):
 
     def __init__(self, response):
         if self.EMOJI:
-            response = u':{}: {}'.format(self.EMOJI, response)
+            response =':{}: {}'.format(self.EMOJI, response)
         self.response = response
 
 

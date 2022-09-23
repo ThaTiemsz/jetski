@@ -1,24 +1,21 @@
-import os
 import psycogreen.gevent; psycogreen.gevent.patch_psycopg()
+import yaml
 
-from peewee import Proxy, OP, Model
-from peewee import Expression
+from peewee import Proxy, OP, Model, Expression
 from playhouse.postgres_ext import PostgresqlExtDatabase
 
 REGISTERED_MODELS = []
+OP['IREGEXP'] = 'iregexp'
 
 # Create a database proxy we can setup post-init
 database = Proxy()
 
-
-OP['IRGX'] = 'irgx'
+with open('config.yaml', 'r') as config:
+    cfg = yaml.safe_load(config)
 
 
 def pg_regex_i(lhs, rhs):
-    return Expression(lhs, OP.IRGX, rhs)
-
-
-PostgresqlExtDatabase.register_ops({OP.IRGX: '~*'})
+    return Expression(lhs, OP.IREGEXP, rhs)
 
 
 class BaseModel(Model):
@@ -31,20 +28,17 @@ class BaseModel(Model):
         return cls
 
 
-def init_db(env):
-    if env == 'docker':
-        database.initialize(PostgresqlExtDatabase(
-            'rowboat',
-            host='db',
-            user='postgres',
-            port=int(os.getenv('PG_PORT', 5432)),
-            autorollback=True))
-    else:
-        database.initialize(PostgresqlExtDatabase(
-            'rowboat',
-            user='rowboat',
-            port=int(os.getenv('PG_PORT', 5432)),
-            autorollback=True))
+def init_db():
+    database.initialize(PostgresqlExtDatabase(
+        'rowboat',
+        host=cfg['db_host'],
+        user=cfg['db_user'],
+        password=cfg['db_password'],
+        port=cfg['db_port'],
+        autorollback=True,
+        autoconnect=True,
+        register_hstore=True,
+        operations={OP.IREGEXP: '~*'})),
 
     for model in REGISTERED_MODELS:
         model.create_table(True)

@@ -1,7 +1,5 @@
-from peewee import (
-    BigIntegerField, TextField, DateTimeField, CompositeKey, IntegerField
-)
 from datetime import datetime
+from peewee import BigIntegerField, TextField, DateTimeField, CompositeKey, IntegerField
 
 from rowboat.sql import BaseModel
 
@@ -18,5 +16,5 @@ class Tag(BaseModel):
     created_at = DateTimeField(default=datetime.utcnow)
 
     class Meta:
-        db_table = 'tags'
+        table_name = 'tags'
         primary_key = CompositeKey('guild_id', 'name')

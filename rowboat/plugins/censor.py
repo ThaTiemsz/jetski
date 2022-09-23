@@ -1,6 +1,6 @@
 import re
 import json
-import urlparse
+import urllib.parse
 
 from holster.enum import Enum
 from unidecode import unidecode
@@ -8,9 +8,9 @@ from disco.types.base import cached_property
 from disco.types.channel import ChannelType
 from disco.util.sanitize import S
 from disco.api.http import APIException
+from disco.util.emitter import Priority
 
 from rowboat.redis import rdb
-from rowboat.util.stats import timed
 from rowboat.util.zalgo import ZALGO_RE
 from rowboat.plugins import RowboatPlugin as Plugin
 from rowboat.types import SlottedModel, Field, ListField, DictField, ChannelField, snowflake, lower
@@ -48,10 +48,10 @@ class CensorSubConfig(SlottedModel):
 
     @cached_property
     def blocked_re(self):
-        return re.compile(u'({})'.format(u'|'.join(
-            map(re.escape, self.blocked_tokens) +
-            map(lambda k: u'\\b{}\\b'.format(re.escape(k)), self.blocked_words)
-        )), re.I + re.U)
+        return re.compile('({})'.format('|'.join(
+            list(map(re.escape, self.blocked_tokens)) +
+            list(map(lambda k: '\\b{}\\b'.format(re.escape(k)), self.blocked_words))
+        )), re.I)
 
 
 class CensorConfig(PluginConfig):
@@ -71,22 +71,22 @@ class Censorship(Exception):
     def details(self):
         if self.reason is CensorReason.INVITE:
             if self.ctx['guild']:
-                return u'invite `{}` to {}'.format(
+                return'invite `{}` to {}'.format(
                     self.ctx['invite'],
                     S(self.ctx['guild']['name'], escape_codeblocks=True)
                 )
             else:
-                return u'invite `{}`'.format(self.ctx['invite'])
+                return'invite `{}`'.format(self.ctx['invite'])
         elif self.reason is CensorReason.DOMAIN:
             if self.ctx['hit'] == 'whitelist':
-                return u'domain `{}` is not in whitelist'.format(S(self.ctx['domain'], escape_codeblocks=True))
+                return'domain `{}` is not in whitelist'.format(S(self.ctx['domain'], escape_codeblocks=True))
             else:
-                return u'domain `{}` is in blacklist'.format(S(self.ctx['domain'], escape_codeblocks=True))
+                return'domain `{}` is in blacklist'.format(S(self.ctx['domain'], escape_codeblocks=True))
         elif self.reason is CensorReason.WORD:
-            return u'found blacklisted words `{}`'.format(
-                u', '.join([S(i, escape_codeblocks=True) for i in self.ctx['words']]))
+            return'found blacklisted words `{}`'.format(
+               ', '.join([S(i, escape_codeblocks=True) for i in self.ctx['words']]))
         elif self.reason is CensorReason.ZALGO:
-            return u'found zalgo at position `{}` in text'.format(
+            return'found zalgo at position `{}` in text'.format(
                 self.ctx['position']
             )
 
@@ -126,7 +126,7 @@ class CensorPlugin(Plugin):
             }
 
         # Cache for 12 hours
-        rdb.setex('inv:{}'.format(code), json.dumps(obj), 43200)
+        rdb.setex('inv:{}'.format(code), 43200, json.dumps(obj))
         return obj
 
     @Plugin.listen('MessageUpdate')
@@ -144,11 +144,11 @@ class CensorPlugin(Plugin):
             event,
             author=event.guild.get_member(msg.author_id))
 
-    @Plugin.listen('MessageCreate')
+    @Plugin.listen('MessageCreate', priority=Priority.AFTER)
     def on_message_create(self, event, author=None):
         author = author or event.author
 
-        if author.id == self.state.me.id:
+        if author.id == self.bot.client.state.me.id:
             return
 
         if event.webhook_id:
@@ -158,48 +158,33 @@ class CensorPlugin(Plugin):
         if not configs:
             return
 
-        tags = {'guild_id': event.guild.id, 'channel_id': event.channel.id}
-        with timed('rowboat.plugin.censor.duration', tags=tags):
+        try:
+            for config in configs:
+                if config.channel:
+                    if event.channel_id != config.channel:
+                        continue
+                if config.bypass_channel:
+                    for byc in config.bypass_channel:
+                        if event.channel_id == byc:
+                            return
+
+                if config.filter_invites:
+                    self.filter_invites(event, config)
+
+                if config.filter_domains:
+                    self.filter_domains(event, config)
+
+                if config.blocked_words or config.blocked_tokens or config.filter_domains:
+                    self.filter_blocked_words(event, config)
+
+        except Censorship as c:
+            self.call('ModLogPlugin.create_debounce', event, ['MessageDelete'], message_id=event.message.id)
+
             try:
-                # TODO: perhaps imap here? how to raise exception then?
-                for config in configs:
-                    if config.channel:
-                        if event.channel_id != config.channel:
-                            continue
-                    if config.bypass_channel:
-                        if event.channel_id == config.bypass_channel:
-                            continue
-
-                    if config.filter_zalgo:
-                        self.filter_zalgo(event, config)
-
-                    if config.filter_invites:
-                        self.filter_invites(event, config)
-
-                    if config.filter_domains:
-                        self.filter_domains(event, config)
-
-                    if config.blocked_words or config.blocked_tokens:
-                        self.filter_blocked_words(event, config)
-            except Censorship as c:
-                self.call(
-                    'ModLogPlugin.create_debounce',
-                    event,
-                    ['MessageDelete'],
-                    message_id=event.message.id,
-                )
-
-                try:
-                    event.delete()
-
-                    self.call(
-                        'ModLogPlugin.log_action_ext',
-                        Actions.CENSORED,
-                        event.guild.id,
-                        e=event,
-                        c=c)
-                except APIException:
-                    self.log.exception('Failed to delete censored message: ')
+                event.delete()
+                self.call('ModLogPlugin.log_action_ext', Actions.CENSORED, event.guild.id, e=event, c=c)
+            except APIException:
+                self.log.warning('Failed to delete censored message: ')
 
     def filter_zalgo(self, event, config):
         s = ZALGO_RE.search(event.content)
@@ -244,7 +229,7 @@ class CensorPlugin(Plugin):
 
         for url in urls:
             try:
-                parsed = urlparse.urlparse(url)
+                parsed = urllib.parse.urlparse(url)
             except:
                 continue
 

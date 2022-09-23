@@ -1,6 +1,7 @@
+import random
+
 from collections import namedtuple
 from math import sqrt
-import random
 
 
 Point = namedtuple('Point', ('coords', 'n', 'ct'))
@@ -16,7 +17,7 @@ def get_points(img):
 
 
 def rtoh(rgb):
-    return '%s' % ''.join(('%02x' % p for p in rgb))
+    return '{}'.format(''.join(('%02x' % p for p in rgb)))
 
 
 def get_dominant_colors(img, n=3):
@@ -26,8 +27,8 @@ def get_dominant_colors(img, n=3):
 
         points = get_points(img)
         clusters = kmeans(points, n, 1)
-        rgbs = [map(int, c.center.coords) for c in clusters]
-        return map(rtoh, rgbs)
+        rgbs = [list(map(int, c.center.coords)) for c in clusters]
+        return list(map(rtoh, rgbs))
     except:
         return [0x00000]
 
@@ -36,7 +37,7 @@ def get_dominant_colors_user(user, url=None):
     import requests
     from rowboat.redis import rdb
     from PIL import Image
-    from six import BytesIO
+    from io import BytesIO
 
     key = 'avatar:color:{}'.format(user.avatar)
     if rdb.exists(key):
@@ -47,8 +48,11 @@ def get_dominant_colors_user(user, url=None):
             r.raise_for_status()
         except:
             return 0
-        color = int(str(get_dominant_colors(Image.open(BytesIO(r.content)))[0]), 16)
-        rdb.set(key, color)
+        try:
+            color = int(get_dominant_colors(Image.open(BytesIO(r.content)))[0], 16)
+            rdb.set(key, color, 86400)
+        except:
+            color = 0x7289DA
         return color
 
 
@@ -56,7 +60,7 @@ def get_dominant_colors_guild(guild, url=None):
     import requests
     from rowboat.redis import rdb
     from PIL import Image
-    from six import BytesIO
+    from io import BytesIO
 
     key = 'guild:color:{}'.format(guild.icon)
     if rdb.exists(key):
@@ -67,8 +71,11 @@ def get_dominant_colors_guild(guild, url=None):
             r.raise_for_status()
         except:
             return 0
-        color = int(str(get_dominant_colors(Image.open(BytesIO(r.content)))[0]), 16)
-        rdb.set(key, color)
+        try:
+            color = int(get_dominant_colors(Image.open(BytesIO(r.content)))[0], 16)
+            rdb.set(key, color, 604800)
+        except:
+            color = 0x7289DA
         return color
 
 

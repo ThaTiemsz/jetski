@@ -1,6 +1,9 @@
 import time
-
 import gevent
+
+from gevent.event import Event
+from gevent.lock import Semaphore
+
 from disco.api.http import APIException
 from disco.util.logging import LoggingClass
 
@@ -10,14 +13,14 @@ class ModLogPump(LoggingClass):
         self.channel = channel
         self.sleep_duration = sleep_duration
         self._buffer = []
-        self._have = gevent.event.Event()
+        self._have = Event()
         self._quiescent_period = None
-        self._lock = gevent.lock.Semaphore()
+        self._lock = Semaphore()
 
         self._greenlet = gevent.spawn(self._emitter_loop)
 
     def _start_emitter(self, greenlet=None):
-        self.log.warning('Restarting emitter for ModLogPump %s' % self.channel)
+        self.log.warning('Restarting emitter for ModLogPump {}'.format(self.channel))
         self._greenlet = gevent.spawn(self._emitter_loop)
         self._greenlet.link_exception(self._start_emitter)
 

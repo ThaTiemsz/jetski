@@ -1,0 +1,18 @@
+apps:
+  - name: 'bot'
+    script: '/home/Warship/manage.py'
+    args: 'bot -e prod'
+    watch: false
+    instances: 1
+    interpreter: '/usr/bin/python3.8'
+  - name: 'api'
+    script: '/home/Warship/manage.py'
+    args: 'serve -r'
+    watch: false
+    instances: 1
+    interpreter: '/usr/bin/python3.8'
+  - name: 'frontend'
+    script: 'npm'
+    args: 'run serve'
+    watch: false
+    cwd: '/home/Warship/frontend'

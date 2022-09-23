@@ -70,7 +70,7 @@ class RedditPlugin(Plugin):
 
     def get_channel(self, guild, ref):
         # CLEAN THIS UP TO A RESOLVER
-        if isinstance(ref, (int, long)):
+        if isinstance(ref, int):
             return guild.channels.get(ref)
         else:
             return guild.channels.select_one(name=ref)
@@ -93,14 +93,14 @@ class RedditPlugin(Plugin):
 
             # Limit title to 256 characters nicely
             if len(data['title']) > 256:
-                embed.title = data['title'][:253] + '...'
+                embed.title = data['title'][:253] + '…'
             else:
                 embed.title = data['title']
 
-            embed.url = u'https://reddit.com{}'.format(data['permalink'])
+            embed.url ='https://reddit.com{}'.format(data['permalink'])
             embed.set_author(
                 name=data['author'],
-                url=u'https://reddit.com/u/{}'.format(data['author'])
+                url='https://reddit.com/u/{}'.format(data['author'])
             )
 
             image = None
@@ -117,7 +117,7 @@ class RedditPlugin(Plugin):
                 sz = min(64, max(config.text_length, 1900))
                 embed.description = data['selftext'][:sz]
                 if len(data['selftext']) > sz:
-                    embed.description += u'...'
+                    embed.description += '…'
                 if image:
                     embed.set_thumbnail(url=image)
             elif image:
@@ -140,14 +140,14 @@ class RedditPlugin(Plugin):
         )
         r.raise_for_status()
 
-        data = list(reversed(map(lambda i: i['data'], r.json()['data']['children'])))
+        data = reversed(list(map(lambda i: i['data'], r.json()['data']['children'])))
 
         # TODO:
         #  1. instead of tracking per guild, just track globally per subreddit
         #  2. fan-out posts to each subscribed channel
 
         for gid, config in configs:
-            guild = self.state.guilds.get(gid)
+            guild = self.bot.client.state.guilds.get(gid)
             if not guild:
                 self.log.warning('Skipping non existant guild %s', gid)
                 continue

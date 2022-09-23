@@ -38,7 +38,7 @@ class InternalPlugin(Plugin):
         tbl.set_header('ID', 'Command', 'Error')
 
         for err in q:
-            tbl.add(err.message_id, u'{}.{}'.format(err.plugin, err.command), err.traceback.split('\n')[-2])
+            tbl.add(err.message_id,'{}.{}'.format(err.plugin, err.command), err.traceback.split('\n')[-2])
 
         event.msg.reply(tbl.compile())
 
@@ -58,15 +58,15 @@ class InternalPlugin(Plugin):
 
         embed = MessageEmbed()
         embed.title = '{}.{} ({})'.format(cmd.plugin, cmd.command, cmd.message.id)
-        embed.set_author(name=unicode(cmd.message.author), icon_url=cmd.message.author.get_avatar_url())
+        embed.set_author(name=cmd.message.author, icon_url=cmd.message.author.get_avatar_url())
         embed.color = 0x77dd77 if cmd.success else 0xff6961
 
         if not cmd.success:
-            embed.description = u'```{}```'.format(cmd.traceback)
+            embed.description ='```{}```'.format(cmd.traceback)
 
         embed.add_field(name='Message', value=cmd.message.content)
-        embed.add_field(name='Channel', value=u'{} `{}`'.format(cmd.message.channel.name, cmd.message.channel.channel_id))
-        embed.add_field(name='Guild', value=unicode(cmd.message.guild_id))
+        embed.add_field(name='Channel', value='{} `{}`'.format(cmd.message.channel.name, cmd.message.channel.channel_id))
+        embed.add_field(name='Guild', value=cmd.message.guild_id)
         event.msg.reply(embed=embed)
 
     @Plugin.command('usage', group='commands', level=-1)
@@ -133,9 +133,7 @@ class InternalPlugin(Plugin):
     @Plugin.schedule(300, init=False)
     def prune_old_events(self):
         # Keep 24 hours of all events
-        Event.delete().where(
-            (Event.timestamp > datetime.utcnow() - timedelta(hours=24))
-        ).execute()
+        Event.delete().where((Event.timestamp > datetime.utcnow() - timedelta(hours=24))).execute()
 
     @Plugin.listen('Ready')
     def on_ready(self, event):
@@ -158,7 +156,7 @@ class InternalPlugin(Plugin):
                 continue
 
             with self.lock:
-                Event.insert_many(filter(bool, [
+                Event.insert_many(list(filter(bool, [
                     Event.prepare(self.session_id, event) for event in self.cache
-                ])).execute()
+                ]))).execute()
                 self.cache = []

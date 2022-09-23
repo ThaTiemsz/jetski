@@ -1,17 +1,14 @@
-import yaml
 import logging
+import yaml
 
-from peewee import (
-    BigIntegerField, CharField, TextField, BooleanField, DateTimeField, CompositeKey, BlobField
-)
-from holster.enum import Enum
-from time import time, mktime
 from datetime import datetime
+from holster.enum import Enum
+from peewee import BigIntegerField, CharField, TextField, BooleanField, DateTimeField, CompositeKey, BlobField
 from playhouse.postgres_ext import BinaryJSONField, ArrayField
 
-from rowboat.sql import BaseModel
-from rowboat.redis import emit
 from rowboat.models.user import User
+from rowboat.redis import emit
+from rowboat.sql import BaseModel
 
 log = logging.getLogger(__name__)
 
@@ -50,7 +47,7 @@ class Guild(BaseModel):
     # '''
 
     class Meta:
-        db_table = 'guilds'
+        table_name = 'guilds'
 
     @classmethod
     def with_id(cls, guild_id):
@@ -109,24 +106,17 @@ class Guild(BaseModel):
             try:
                 self._cached_config = GuildConfig(self.config)
             except:
-                log.exception('Failed to load config for Guild %s, invalid: ', self.guild_id)
+                log.exception('Failed to load config for Guild {}, invalid: '.format(self.guild_id))
                 return None
 
         return self._cached_config
 
     def sync_bans(self, guild):
         # Update last synced time
-        Guild.update(
-            last_ban_sync=datetime.utcnow()
-        ).where(Guild.guild_id == self.guild_id).execute()
+        Guild.update(last_ban_sync=datetime.utcnow()).where(Guild.guild_id == self.guild_id).execute()
 
-        try:
-            bans = guild.get_bans()
-        except:
-            log.exception('sync_bans failed:')
-            return
-
-        log.info('Syncing %s bans for guild %s', len(bans), guild.id)
+        bans = guild.get_bans()
+        log.info('Syncing {} bans for guild {}'.format(len(bans), guild.id))
 
         GuildBan.delete().where(
             (~(GuildBan.user_id << list(bans.keys()))) &
@@ -167,7 +157,7 @@ class GuildEmoji(BaseModel):
     deleted = BooleanField(default=False)
 
     class Meta:
-        db_table = 'guild_emojis'
+        table_name = 'guild_emojis'
 
     @classmethod
     def from_disco_guild_emoji(cls, emoji, guild_id=None):
@@ -194,7 +184,7 @@ class GuildBan(BaseModel):
     reason = TextField(null=True)
 
     class Meta:
-        db_table = 'guild_bans'
+        table_name = 'guild_bans'
         primary_key = CompositeKey('user_id', 'guild_id')
 
     @classmethod
@@ -217,7 +207,7 @@ class GuildConfigChange(BaseModel):
     created_at = DateTimeField(default=datetime.utcnow)
 
     class Meta:
-        db_table = 'guild_config_changes'
+        table_name = 'guild_config_changes'
 
         indexes = (
             (('user_id', 'guild_id'), False),
@@ -227,13 +217,13 @@ class GuildConfigChange(BaseModel):
     def rollback_to(self):
         Guild.update(
             config_raw=self.after_raw,
-            config=yaml.load(self.after_raw)
+            config=yaml.safe_load(self.after_raw)
         ).where(Guild.guild_id == self.guild_id).execute()
 
     def revert(self):
         Guild.update(
             config_raw=self.before_raw,
-            config=yaml.load(self.before_raw)
+            config=yaml.safe_load(self.before_raw)
         ).where(Guild.guild_id == self.guild_id).execute()
 
 
@@ -249,7 +239,7 @@ class GuildMemberBackup(BaseModel):
     deaf = BooleanField(null=True)
 
     class Meta:
-        db_table = 'guild_member_backups'
+        table_name = 'guild_member_backups'
         primary_key = CompositeKey('user_id', 'guild_id')
 
     @classmethod
@@ -274,7 +264,7 @@ class GuildMemberBackup(BaseModel):
         return cls.create(
             user_id=member.user.id,
             guild_id=member.guild_id,
-            nick=member.nick,
+            nick=member.nick if hasattr(member, 'nick') else None,
             roles=member.roles,
             mute=member.mute,
             deaf=member.deaf,
@@ -292,7 +282,7 @@ class GuildVoiceSession(BaseModel):
     ended_at = DateTimeField(default=None, null=True)
 
     class Meta:
-        db_table = 'guild_voice_sessions'
+        table_name = 'guild_voice_sessions'
 
         indexes = (
             # Used for conflicts
@@ -322,4 +312,4 @@ class GuildVoiceSession(BaseModel):
                 channel_id=after.channel_id,
                 user_id=after.user_id,
                 started_at=datetime.utcnow(),
-            ).returning(GuildVoiceSession.id).on_conflict('DO NOTHING').execute()
+            ).returning(GuildVoiceSession.id).on_conflict_update().execute()

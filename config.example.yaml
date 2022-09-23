@@ -1,11 +1,12 @@
 token: ''
 
-manhole_enable: true
+manhole_enable: false
 manhole_bind: 127.0.0.1:7171
 
 max_reconnects: 0
-guild_subscriptions: false
-intents: 14319
+log_level: 'info'
+encoder: etf
+intent: 14319  # 14036 for 80% fewer events
 
 DSN: ''
 
@@ -15,25 +16,30 @@ web:
     CLIENT_ID: ''
     REDIRECT_URI: 'http://WEBSITE.com/api/auth/discord/callback'
     CLIENT_SECRET: ''
-    API_BASE_URL: 'https://discordapp.com/api'
-    TOKEN_URL: 'https://discordapp.com/api/oauth2/token'
-    AUTH_URL: 'https://discordapp.com/oauth2/authorize'
+    API_BASE_URL: 'https://discord.com/api'
+    TOKEN_URL: 'https://discord.com/api/oauth2/token'
+    AUTH_URL: 'https://discord.com/oauth2/authorize'
 
 state:
-  sync_guild_members: false
+  sync_guild_members: true
+  track_messages: false
 
 bot:
   commands_enabled: false
   plugins:
-    - rowboat.plugins.core
-    - rowboat.plugins.modlog
-    - rowboat.plugins.admin
-    - rowboat.plugins.spam
-    - rowboat.plugins.censor
-    - rowboat.plugins.reddit
-    - rowboat.plugins.starboard
-    - rowboat.plugins.utilities
-    - rowboat.plugins.sql
-    - rowboat.plugins.internal
-    - rowboat.plugins.stats
-    - rowboat.plugins.tags
+  - rowboat.plugins.core
+  - rowboat.plugins.modlog
+  - rowboat.plugins.admin
+  - rowboat.plugins.spam
+  - rowboat.plugins.censor
+  - rowboat.plugins.reddit
+  - rowboat.plugins.starboard
+  - rowboat.plugins.utilities
+  - rowboat.plugins.sql
+  - rowboat.plugins.internal
+  - rowboat.plugins.tags
+
+db_host: '127.0.0.1'
+db_port: '5432'
+  db_user: 'rowboat'
+db_password: ''

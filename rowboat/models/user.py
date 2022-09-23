@@ -1,4 +1,6 @@
+import humanize
 from datetime import datetime
+
 from holster.enum import Enum
 from peewee import BigIntegerField, IntegerField, SmallIntegerField, TextField, BooleanField, DateTimeField
 from playhouse.postgres_ext import BinaryJSONField
@@ -23,7 +25,7 @@ class User(BaseModel):
     '''
 
     class Meta:
-        db_table = 'users'
+        table_name = 'users'
 
         indexes = (
             (('user_id', 'username', 'discriminator'), True),
@@ -60,7 +62,6 @@ class User(BaseModel):
 
     @classmethod
     def from_disco_user(cls, user, should_update=True):
-        # DEPRECATED
         obj, _ = cls.get_or_create(
             user_id=user.id,
             defaults={
@@ -87,19 +88,8 @@ class User(BaseModel):
 
         return obj
 
-    def get_avatar_url(self, fmt='webp', size=1024):
-        if not self.avatar:
-            return None
-
-        return 'https://cdn.discordapp.com/avatars/{}/{}.{}?size={}'.format(
-            self.user_id,
-            self.avatar,
-            fmt,
-            size
-        )
-
-    def __unicode__(self):
-        return u'{}#{}'.format(self.username, str(self.discriminator).zfill(4))
+    def __str__(self):
+        return '{}#{}'.format(self.username, str(self.discriminator).zfill(4))
 
 
 @BaseModel.register
@@ -121,7 +111,7 @@ class Infraction(BaseModel):
     user_id = BigIntegerField()
     actor_id = BigIntegerField(null=True)
 
-    type_ = IntegerField(db_column='type')
+    type_ = IntegerField(column_name='type')
     reason = TextField(null=True)
     metadata = BinaryJSONField(default={})
 
@@ -130,28 +120,20 @@ class Infraction(BaseModel):
     active = BooleanField(default=True)
 
     class Meta:
-        db_table = 'infractions'
+        table_name = 'infractions'
 
         indexes = (
             (('guild_id', 'user_id'), False),
         )
 
     def serialize(self, guild=None, user=None, actor=None, include_metadata=False):
-        base = {
-            'id': str(self.id),
-            'guild': (guild and guild.serialize()) or {'id': str(self.guild_id)},
-            'user': (user and user.serialize()) or {'id': str(self.user_id)},
-            'actor': (actor and actor.serialize()) or {'id': str(self.actor_id)},
-            'reason': self.reason,
-            'expires_at': self.expires_at,
-            'created_at': self.created_at,
-            'active': self.active,
-        }
-
-        base['type'] = {
-            'id': self.type_,
-            'name': next(i.name for i in Infraction.Types.attrs if i.index == self.type_)
-        }
+        base = {'id': str(self.id), 'guild': (guild and guild.serialize()) or {'id': str(self.guild_id)},
+                'user': (user and user.serialize()) or {'id': str(self.user_id)},
+                'actor': (actor and actor.serialize()) or {'id': str(self.actor_id)}, 'reason': self.reason,
+                'expires_at': self.expires_at, 'created_at': self.created_at, 'active': self.active, 'type': {
+                'id': self.type_,
+                'name': next(i.name for i in Infraction.Types.attrs if i.index == self.type_)
+            }}
 
         if include_metadata:
             base['metadata'] = self.metadata
@@ -201,7 +183,7 @@ class Infraction(BaseModel):
             Actions.MEMBER_KICK,
             event.guild.id,
             member=member,
-            actor=unicode(event.author) if event.author.id != member.id else 'Automatic',
+            actor=event.author if event.author.id != member.id else 'Automatic',
             reason=reason or 'no reason'
         )
 
@@ -231,7 +213,7 @@ class Infraction(BaseModel):
             Actions.MEMBER_TEMPBAN,
             event.guild.id,
             member=member,
-            actor=unicode(event.author) if event.author.id != member.id else 'Automatic',
+            actor=event.author if event.author.id != member.id else 'Automatic',
             reason=reason or 'no reason',
             expires=expires_at,
         )
@@ -264,7 +246,7 @@ class Infraction(BaseModel):
             Actions.MEMBER_SOFTBAN,
             event.guild.id,
             member=member,
-            actor=unicode(event.author) if event.author.id != member.id else 'Automatic',
+            actor=event.author if event.author.id != member.id else 'Automatic',
             reason=reason or 'no reason'
         )
 
@@ -278,7 +260,7 @@ class Infraction(BaseModel):
     @classmethod
     def ban(cls, plugin, event, member, reason, guild, delete_message_days=0):
         from rowboat.plugins.modlog import Actions
-        if isinstance(member, (int, long)):
+        if isinstance(member, int):
             user_id = member
         else:
             User.from_disco_user(member.user)
@@ -297,9 +279,9 @@ class Infraction(BaseModel):
             'ModLogPlugin.log_action_ext',
             Actions.MEMBER_BAN,
             guild.id,
-            user=unicode(member),
+            user=member,
             user_id=user_id,
-            actor=unicode(event.author) if event.author.id != user_id else 'Automatic',
+            actor=event.author if event.author.id != user_id else 'Automatic',
             reason=reason or 'no reason'
         )
 
@@ -328,7 +310,7 @@ class Infraction(BaseModel):
             Actions.MEMBER_WARNED,
             event.guild.id,
             member=member,
-            actor=unicode(event.author) if event.author.id != member.id else 'Automatic',
+            actor=event.author if event.author.id != member.id else 'Automatic',
             reason=reason or 'no reason'
         )
 
@@ -336,6 +318,10 @@ class Infraction(BaseModel):
     def mute(cls, plugin, event, member, reason):
         from rowboat.plugins.modlog import Actions
         admin_config = cls.admin_config(event)
+
+        if not admin_config.mute_role:
+            plugin.log.warning('Cannot mute member {}, no mute role'.format(member.id))
+            return
 
         plugin.call(
             'ModLogPlugin.create_debounce',
@@ -352,7 +338,7 @@ class Infraction(BaseModel):
             Actions.MEMBER_MUTED,
             event.guild.id,
             member=member,
-            actor=unicode(event.author) if event.author.id != member.id else 'Automatic',
+            actor=event.author if event.author.id != member.id else 'Automatic',
             reason=reason or 'no reason'
         )
 
@@ -370,7 +356,7 @@ class Infraction(BaseModel):
         admin_config = cls.admin_config(event)
 
         if not admin_config.mute_role:
-            plugin.log.warning('Cannot tempmute member %s, no tempmute role', member.id)
+            plugin.log.warning('Cannot tempmute member {}, no mute role'.format(member.id))
             return
 
         plugin.call(
@@ -388,7 +374,7 @@ class Infraction(BaseModel):
             Actions.MEMBER_TEMP_MUTED,
             event.guild.id,
             member=member,
-            actor=unicode(event.author) if event.author.id != member.id else 'Automatic',
+            actor=event.author if event.author.id != member.id else 'Automatic',
             reason=reason or 'no reason',
             expires=expires_at,
         )

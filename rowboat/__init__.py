@@ -1,10 +1,13 @@
-import os
 import logging
+import os
 import subprocess
 
+from sentry_sdk import init
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.excepthook import ExcepthookIntegration
+
 from disco.util.logging import LOG_FORMAT
-from raven import Client
-from raven.transport.gevent import GeventedHTTPTransport
 
 ENV = os.getenv('ENV', 'local')
 DSN = os.getenv('DSN')
@@ -12,14 +15,11 @@ REV = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip()
 
 VERSION = '1.3.0'
 
-raven_client = Client(
+sentry_client = init(
     DSN,
-    ignore_exceptions=[
-        'KeyboardInterrupt',
-    ],
-    release=REV,
+    release=VERSION,
     environment=ENV,
-    transport=GeventedHTTPTransport,
+    integrations=[FlaskIntegration(), RedisIntegration(), ExcepthookIntegration(always_run=True)]
 )
 
 # Log things to file
