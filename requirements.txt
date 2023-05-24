@@ -25,7 +25,7 @@ humanize==0.5.1
 inflection==0.3.1
 influxdb==4.0.0
 itsdangerous==0.24
-Jinja2==2.9.5
+Jinja2==2.11.3
 lxml==3.7.2
 markovify==0.5.4
 MarkupSafe==0.23
